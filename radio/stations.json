@@ -1,0 +1,93 @@
+{
+  "comment": "Radio metadata for Road Trip Runner. Audio clips go in radio/clips/ named {era}_{type}_{n}.mp3 (types: id, intro, outro, ad, rain, city, unlock). Songs go in radio/music/ named {era}_{songSlug}.mp3.",
+  "stations": {
+    "70s": {
+      "callSign": "KWAX 96.9 FM",
+      "name": "The Wax Museum",
+      "tagline": "All killer, no filler, and the killer is groovy.",
+      "dj": "Velvet Vince Delacroix",
+      "voiceDirection": "Deep male, slow, warm, near-whisper 70s FM announcer. Long pauses.",
+      "bands": [
+        { "band": "Sasquatch Canyon", "song": "Gravel Road Woman" },
+        { "band": "The Marmalade Skyway", "song": "Velour Sunrise" },
+        { "band": "Donna Fontaine & The Foxfire", "song": "Roller Rink Romance" },
+        { "band": "Brass Aquarium", "song": "Funky Interstate (Pt. 2)" },
+        { "band": "Cactus Telephone", "song": "Long Distance Desert Call" }
+      ]
+    },
+    "80s": {
+      "callSign": "KRZR 104 FM",
+      "name": "Power 104 — The Razor",
+      "tagline": "Maximum voltage. Minimum mercy.",
+      "dj": "Rick 'Hurricane' Hammers",
+      "voiceDirection": "High-energy male rock DJ, fast, loud, gravelly, monster-truck-ad delivery.",
+      "bands": [
+        { "band": "Chrome Viper", "song": "Midnight Accelerator" },
+        { "band": "Neon Prophecy", "song": "She's Electric (In a Legal Sense)" },
+        { "band": "Tiffany Blackout", "song": "Mall Heart" },
+        { "band": "The Velcro Militia", "song": "Radical Maneuvers" },
+        { "band": "Stallion Force", "song": "Training Montage" }
+      ]
+    },
+    "90s": {
+      "callSign": "KDRT 91.3 FM",
+      "name": "The Dirt",
+      "tagline": "Whatever. It's fine. It's The Dirt.",
+      "dj": "Meg",
+      "voiceDirection": "Young female, flat, deadpan, slight vocal fry, college-radio mumble, sighs.",
+      "tracks": [
+        {
+          "file": "Spin Me Right.mp3",
+          "band": "N2U",
+          "song": "Spin Me Right",
+          "style": "boy-band dance-pop, four-on-the-floor, key-change finale"
+        },
+        {
+          "file": "Blue Hairclip.mp3",
+          "band": "N2U",
+          "song": "Blue Hairclip",
+          "style": "boy-band dance-pop, call-and-response backing vocals"
+        },
+        {
+          "file": "Chain Link Riot.mp3",
+          "band": "Karpet Burn",
+          "song": "Chain Link Riot",
+          "style": "nu metal rap rock, gang vocals, turntable scratches"
+        },
+        {
+          "file": "Blue Tape Corner.mp3",
+          "band": "Motel Soap",
+          "song": "Blue Tape Corner",
+          "style": "funky alt-rock, turntable scratches, half-time bridge"
+        },
+        {
+          "file": "Hammer of Asgard.mp3",
+          "band": "Wölfhammer",
+          "song": "Hammer of Asgard",
+          "style": "thrash metal, 180 BPM gallop, gang vocals, Viking everything"
+        }
+      ],
+      "bands": [
+        { "band": "Dishwater Halo", "song": "Flannel Cathedral" },
+        { "band": "Sadie vs. The Microwave", "song": "Dial-Up Heart" },
+        { "band": "The Chunky Sweaters", "song": "Thrift Store Prophet" },
+        { "band": "Pavement Enthusiast", "song": "Parking Lot Sunset" },
+        { "band": "Grape Soda Riot", "song": "Saturday Cartoon Bones" }
+      ]
+    },
+    "00s": {
+      "callSign": "HITZ 99.5 FM",
+      "name": "The Blender",
+      "tagline": "ALL the hits, ALL the time, ALL AT ONCE.",
+      "dj": "Jamie & The Toad",
+      "voiceDirection": "Jamie: bright caffeinated female pop-radio voice. The Toad: dopey male, two-word interjections, record separately.",
+      "bands": [
+        { "band": "Sk8er Confession", "song": "My Mom Drove Us To The Show" },
+        { "band": "Britney Alexandra", "song": "Text Me Back (Or Else)" },
+        { "band": "B4NDW1DTH", "song": "Buffering... (My Heart)" },
+        { "band": "The O.C. Parking Lot", "song": "Frosted Tips Forever" },
+        { "band": "DJ Nokia", "song": "Snake Charmer (Ringtone Remix)" }
+      ]
+    }
+  }
+}

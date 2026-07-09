@@ -1,0 +1,1700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Road Trip Runner</title>
+<style>
+  :root {
+    --bg: #1a1a2e;
+    --panel: #16213e;
+    --accent: #e94560;
+    --text: #f0f0f0;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 12px;
+  }
+  h1 {
+    font-size: 28px;
+    letter-spacing: 2px;
+    margin: 6px 0 2px;
+    text-transform: uppercase;
+  }
+  h1 span { color: var(--accent); }
+  .tagline { font-size: 13px; opacity: 0.7; margin-bottom: 10px; }
+  #gameWrap {
+    position: relative;
+    width: 960px;
+    max-width: 100%;
+  }
+  canvas {
+    display: block;
+    width: 100%;
+    border-radius: 10px;
+    background: #000;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+  }
+  #overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(10, 12, 30, 0.82);
+    border-radius: 10px;
+    text-align: center;
+    padding: 20px;
+  }
+  #overlay.hidden { display: none; }
+  #overlay h2 { font-size: 34px; margin-bottom: 8px; letter-spacing: 3px; }
+  #overlay p { font-size: 14px; line-height: 1.7; opacity: 0.9; max-width: 560px; }
+  .btn {
+    background: var(--accent);
+    color: white;
+    border: none;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 12px 36px;
+    border-radius: 30px;
+    cursor: pointer;
+    margin-top: 18px;
+    letter-spacing: 1px;
+    transition: transform 0.1s;
+  }
+  .btn:hover { transform: scale(1.06); }
+  .radio {
+    margin-top: 16px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    background: var(--panel);
+    padding: 8px 14px;
+    border-radius: 30px;
+  }
+  .radio label { font-size: 12px; opacity: 0.7; margin-right: 4px; }
+  .decade {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid #445;
+    padding: 5px 12px;
+    border-radius: 16px;
+    cursor: pointer;
+    font-size: 13px;
+  }
+  .decade.active { background: var(--accent); border-color: var(--accent); font-weight: bold; }
+  .btn-stop {
+    display: none;
+    background: transparent;
+    color: var(--text);
+    border: 1px solid #556;
+    font-size: 12px;
+    padding: 7px 18px;
+    border-radius: 20px;
+    cursor: pointer;
+    margin-top: 12px;
+    opacity: 0.75;
+  }
+  .btn-stop:hover { opacity: 1; border-color: var(--accent); }
+  .btn-stop.show { display: inline-block; }
+  #hud-help { font-size: 12px; opacity: 0.55; margin-top: 10px; text-align: center; line-height: 1.6; }
+  kbd {
+    background: #333; border-radius: 4px; padding: 1px 6px;
+    font-family: monospace; font-size: 11px; border: 1px solid #555;
+  }
+</style>
+</head>
+<body>
+  <h1>Road Trip <span>Runner</span></h1>
+  <div class="tagline">Your fingers vs. the great American landscape. Just like the back seat of the station wagon.</div>
+
+  <div id="gameWrap">
+    <canvas id="game" width="960" height="540"></canvas>
+    <div id="overlay">
+      <h2 id="ovTitle">ROAD TRIP RUNNER</h2>
+      <p id="ovText">
+        Run your fingers along the horizon. Jump over landmarks and land on
+        fences and rooftops.<br><br>
+        <kbd>Space</kbd> / <kbd>&uarr;</kbd> / <kbd>click</kbd> to jump &nbsp;•&nbsp; hold to jump higher<br>
+        <kbd>1</kbd> fingers &nbsp; <kbd>2</kbd> skateboard (unlocks at 300m) &nbsp; <kbd>3</kbd> motorcycle (unlocks at 800m)
+      </p>
+      <div class="radio">
+        <label>&#128251; CAR RADIO</label>
+        <button class="decade" data-era="70s">'70s</button>
+        <button class="decade" data-era="80s">'80s</button>
+        <button class="decade active" data-era="90s">'90s</button>
+        <button class="decade" data-era="00s">'00s</button>
+        <button class="decade" data-era="off">OFF</button>
+      </div>
+      <button class="btn" id="startBtn">START THE TRIP</button>
+      <button class="btn-stop" id="stopMusicBtn">&#9632; STOP MUSIC</button>
+    </div>
+  </div>
+
+  <div id="hud-help">
+    Routes: New York &rarr; Desert &rarr; San Francisco &rarr; Farmland &rarr; Los Angeles &rarr; Washington D.C. (loops)
+  </div>
+
+<script>
+"use strict";
+
+// ============================================================
+// ROAD TRIP RUNNER — prototype v0.1
+// A 2D endless runner: your fingers run along the landscape
+// out the car window, like every family road trip ever.
+// ============================================================
+
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+const W = canvas.width, H = canvas.height;
+const GROUND_Y = 460;
+
+// ---------- Themes (the "routes" you drive through) ----------
+// Each theme = sky colors, far landmark silhouettes, mid skyline,
+// and the obstacle set that spawns in the play lane.
+const THEMES = [
+  {
+    name: "NEW YORK CITY",
+    skyTop: "#0f1b3d", skyBottom: "#e8734a",
+    far: "#1b2a52", mid: "#25355f", ground: "#3a3a44", groundLine: "#55555f",
+    landmarks: ["empireState", "statueOfLiberty", "skyline"],
+    obstacles: ["hydrant", "taxi", "fence", "waterTower", "mailbox"],
+  },
+  {
+    name: "DESERT SOUTHWEST",
+    skyTop: "#2b1055", skyBottom: "#f5af19",
+    far: "#6b2d5c", mid: "#a04c3c", ground: "#c98850", groundLine: "#a06838",
+    landmarks: ["devilsTower", "mesa", "canyon"],
+    obstacles: ["cactus", "tumbleweed", "rock", "fence", "roadSign"],
+  },
+  {
+    name: "SAN FRANCISCO",
+    skyTop: "#1c3f60", skyBottom: "#f7b2a3",
+    far: "#2c4f70", mid: "#3d5f80", ground: "#4a4a55", groundLine: "#66666f",
+    landmarks: ["goldenGate", "transamerica", "paintedLadies"],
+    obstacles: ["cableCar", "hydrant", "fence", "paintedHouse", "mailbox"],
+  },
+  {
+    name: "HEARTLAND FARMS",
+    skyTop: "#3f7fb5", skyBottom: "#f5d76e",
+    far: "#4f6f3f", mid: "#5f8a48", ground: "#79a356", groundLine: "#5c7f43",
+    midStyle: "hills",
+    landmarks: ["silo", "windmill", "treeline"],
+    obstacles: ["cow", "hayBale", "tractor", "scarecrow", "barn", "fence"],
+  },
+  {
+    name: "LOS ANGELES",
+    skyTop: "#4a5899", skyBottom: "#f2957d",
+    far: "#5a548c", mid: "#6b6499", ground: "#8f8778", groundLine: "#6f6a5c",
+    landmarks: ["hollywoodSign", "palmRow", "pier", "waves"],
+    obstacles: ["palmTree", "convertible", "wave", "lifeguardTower", "tacoTruck"],
+  },
+  {
+    name: "WASHINGTON D.C.",
+    skyTop: "#20284e", skyBottom: "#d9a05e",
+    far: "#2e3860", mid: "#3d4a75", ground: "#4a4a52", groundLine: "#66666e",
+    landmarks: ["washingtonMonument", "capitol", "lincolnMemorial"],
+    obstacles: ["cherryTree", "limo", "barricade", "foodCart", "hydrant", "fence"],
+  },
+];
+const THEME_LENGTH = 1200; // meters per route before the next city
+
+// ---------- Obstacle catalog ----------
+// landable: true means you can run along the top (fences, rooftops)
+const OBSTACLE_DEFS = {
+  hydrant:      { w: 34,  h: 46,  landable: false },
+  mailbox:      { w: 36,  h: 58,  landable: false },
+  taxi:         { w: 120, h: 62,  landable: true  },
+  fence:        { w: 220, h: 70,  landable: true  },
+  waterTower:   { w: 70,  h: 110, landable: true  },
+  cactus:       { w: 44,  h: 88,  landable: false },
+  tumbleweed:   { w: 46,  h: 46,  landable: false, rolls: true },
+  rock:         { w: 70,  h: 44,  landable: true  },
+  roadSign:     { w: 40,  h: 96,  landable: false },
+  cableCar:     { w: 130, h: 88,  landable: true  },
+  paintedHouse: { w: 110, h: 120, landable: true  },
+  cow:          { w: 92,  h: 62,  landable: false },
+  hayBale:      { w: 64,  h: 56,  landable: true  },
+  tractor:      { w: 120, h: 80,  landable: true  },
+  scarecrow:    { w: 44,  h: 92,  landable: false },
+  barn:         { w: 150, h: 110, landable: true  },
+  palmTree:     { w: 46,  h: 118, landable: false },
+  convertible:  { w: 130, h: 52,  landable: true  },
+  wave:         { w: 70,  h: 58,  landable: false, rolls: true },
+  lifeguardTower: { w: 80, h: 96, landable: true  },
+  tacoTruck:    { w: 140, h: 84,  landable: true  },
+  cherryTree:   { w: 70,  h: 84,  landable: false },
+  limo:         { w: 170, h: 54,  landable: true  },
+  barricade:    { w: 56,  h: 40,  landable: true  },
+  foodCart:     { w: 70,  h: 66,  landable: false },
+};
+
+// ---------- Game state ----------
+const S = {
+  running: false,
+  gameOver: false,
+  t: 0,
+  speed: 320,          // px/sec world scroll
+  distance: 0,         // meters
+  best: Number(localStorage.getItem("rtr_best") || 0),
+  lives: 3,
+  invuln: 0,
+  themeIndex: 0,
+  banner: null,        // {text, timer}
+  obstacles: [],
+  spawnTimer: 1.2,
+  // weather
+  raining: false,
+  rainTimer: 14,       // seconds until next weather flip
+  drops: [],
+  // parallax scroll offsets
+  farX: 0, midX: 0, groundX: 0,
+  // rides: run -> skateboard -> motorcycle
+  ride: "run",
+  unlocked: { skateboard: false, motorcycle: false },
+  toast: null,         // {text, timer}
+};
+
+const player = {
+  x: 180, y: GROUND_Y, w: 46, h: 74,
+  vy: 0, onGround: true, jumpHeld: false,
+  legPhase: 0,
+};
+
+const GRAVITY = 2600;      // rising with the button released
+const HOLD_GRAVITY = 1350; // rising while held = keeps climbing to full height
+const FALL_GRAVITY = 3200; // falling is faster than rising = snappy landings
+const JUMP_V = 860;
+const JUMP_CUT_V = -320;   // releasing early caps upward speed: tap = short hop
+
+function currentTheme() { return THEMES[S.themeIndex % THEMES.length]; }
+
+function resetGame() {
+  S.running = true; S.gameOver = false;
+  S.t = 0; S.speed = 320; S.distance = 0; S.lives = 3; S.invuln = 0;
+  S.themeIndex = 0; S.obstacles = []; S.spawnTimer = 1.2;
+  S.raining = false; S.rainTimer = 14; S.drops = [];
+  S.rainAnnounced = false; // Meg calls the weather once per run
+  Glass.drops = [];
+  S.ride = "run";
+  S.banner = { text: "NOW ENTERING: " + THEMES[0].name, timer: 2.5 };
+  player.y = GROUND_Y; player.vy = 0; player.onGround = true;
+}
+
+// ============================================================
+// INPUT
+// ============================================================
+function jumpPress() {
+  if (!S.running) return;
+  if (player.onGround) {
+    player.vy = -JUMP_V;
+    player.onGround = false;
+    Sfx.jump();
+  }
+  player.jumpHeld = true;
+}
+function jumpRelease() {
+  player.jumpHeld = false;
+  if (player.vy < JUMP_CUT_V) player.vy = JUMP_CUT_V; // cut the jump short
+}
+
+document.addEventListener("keydown", (e) => {
+  if (e.repeat) return;
+  if (e.code === "Space" || e.code === "ArrowUp") { e.preventDefault(); jumpPress(); }
+  if (e.key === "1") setRide("run");
+  if (e.key === "2") setRide("skateboard");
+  if (e.key === "3") setRide("motorcycle");
+});
+document.addEventListener("keyup", (e) => {
+  if (e.code === "Space" || e.code === "ArrowUp") jumpRelease();
+});
+canvas.addEventListener("pointerdown", jumpPress);
+canvas.addEventListener("pointerup", jumpRelease);
+
+function setRide(r) {
+  if (r !== "run" && !S.unlocked[r]) {
+    S.toast = { text: r.toUpperCase() + " not unlocked yet!", timer: 1.5 };
+    return;
+  }
+  S.ride = r;
+  S.toast = { text: "Ride: " + r.toUpperCase(), timer: 1.2 };
+}
+
+// ============================================================
+// AUDIO — placeholder era "radio" built on WebAudio.
+// Each decade gets a different waveform/tempo/riff so the vibe
+// changes. Swap these for AI-generated songs later.
+// ============================================================
+const Radio = {
+  era: "90s",
+  actx: null, nextNote: 0, step: 0, timer: null,
+  playlist: {},        // era -> [filenames], loaded from radio/music/playlist.json
+  audio: null, queue: [],
+  patterns: {
+    // [scale notes as semitone offsets from root], root Hz, bpm, waveform
+    "70s": { notes: [0, 3, 5, 7, 10, 7, 5, 3], root: 110,    bpm: 96,  wave: "triangle", swing: true  },
+    "80s": { notes: [0, 7, 12, 7, 3, 7, 12, 15], root: 130.8, bpm: 118, wave: "sawtooth", swing: false },
+    "90s": { notes: [0, 0, 7, 5, 0, 0, 10, 7],  root: 82.4,  bpm: 108, wave: "square",   swing: false },
+    "00s": { notes: [0, 4, 7, 4, 9, 7, 4, 0],   root: 146.8, bpm: 140, wave: "square",   swing: false },
+  },
+  start() {
+    this.stop();
+    if (this.era === "off") return;
+    if (!this.actx) this.actx = new (window.AudioContext || window.webkitAudioContext)();
+    if (this.actx.state === "suspended") this.actx.resume();
+    // real songs beat placeholder chiptunes
+    const tracks = this.playlist[this.era];
+    if (tracks && tracks.length) { this.playBreak(null, tracks); return; }
+    this.step = 0;
+    this.nextNote = this.actx.currentTime + 0.1;
+    this.timer = setInterval(() => this.schedule(), 60);
+  },
+  // DJ break: outro for what just played, sometimes a station ID or ad,
+  // then the intro for what's next — like actual radio
+  playBreak(prevFile, tracks) {
+    if (!this.queue.length) this.queue = tracks.slice().sort(() => Math.random() - 0.5);
+    const nextFile = this.queue.shift();
+    const seq = [];
+    if (prevFile && Math.random() < 0.7) {
+      const outro = DJ.pick("outro", DJ.slugOf(prevFile));
+      if (outro) seq.push(outro);
+    }
+    DJ.breaks++;
+    if (!prevFile) { // show open: always lead with the station ID
+      const id = DJ.pick("id");
+      if (id) seq.push(id);
+    } else if (DJ.breaks % 2 === 1) { // every other break gets an ID or ad
+      const spot = DJ.pick(Math.random() < 0.65 ? "id" : "ad") || DJ.pick("id");
+      if (spot) seq.push(spot);
+    }
+    const intro = DJ.pick("intro", DJ.slugOf(nextFile));
+    if (intro) seq.push(intro);
+    DJ.playSeq(seq, () => this.playSong(nextFile, tracks));
+  },
+  playSong(file, tracks) {
+    this.audio = new Audio("radio/music/" + this.era + "/" + encodeURIComponent(file));
+    this.audio.volume = 0.65;
+    this.audio.onended = () => this.playBreak(file, tracks);
+    this.audio.onerror = () => {
+      // bad/missing file: skip ahead instead of going silent, but give up
+      // after one full pass so a missing folder can't loop forever
+      S.toast = { text: "RADIO: couldn't load " + file, timer: 3 };
+      this._errs = (this._errs || 0) + 1;
+      if (this._errs < tracks.length) {
+        if (!this.queue.length) this.queue = tracks.slice().sort(() => Math.random() - 0.5);
+        this.playSong(this.queue.shift(), tracks);
+      }
+    };
+    this.audio.oncanplay = () => { this._errs = 0; };
+    this.audio.play().catch(() => {});
+    S.toast = { text: "♪ NOW PLAYING: " + file.replace(/\.[^.]+$/, ""), timer: 3.5 };
+  },
+  stop() {
+    if (this.timer) { clearInterval(this.timer); this.timer = null; }
+    if (this.audio) { this.audio.pause(); this.audio = null; }
+    DJ.cut();
+    this.queue = [];
+  },
+  // game over: let the current song play to the end, then go quiet —
+  // no more DJ breaks or next tracks
+  finishSong() {
+    if (this.timer) { clearInterval(this.timer); this.timer = null; } // chiptunes stop now
+    DJ.cut();
+    this.queue = [];
+    if (this.audio) {
+      this.audio.volume = 0.65; // un-duck in case Meg was mid-line
+      this.audio.onended = () => { this.audio = null; updateStopBtn(); };
+      this.audio.onerror = () => { this.audio = null; updateStopBtn(); };
+    }
+  },
+  schedule() {
+    const p = this.patterns[this.era];
+    if (!p) return;
+    const beat = 60 / p.bpm / 2; // eighth notes
+    while (this.nextNote < this.actx.currentTime + 0.25) {
+      const semis = p.notes[this.step % p.notes.length];
+      const freq = p.root * Math.pow(2, semis / 12);
+      const dur = p.swing && this.step % 2 ? beat * 0.55 : beat * 0.85;
+      this.tone(freq, this.nextNote, dur, p.wave, 0.055);
+      // simple hi-hat tick every other step
+      if (this.step % 2 === 0) this.noise(this.nextNote, 0.03, 0.018);
+      this.nextNote += beat;
+      this.step++;
+    }
+  },
+  tone(freq, when, dur, wave, gain) {
+    const o = this.actx.createOscillator(), g = this.actx.createGain();
+    o.type = wave; o.frequency.value = freq;
+    g.gain.setValueAtTime(gain, when);
+    g.gain.exponentialRampToValueAtTime(0.001, when + dur);
+    o.connect(g).connect(this.actx.destination);
+    o.start(when); o.stop(when + dur);
+  },
+  noise(when, dur, gain) {
+    const size = this.actx.sampleRate * dur;
+    const buf = this.actx.createBuffer(1, size, this.actx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < size; i++) data[i] = Math.random() * 2 - 1;
+    const src = this.actx.createBufferSource(); src.buffer = buf;
+    const g = this.actx.createGain();
+    g.gain.setValueAtTime(gain, when);
+    g.gain.exponentialRampToValueAtTime(0.001, when + dur);
+    src.connect(g).connect(this.actx.destination);
+    src.start(when);
+  },
+};
+
+// ============================================================
+// DJ — voice clips recorded in ElevenLabs, dropped in radio/clips/.
+// Filenames follow {era}_{type}[_{slug}]_{n}.mp3 (see radio/DJ_SCRIPT.md).
+// Missing clips are skipped gracefully, so partial recordings work.
+// ============================================================
+const DJ = {
+  reg: {}, voice: null, breaks: 0,
+  setFiles(files) {
+    this.reg = {};
+    for (const f of files) {
+      const m = /^(\d0s)_(id|ad|rain|intro|outro|city|unlock)(?:_([a-z0-9]+))?_\d+\.mp3$/.exec(f);
+      if (!m) continue;
+      const era = m[1], type = m[2], slug = m[3];
+      const r = (this.reg[era] = this.reg[era] || {});
+      const key = slug ? type + "_" + slug : type;
+      (r[key] = r[key] || []).push(f);
+    }
+  },
+  pick(type, slug) {
+    const r = this.reg[Radio.era];
+    const pool = r && r[slug ? type + "_" + slug : type];
+    return pool ? pool[Math.floor(Math.random() * pool.length)] : null;
+  },
+  slugOf(file) { return file.replace(/\.[^.]+$/, "").toLowerCase().replace(/[^a-z0-9]/g, ""); },
+  // play clips back-to-back, then call done()
+  playSeq(clips, done) {
+    const next = () => {
+      const f = clips.shift();
+      if (!f) { this.voice = null; if (done) done(); return; }
+      this.voice = new Audio("radio/clips/" + encodeURIComponent(f));
+      this.voice.onended = next;
+      this.voice.onerror = next;
+      this.voice.play().catch(() => { this.voice = null; if (done) done(); });
+    };
+    next();
+  },
+  // one-off line over the music (rain, cities, unlocks): duck, talk, restore
+  event(type, slug) {
+    if (this.voice) return; // already talking
+    const f = this.pick(type, slug);
+    if (!f) return;
+    if (Radio.audio) Radio.audio.volume = 0.15;
+    this.playSeq([f], () => { if (Radio.audio) Radio.audio.volume = 0.65; });
+  },
+  cut() {
+    if (this.voice) {
+      this.voice.onended = null;
+      this.voice.onerror = null;
+      this.voice.pause();
+      this.voice = null;
+    }
+  },
+};
+
+// One-shot sound effects share the radio's audio context.
+const Sfx = {
+  ctx() {
+    if (!Radio.actx) Radio.actx = new (window.AudioContext || window.webkitAudioContext)();
+    if (Radio.actx.state === "suspended") Radio.actx.resume();
+    return Radio.actx;
+  },
+  jump() {
+    const c = this.ctx(), t = c.currentTime;
+    const o = c.createOscillator(), g = c.createGain();
+    o.type = "sine"; o.frequency.setValueAtTime(300, t);
+    o.frequency.exponentialRampToValueAtTime(600, t + 0.12);
+    g.gain.setValueAtTime(0.08, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
+    o.connect(g).connect(c.destination); o.start(t); o.stop(t + 0.15);
+  },
+  hit() {
+    const c = this.ctx(), t = c.currentTime;
+    const o = c.createOscillator(), g = c.createGain();
+    o.type = "sawtooth"; o.frequency.setValueAtTime(180, t);
+    o.frequency.exponentialRampToValueAtTime(50, t + 0.3);
+    g.gain.setValueAtTime(0.12, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
+    o.connect(g).connect(c.destination); o.start(t); o.stop(t + 0.3);
+  },
+  unlock() {
+    const c = this.ctx(), t = c.currentTime;
+    [523, 659, 784].forEach((f, i) => {
+      const o = c.createOscillator(), g = c.createGain();
+      o.type = "triangle"; o.frequency.value = f;
+      g.gain.setValueAtTime(0.07, t + i * 0.09);
+      g.gain.exponentialRampToValueAtTime(0.001, t + i * 0.09 + 0.2);
+      o.connect(g).connect(c.destination);
+      o.start(t + i * 0.09); o.stop(t + i * 0.09 + 0.2);
+    });
+  },
+};
+
+// ============================================================
+// UPDATE
+// ============================================================
+function update(dt) {
+  S.t += dt;
+  S.speed = Math.min(720, 320 + S.t * 7);
+  const px = S.speed * dt;
+  S.distance += px / 12; // ~12px per "meter"
+  S.farX += px * 0.15; S.midX += px * 0.4; S.groundX += px;
+
+  // route changes
+  const idx = Math.floor(S.distance / THEME_LENGTH) % THEMES.length;
+  if (idx !== S.themeIndex) {
+    S.themeIndex = idx;
+    S.banner = { text: "NOW ENTERING: " + currentTheme().name, timer: 2.5 };
+    DJ.event("city", ["newyork", "desert", "sanfrancisco", "farmland", "losangeles", "washingtondc"][idx]);
+  }
+
+  // unlocks
+  if (!S.unlocked.skateboard && S.distance >= 300) {
+    S.unlocked.skateboard = true;
+    S.toast = { text: "SKATEBOARD UNLOCKED! Press 2", timer: 3 };
+    Sfx.unlock();
+    DJ.event("unlock", "skateboard");
+  }
+  if (!S.unlocked.motorcycle && S.distance >= 800) {
+    S.unlocked.motorcycle = true;
+    S.toast = { text: "MOTORCYCLE UNLOCKED! Press 3", timer: 3 };
+    Sfx.unlock();
+    DJ.event("unlock", "motorcycle");
+  }
+
+  // ---- player physics ----
+  const grav = player.vy > 0 ? FALL_GRAVITY
+             : (player.jumpHeld ? HOLD_GRAVITY : GRAVITY);
+  player.vy += grav * dt;
+  player.y += player.vy * dt;
+  player.legPhase += dt * (8 + S.speed / 60);
+
+  // find surface under the player: ground or a landable obstacle top
+  let surface = GROUND_Y;
+  for (const o of S.obstacles) {
+    if (!o.def.landable) continue;
+    const top = GROUND_Y - o.def.h;
+    if (player.x + player.w * 0.35 > o.x && player.x - player.w * 0.35 < o.x + o.def.w) {
+      // only counts as a floor if we're above it (or barely into it)
+      if (player.y <= top + 18) surface = Math.min(surface, top);
+    }
+  }
+  if (player.y >= surface) {
+    player.y = surface;
+    player.vy = 0;
+    player.onGround = true;
+  } else {
+    player.onGround = false;
+  }
+
+  // ---- obstacles ----
+  S.spawnTimer -= dt;
+  if (S.spawnTimer <= 0) {
+    spawnObstacle();
+    // spawn gap shrinks as speed rises, with randomness
+    S.spawnTimer = (0.85 + Math.random() * 1.1) * (420 / S.speed);
+  }
+  for (const o of S.obstacles) {
+    o.x -= px * (o.def.rolls ? 1.35 : 1); // tumbleweeds roll toward you
+    if (o.def.rolls) o.spin = (o.spin || 0) + dt * 9;
+  }
+  S.obstacles = S.obstacles.filter((o) => o.x + o.def.w > -50);
+
+  // side collisions (landing on top is handled above)
+  if (S.invuln > 0) S.invuln -= dt;
+  for (const o of S.obstacles) {
+    if (S.invuln > 0) break;
+    const top = GROUND_Y - o.def.h;
+    const overlapX = player.x + player.w * 0.3 > o.x + 6 && player.x - player.w * 0.3 < o.x + o.def.w - 6;
+    const belowTop = player.y > top + 20; // feet clearly below the top edge
+    if (overlapX && belowTop) takeHit();
+  }
+
+  // ---- weather ----
+  S.rainTimer -= dt;
+  if (S.rainTimer <= 0) {
+    S.raining = !S.raining;
+    S.rainTimer = S.raining ? 8 + Math.random() * 5 : 12 + Math.random() * 10;
+    if (S.raining) {
+      S.toast = { text: "STORM AHEAD!", timer: 2.5 };
+      if (!S.rainAnnounced) {
+        S.rainAnnounced = true;
+        DJ.event("rain");
+      }
+    }
+  }
+  // hazard beads blow in from the front of the car and streak backward
+  // across the glass at runner height — jump them like any obstacle
+  if (S.raining && Math.random() < dt * 1.5) {
+    S.drops.push({
+      x: W + 30,
+      y: GROUND_Y - 16 - Math.random() * 56,
+      vx: -(S.speed * 0.5 + 140 + Math.random() * 140),
+      vy: 10 + Math.random() * 16, // gravity slowly drags the bead down the glass
+    });
+  }
+  for (const d of S.drops) { d.x += d.vx * dt; d.y += d.vy * dt; }
+  S.drops = S.drops.filter((d) => d.x > -60 && d.y < H);
+  // drops are purely atmospheric for now — no damage while we figure out
+  // how rain should play into the game
+  Glass.update(dt); // cosmetic droplets clinging to the window
+
+  // timers
+  if (S.banner && (S.banner.timer -= dt) <= 0) S.banner = null;
+  if (S.toast && (S.toast.timer -= dt) <= 0) S.toast = null;
+}
+
+function spawnObstacle() {
+  const theme = currentTheme();
+  const key = theme.obstacles[Math.floor(Math.random() * theme.obstacles.length)];
+  const def = OBSTACLE_DEFS[key];
+  const last = S.obstacles[S.obstacles.length - 1];
+  const minGap = S.speed * 0.62 + 40; // always physically clearable, with landing room
+  const x = Math.max(W + 40, last ? last.x + last.def.w + minGap : 0);
+  S.obstacles.push({ key, def, x });
+}
+
+function takeHit() {
+  S.lives--;
+  S.invuln = 1.6;
+  Sfx.hit();
+  if (S.lives <= 0) endGame();
+}
+
+function endGame() {
+  S.running = false;
+  S.gameOver = true;
+  Radio.finishSong(); // the last song plays out over the game-over screen
+  if (S.distance > S.best) {
+    S.best = Math.floor(S.distance);
+    localStorage.setItem("rtr_best", S.best);
+  }
+  const ov = document.getElementById("overlay");
+  document.getElementById("ovTitle").textContent = "OUT OF GAS!";
+  document.getElementById("ovText").innerHTML =
+    "You made it <b>" + Math.floor(S.distance) + "m</b> down the road." +
+    "<br>Best trip: <b>" + S.best + "m</b>";
+  document.getElementById("startBtn").textContent = "TAKE ANOTHER TRIP";
+  ov.classList.remove("hidden");
+  updateStopBtn(); // offer to stop the song still playing out
+}
+
+// show the stop button only while a song is playing over the menu
+function updateStopBtn() {
+  document.getElementById("stopMusicBtn")
+    .classList.toggle("show", !S.running && Radio.audio !== null);
+}
+
+// ============================================================
+// DRAWING
+// ============================================================
+function draw() {
+  const theme = currentTheme();
+
+  drawSky(theme);
+  drawLandmarks(theme);
+  drawMidSkyline(theme);
+
+  // ground
+  ctx.fillStyle = theme.ground;
+  ctx.fillRect(0, GROUND_Y, W, H - GROUND_Y);
+  // shading: lit near the horizon line, falling into shadow below
+  const gsh = ctx.createLinearGradient(0, GROUND_Y, 0, H);
+  gsh.addColorStop(0, "rgba(255,255,255,0.08)");
+  gsh.addColorStop(0.3, "rgba(0,0,0,0)");
+  gsh.addColorStop(1, "rgba(0,0,0,0.35)");
+  ctx.fillStyle = gsh;
+  ctx.fillRect(0, GROUND_Y, W, H - GROUND_Y);
+  ctx.strokeStyle = theme.groundLine;
+  ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(0, GROUND_Y); ctx.lineTo(W, GROUND_Y); ctx.stroke();
+  // dashed road line
+  ctx.setLineDash([26, 22]);
+  ctx.lineDashOffset = S.groundX % 48;
+  ctx.strokeStyle = "rgba(255,255,255,0.25)";
+  ctx.beginPath(); ctx.moveTo(0, GROUND_Y + 42); ctx.lineTo(W, GROUND_Y + 42); ctx.stroke();
+  ctx.setLineDash([]);
+
+  for (const o of S.obstacles) drawObstacle(o, theme);
+  drawShadow();
+  drawPlayer();
+  drawRain();       // hazard beads streaking across the glass
+  Glass.draw();     // cosmetic droplets clinging to the window
+  drawGlassSheen();
+  drawCarFrame();   // you're watching all of this from the back seat
+  drawHUD(theme);
+}
+
+// ---- sky, sun/moon, clouds ----
+function drawSky(theme) {
+  const sky = ctx.createLinearGradient(0, 0, 0, GROUND_Y);
+  sky.addColorStop(0, theme.skyTop);
+  sky.addColorStop(1, theme.skyBottom);
+  ctx.fillStyle = sky;
+  ctx.fillRect(0, 0, W, GROUND_Y);
+
+  const kind = S.themeIndex % THEMES.length;
+  if (kind === 0) {
+    // NYC dusk: first stars + crescent moon
+    ctx.fillStyle = "rgba(255,255,255,0.7)";
+    for (let i = 0; i < 26; i++) {
+      ctx.fillRect((i * 173 + 40) % W, (i * 97) % 150 + 25, 2, 2);
+    }
+    ctx.fillStyle = "#f2ead9";
+    ctx.beginPath(); ctx.arc(W - 170, 115, 26, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = theme.skyTop;
+    ctx.beginPath(); ctx.arc(W - 182, 107, 24, 0, Math.PI * 2); ctx.fill();
+  } else if (kind === 1) {
+    // desert: big low sun with haze halo
+    const sx = W - 250, sy = GROUND_Y - 170;
+    ctx.fillStyle = "rgba(255,180,80,0.14)";
+    ctx.beginPath(); ctx.arc(sx, sy, 78, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "rgba(255,190,90,0.2)";
+    ctx.beginPath(); ctx.arc(sx, sy, 58, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#ffd27a";
+    ctx.beginPath(); ctx.arc(sx, sy, 42, 0, Math.PI * 2); ctx.fill();
+  } else if (kind === 2) {
+    // SF: fog banks drifting along the horizon
+    ctx.fillStyle = "rgba(230,235,245,0.16)";
+    for (let i = 0; i < 3; i++) {
+      const fx = ((-(S.farX * 0.6) + i * 380) % (W + 500) + W + 500) % (W + 500) - 250;
+      ctx.beginPath();
+      ctx.ellipse(fx, GROUND_Y - 60 - i * 26, 260, 34, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  } else if (kind === 3) {
+    // farmland: high afternoon sun and a few birds
+    ctx.fillStyle = "rgba(255,244,200,0.9)";
+    ctx.beginPath(); ctx.arc(W - 190, 90, 34, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = "rgba(30,40,60,0.5)";
+    ctx.lineWidth = 2;
+    for (let b = 0; b < 4; b++) {
+      const bx = W - ((S.farX * 0.35 + b * 260) % (W + 120));
+      const by = 70 + (b * 53) % 90;
+      ctx.beginPath();
+      ctx.moveTo(bx - 8, by + 5);
+      ctx.quadraticCurveTo(bx - 4, by, bx, by + 5);
+      ctx.quadraticCurveTo(bx + 4, by, bx + 8, by + 5);
+      ctx.stroke();
+    }
+  } else if (kind === 4) {
+    // LA: hazy sun sinking over the ocean, smog band on the horizon
+    ctx.fillStyle = "rgba(255,170,120,0.25)";
+    ctx.beginPath(); ctx.arc(210, GROUND_Y - 210, 62, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#ffcf9f";
+    ctx.beginPath(); ctx.arc(210, GROUND_Y - 210, 40, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "rgba(255,190,150,0.12)";
+    ctx.fillRect(0, GROUND_Y - 150, W, 60);
+  } else {
+    // DC: clear night, moon over the monuments
+    ctx.fillStyle = "rgba(255,255,255,0.65)";
+    for (let i = 0; i < 20; i++) {
+      ctx.fillRect((i * 211 + 80) % W, (i * 83) % 140 + 25, 2, 2);
+    }
+    ctx.fillStyle = "#f2ead9";
+    ctx.beginPath(); ctx.arc(170, 100, 24, 0, Math.PI * 2); ctx.fill();
+  }
+  // drifting clouds on every route
+  ctx.fillStyle = "rgba(255,255,255,0.10)";
+  for (let i = 0; i < 4; i++) {
+    const cx = (W + 300) - ((S.farX * 0.5 + i * 340) % (W + 300));
+    const cy = 60 + (i * 67) % 120;
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, 70, 16, 0, 0, Math.PI * 2);
+    ctx.ellipse(cx + 40, cy - 10, 45, 13, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+// ---- soft shadow under the runner ----
+function drawShadow() {
+  const sy = player.onGround ? player.y : GROUND_Y;
+  const lift = Math.max(0, sy - player.y);
+  const sc = Math.max(0.4, 1 - lift / 500);
+  ctx.fillStyle = "rgba(0,0,0," + (0.22 * sc).toFixed(3) + ")";
+  ctx.beginPath();
+  ctx.ellipse(player.x, sy + 5, 30 * sc, 7 * sc, 0, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+// ---- cosmetic droplets clinging to the window glass (screen space) ----
+const Glass = {
+  drops: [],
+  update(dt) {
+    if (S.raining && this.drops.length < 70 && Math.random() < dt * 24) {
+      this.drops.push({
+        x: Math.random() * W, y: 40 + Math.random() * (H - 120),
+        r: 1.5 + Math.random() * 3.5,
+        vx: 0, stick: 0.2 + Math.random() * 1.4, trail: [],
+      });
+    }
+    for (const d of this.drops) {
+      if (d.stick > 0) { d.stick -= dt; continue; }
+      // wind drags the bead backward across the glass, gravity tugs it down
+      d.vx -= (60 + S.speed * 0.4) * dt;
+      d.x += d.vx * dt;
+      d.y += (8 + Math.sin(d.x * 0.05) * 6) * dt;
+      d.trail.push({ x: d.x, y: d.y });
+      if (d.trail.length > 14) d.trail.shift();
+    }
+    this.drops = this.drops.filter((d) => d.x > -20);
+  },
+  draw() {
+    for (const d of this.drops) {
+      if (d.trail.length > 1) {
+        ctx.strokeStyle = "rgba(190,215,245,0.16)";
+        ctx.lineWidth = d.r * 1.4;
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.moveTo(d.trail[0].x, d.trail[0].y);
+        for (const p of d.trail) ctx.lineTo(p.x, p.y);
+        ctx.stroke();
+      }
+      const g = ctx.createRadialGradient(d.x - d.r * 0.4, d.y - d.r * 0.4, 0.5, d.x, d.y, d.r * 1.6);
+      g.addColorStop(0, "rgba(255,255,255,0.5)");
+      g.addColorStop(1, "rgba(170,200,240,0.10)");
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.arc(d.x, d.y, d.r * 1.4, 0, Math.PI * 2); ctx.fill();
+    }
+  },
+};
+
+// ---- faint diagonal reflections on the glass ----
+function drawGlassSheen() {
+  ctx.save();
+  ctx.globalAlpha = S.raining ? 0.09 : 0.05;
+  ctx.fillStyle = "#cfe4ff";
+  ctx.beginPath();
+  ctx.moveTo(W * 0.16, 0); ctx.lineTo(W * 0.30, 0);
+  ctx.lineTo(W * 0.06, H); ctx.lineTo(W * 0.00, H);
+  ctx.closePath(); ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(W * 0.38, 0); ctx.lineTo(W * 0.43, 0);
+  ctx.lineTo(W * 0.16, H); ctx.lineTo(W * 0.13, H);
+  ctx.closePath(); ctx.fill();
+  ctx.restore();
+}
+
+// ---- the car door + window frame you're looking through ----
+function drawCarFrame() {
+  const T = 18, B = 44, R = 24; // trim thickness, door panel height, corner radius
+  ctx.save();
+  // door and pillars around the window opening
+  ctx.beginPath();
+  ctx.rect(0, 0, W, H);
+  ctx.roundRect(T, T, W - T * 2, H - T - B, R);
+  ctx.fillStyle = "#1c1f2b";
+  ctx.fill("evenodd");
+  // chrome trim + rubber seal
+  ctx.beginPath(); ctx.roundRect(T, T, W - T * 2, H - T - B, R);
+  ctx.strokeStyle = "#454b63"; ctx.lineWidth = 5; ctx.stroke();
+  ctx.beginPath(); ctx.roundRect(T + 4, T + 4, W - T * 2 - 8, H - T - B - 8, R - 4);
+  ctx.strokeStyle = "rgba(0,0,0,0.55)"; ctx.lineWidth = 3; ctx.stroke();
+  // door panel with armrest
+  ctx.fillStyle = "#242938";
+  ctx.fillRect(0, H - B + 8, W, B - 8);
+  ctx.fillStyle = "#2e3447";
+  ctx.beginPath(); ctx.roundRect(W * 0.58, H - B + 16, 240, 18, 9); ctx.fill();
+  // door lock knob poking up over the sill
+  ctx.fillStyle = "#12141c";
+  ctx.beginPath(); ctx.roundRect(70, H - B - 14, 10, 18, 4); ctx.fill();
+  ctx.restore();
+}
+
+// ---- far landmark silhouettes, tiled with parallax ----
+function drawLandmarks(theme) {
+  ctx.fillStyle = theme.far;
+  const tile = 900;
+  const off = -(S.farX % tile);
+  for (let i = -1; i <= Math.ceil(W / tile) + 1; i++) {
+    const bx = off + i * tile;
+    const spacing = tile / theme.landmarks.length;
+    for (let j = 0; j < theme.landmarks.length; j++) {
+      drawLandmark(theme.landmarks[j], bx + j * spacing + 60);
+    }
+  }
+}
+
+function drawLandmark(kind, x) {
+  const g = GROUND_Y;
+  ctx.beginPath();
+  switch (kind) {
+    case "empireState": // stepped tower with spire
+      ctx.rect(x, g - 190, 70, 190);
+      ctx.rect(x + 12, g - 250, 46, 60);
+      ctx.rect(x + 24, g - 290, 22, 40);
+      ctx.rect(x + 32, g - 330, 6, 40);
+      break;
+    case "statueOfLiberty": // pedestal, body, torch arm
+      ctx.rect(x + 10, g - 90, 44, 90);
+      ctx.rect(x + 20, g - 165, 24, 80);
+      ctx.rect(x + 40, g - 205, 7, 50); // torch arm
+      ctx.arc(x + 32, g - 172, 12, 0, Math.PI * 2); // head
+      break;
+    case "skyline":
+      ctx.rect(x, g - 120, 40, 120);
+      ctx.rect(x + 46, g - 160, 34, 160);
+      ctx.rect(x + 86, g - 100, 44, 100);
+      break;
+    case "devilsTower": // fluted butte
+      ctx.moveTo(x, g);
+      ctx.lineTo(x + 24, g - 200);
+      ctx.lineTo(x + 96, g - 200);
+      ctx.lineTo(x + 120, g);
+      break;
+    case "mesa":
+      ctx.moveTo(x, g);
+      ctx.lineTo(x + 30, g - 130);
+      ctx.lineTo(x + 150, g - 130);
+      ctx.lineTo(x + 180, g);
+      break;
+    case "canyon":
+      ctx.moveTo(x, g);
+      ctx.lineTo(x + 20, g - 90);
+      ctx.lineTo(x + 55, g - 60);
+      ctx.lineTo(x + 90, g - 140);
+      ctx.lineTo(x + 130, g - 70);
+      ctx.lineTo(x + 160, g - 110);
+      ctx.lineTo(x + 180, g);
+      break;
+    case "goldenGate": { // two towers + cable curve
+      ctx.rect(x, g - 210, 14, 210);
+      ctx.rect(x + 170, g - 210, 14, 210);
+      ctx.rect(x - 40, g - 95, 270, 10);
+      ctx.fill();
+      ctx.strokeStyle = ctx.fillStyle; ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.moveTo(x + 7, g - 205);
+      ctx.quadraticCurveTo(x + 92, g - 80, x + 177, g - 205);
+      ctx.stroke();
+      return;
+    }
+    case "transamerica": // pyramid tower
+      ctx.moveTo(x + 40, g - 240);
+      ctx.lineTo(x + 78, g);
+      ctx.lineTo(x + 2, g);
+      break;
+    case "paintedLadies":
+      for (let i = 0; i < 3; i++) {
+        const hx = x + i * 44;
+        ctx.rect(hx, g - 90, 38, 90);
+        ctx.moveTo(hx - 3, g - 90);
+        ctx.lineTo(hx + 19, g - 120);
+        ctx.lineTo(hx + 41, g - 90);
+      }
+      break;
+    case "silo": // barn with grain silo
+      ctx.rect(x, g - 100, 90, 100);
+      ctx.moveTo(x - 6, g - 100);
+      ctx.lineTo(x + 45, g - 140);
+      ctx.lineTo(x + 96, g - 100);
+      ctx.rect(x + 110, g - 170, 34, 170);
+      ctx.moveTo(x + 144, g - 170);
+      ctx.arc(x + 127, g - 170, 17, 0, Math.PI, true);
+      break;
+    case "windmill": { // farm windmill with blades
+      ctx.moveTo(x + 18, g);
+      ctx.lineTo(x + 26, g - 120);
+      ctx.lineTo(x + 34, g - 120);
+      ctx.lineTo(x + 42, g);
+      ctx.fill();
+      ctx.save();
+      ctx.strokeStyle = ctx.fillStyle;
+      ctx.lineWidth = 5;
+      ctx.translate(x + 30, g - 126);
+      for (let b = 0; b < 4; b++) {
+        const ang = b * Math.PI / 2 + 0.5;
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(Math.cos(ang) * 36, Math.sin(ang) * 36);
+        ctx.stroke();
+      }
+      ctx.restore();
+      return;
+    }
+    case "treeline":
+      for (let t = 0; t < 5; t++) {
+        const ty = g - 34 - (t % 2) * 14;
+        ctx.moveTo(x + t * 38 + 24, ty);
+        ctx.arc(x + t * 38, ty, 24, 0, Math.PI * 2);
+      }
+      ctx.rect(x - 24, g - 16, 190, 16);
+      break;
+    case "hollywoodSign": { // hillside with the nine letters
+      ctx.moveTo(x - 30, g);
+      ctx.quadraticCurveTo(x + 80, g - 195, x + 190, g);
+      ctx.fill();
+      ctx.save();
+      ctx.fillStyle = "rgba(255,255,255,0.85)";
+      for (let l = 0; l < 9; l++)
+        ctx.fillRect(x + 32 + l * 12, g - 122 + l * 2, 8, 13);
+      ctx.restore();
+      return;
+    }
+    case "palmRow":
+      for (let p = 0; p < 3; p++) {
+        const px = x + p * 60, h = 105 + (p % 2) * 25;
+        ctx.rect(px, g - h, 7, h);
+        for (let fr = 0; fr < 6; fr++) {
+          const ang = (fr / 6) * Math.PI * 2;
+          ctx.moveTo(px + 3, g - h);
+          ctx.ellipse(px + 3 + Math.cos(ang) * 15, g - h + Math.sin(ang) * 7,
+                      17, 5, ang * 0.5, 0, Math.PI * 2);
+        }
+      }
+      break;
+    case "pier": { // boardwalk on pilings + ferris wheel
+      ctx.rect(x, g - 60, 170, 9);
+      for (let p = 0; p < 5; p++) ctx.rect(x + 8 + p * 38, g - 52, 7, 52);
+      ctx.fill();
+      ctx.save();
+      ctx.strokeStyle = ctx.fillStyle;
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.arc(x + 85, g - 108, 42, 0, Math.PI * 2);
+      for (let sp = 0; sp < 6; sp++) {
+        const a = sp * Math.PI / 3;
+        ctx.moveTo(x + 85, g - 108);
+        ctx.lineTo(x + 85 + Math.cos(a) * 42, g - 108 + Math.sin(a) * 42);
+      }
+      ctx.stroke();
+      ctx.restore();
+      return;
+    }
+    case "waves": // ocean band with rolling crests
+      ctx.rect(x - 40, g - 24, 280, 24);
+      for (let w = 0; w < 6; w++) {
+        ctx.moveTo(x - 8 + w * 46, g - 24);
+        ctx.arc(x - 20 + w * 46, g - 24, 12, 0, Math.PI, true);
+      }
+      break;
+    case "washingtonMonument":
+      ctx.moveTo(x + 20, g);
+      ctx.lineTo(x + 26, g - 200);
+      ctx.lineTo(x + 32, g - 232);
+      ctx.lineTo(x + 38, g - 200);
+      ctx.lineTo(x + 44, g);
+      break;
+    case "capitol":
+      ctx.rect(x, g - 70, 180, 70);
+      ctx.rect(x + 55, g - 95, 70, 25);
+      ctx.moveTo(x + 125, g - 95);
+      ctx.arc(x + 90, g - 95, 35, 0, Math.PI, true);
+      ctx.rect(x + 86, g - 148, 8, 22);
+      break;
+    case "lincolnMemorial":
+      ctx.rect(x, g - 30, 140, 30);
+      for (let c = 0; c < 7; c++) ctx.rect(x + 14 + c * 17, g - 86, 8, 56);
+      ctx.rect(x + 4, g - 108, 132, 22);
+      break;
+  }
+  ctx.fill();
+}
+
+// ---- mid-layer generic skyline / hills ----
+function drawMidSkyline(theme) {
+  ctx.fillStyle = theme.mid;
+  const tile = 420;
+  const off = -(S.midX % tile);
+  for (let i = -1; i <= Math.ceil(W / tile) + 1; i++) {
+    const bx = off + i * tile;
+    // deterministic pseudo-random heights per tile slot
+    const seed = Math.abs(Math.floor((S.midX + bx) / tile));
+    if (theme.midStyle === "hills") {
+      // rolling hills instead of a skyline
+      const hh = 36 + ((seed * 29) % 30);
+      ctx.beginPath();
+      ctx.ellipse(bx + 130, GROUND_Y, 210, hh, 0, Math.PI, Math.PI * 2);
+      ctx.ellipse(bx + 340, GROUND_Y, 170, hh * 0.7, 0, Math.PI, Math.PI * 2);
+      ctx.fill();
+      continue;
+    }
+    const h1 = 60 + ((seed * 37) % 50);
+    const h2 = 45 + ((seed * 53) % 65);
+    ctx.fillRect(bx + 20, GROUND_Y - h1, 90, h1);
+    ctx.fillRect(bx + 140, GROUND_Y - h2, 110, h2);
+    ctx.fillRect(bx + 280, GROUND_Y - h1 * 0.7, 80, h1 * 0.7);
+    // a few lit windows so the buildings read as buildings
+    ctx.fillStyle = "rgba(255,214,120,0.28)";
+    for (let wx = 0; wx < 5; wx++) {
+      for (let wy = 0; wy < Math.floor(h1 / 18); wy++) {
+        if ((seed * 31 + wx * 7 + wy * 13) % 5 < 2)
+          ctx.fillRect(bx + 28 + wx * 16, GROUND_Y - h1 + 8 + wy * 18, 6, 8);
+      }
+    }
+    ctx.fillStyle = theme.mid;
+  }
+}
+
+// ---- obstacles in the play lane ----
+function drawObstacle(o, theme) {
+  const x = o.x, g = GROUND_Y, d = o.def;
+  ctx.save();
+  switch (o.key) {
+    case "hydrant":
+      ctx.fillStyle = "#d93a3a";
+      ctx.fillRect(x + 8, g - d.h + 10, d.w - 16, d.h - 10);
+      ctx.beginPath(); ctx.arc(x + d.w / 2, g - d.h + 12, 12, Math.PI, 0); ctx.fill();
+      ctx.fillRect(x, g - d.h + 22, d.w, 8);
+      break;
+    case "mailbox":
+      ctx.fillStyle = "#2f5fb3";
+      ctx.fillRect(x + 14, g - d.h + 24, 8, d.h - 24);
+      ctx.fillRect(x, g - d.h, d.w, 26);
+      break;
+    case "taxi":
+      ctx.fillStyle = "#f4c518";
+      ctx.fillRect(x, g - 44, d.w, 34);
+      ctx.fillRect(x + 24, g - d.h, d.w - 48, 22);
+      ctx.fillStyle = "#222";
+      ctx.beginPath();
+      ctx.arc(x + 28, g - 8, 11, 0, Math.PI * 2);
+      ctx.arc(x + d.w - 28, g - 8, 11, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = "#000";
+      ctx.fillRect(x + 46, g - d.h - 8, 28, 10); // taxi sign
+      break;
+    case "fence": {
+      ctx.fillStyle = "#8a6b48";
+      ctx.fillRect(x, g - d.h, d.w, 8); // rail you run on
+      for (let px = x + 6; px < x + d.w - 6; px += 26)
+        ctx.fillRect(px, g - d.h + 6, 10, d.h - 6);
+      break;
+    }
+    case "waterTower":
+      ctx.fillStyle = "#7a5a44";
+      ctx.fillRect(x + 10, g - d.h + 30, 10, d.h - 30);
+      ctx.fillRect(x + d.w - 20, g - d.h + 30, 10, d.h - 30);
+      ctx.fillRect(x, g - d.h, d.w, 44);
+      ctx.beginPath();
+      ctx.moveTo(x - 4, g - d.h);
+      ctx.lineTo(x + d.w / 2, g - d.h - 22);
+      ctx.lineTo(x + d.w + 4, g - d.h);
+      ctx.fill();
+      break;
+    case "cactus":
+      ctx.fillStyle = "#3d8b4f";
+      ctx.fillRect(x + 15, g - d.h, 14, d.h);
+      ctx.fillRect(x, g - d.h + 26, 12, 10);
+      ctx.fillRect(x, g - d.h + 12, 10, 24);
+      ctx.fillRect(x + 32, g - d.h + 40, 12, 10);
+      ctx.fillRect(x + 34, g - d.h + 26, 10, 24);
+      break;
+    case "tumbleweed":
+      ctx.strokeStyle = "#b08d57";
+      ctx.lineWidth = 2.5;
+      ctx.translate(x + d.w / 2, g - d.w / 2);
+      ctx.rotate(o.spin || 0);
+      for (let i = 0; i < 7; i++) {
+        ctx.beginPath();
+        ctx.arc(0, 0, d.w / 2 - 3, (i / 7) * Math.PI * 2, (i / 7) * Math.PI * 2 + 2.2);
+        ctx.stroke();
+      }
+      break;
+    case "rock":
+      ctx.fillStyle = "#9a7d64";
+      ctx.beginPath();
+      ctx.moveTo(x, g);
+      ctx.lineTo(x + 14, g - d.h);
+      ctx.lineTo(x + d.w - 12, g - d.h + 4);
+      ctx.lineTo(x + d.w, g);
+      ctx.fill();
+      break;
+    case "roadSign":
+      ctx.fillStyle = "#888";
+      ctx.fillRect(x + 16, g - d.h + 34, 8, d.h - 34);
+      ctx.fillStyle = "#2a7d3f";
+      ctx.fillRect(x, g - d.h, d.w, 36);
+      ctx.fillStyle = "#fff";
+      ctx.font = "10px sans-serif";
+      ctx.fillText("ROUTE 66", x + 4, g - d.h + 21);
+      break;
+    case "cableCar":
+      ctx.fillStyle = "#8c1f28";
+      ctx.fillRect(x, g - d.h + 14, d.w, d.h - 26);
+      ctx.fillStyle = "#e8d9b0";
+      ctx.fillRect(x + 10, g - d.h + 24, d.w - 20, 26);
+      ctx.fillStyle = "#5a1218";
+      ctx.fillRect(x - 4, g - d.h, d.w + 8, 14);
+      ctx.fillStyle = "#222";
+      ctx.beginPath();
+      ctx.arc(x + 30, g - 6, 9, 0, Math.PI * 2);
+      ctx.arc(x + d.w - 30, g - 6, 9, 0, Math.PI * 2);
+      ctx.fill();
+      break;
+    case "paintedHouse": {
+      const colors = ["#7fb3d5", "#c39bd3", "#f5b7b1"];
+      const c = colors[Math.floor(x / 100) % 3 < 0 ? 0 : Math.floor(x / 100) % 3];
+      ctx.fillStyle = c;
+      ctx.fillRect(x, g - d.h + 26, d.w, d.h - 26);
+      ctx.fillStyle = "#5d4b66";
+      ctx.beginPath();
+      ctx.moveTo(x - 6, g - d.h + 26);
+      ctx.lineTo(x + d.w / 2, g - d.h);
+      ctx.lineTo(x + d.w + 6, g - d.h + 26);
+      ctx.fill();
+      ctx.fillStyle = "#fff8";
+      ctx.fillRect(x + 16, g - d.h + 44, 20, 26);
+      ctx.fillRect(x + d.w - 36, g - d.h + 44, 20, 26);
+      break;
+    }
+    case "cow": {
+      ctx.fillStyle = "#f2ede2";
+      ctx.beginPath();
+      ctx.ellipse(x + 44, g - 34, 34, 20, 0, 0, Math.PI * 2); // body
+      ctx.fill();
+      ctx.beginPath();
+      ctx.ellipse(x + 80, g - 46, 13, 11, 0, 0, Math.PI * 2); // head
+      ctx.fill();
+      ctx.fillRect(x + 20, g - 22, 7, 22); // legs
+      ctx.fillRect(x + 58, g - 22, 7, 22);
+      ctx.fillStyle = "#3b3630"; // spots
+      ctx.beginPath();
+      ctx.ellipse(x + 34, g - 38, 10, 7, 0.3, 0, Math.PI * 2);
+      ctx.ellipse(x + 54, g - 28, 8, 6, -0.4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = "#e8b7a9"; // snout
+      ctx.beginPath();
+      ctx.ellipse(x + 86, g - 42, 6, 4, 0, 0, Math.PI * 2);
+      ctx.fill();
+      break;
+    }
+    case "hayBale":
+      ctx.fillStyle = "#d9a94e";
+      ctx.beginPath();
+      ctx.arc(x + 32, g - 28, 28, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = "#b8883a";
+      ctx.lineWidth = 3;
+      for (let r = 8; r <= 20; r += 6) {
+        ctx.beginPath();
+        ctx.arc(x + 32, g - 28, r, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+      break;
+    case "tractor":
+      ctx.fillStyle = "#2e7d32";
+      ctx.fillRect(x + 20, g - 62, 70, 26); // hood
+      ctx.fillRect(x + 58, g - d.h, 40, 24); // cab
+      ctx.fillStyle = "#666";
+      ctx.fillRect(x + 26, g - 74, 6, 14); // exhaust stack
+      ctx.fillStyle = "#222";
+      ctx.beginPath();
+      ctx.arc(x + 88, g - 22, 22, 0, Math.PI * 2); // big rear wheel
+      ctx.arc(x + 30, g - 14, 14, 0, Math.PI * 2);
+      ctx.fill();
+      break;
+    case "scarecrow":
+      ctx.fillStyle = "#8a6b48";
+      ctx.fillRect(x + 19, g - 80, 6, 80); // pole
+      ctx.fillRect(x + 2, g - 64, 40, 5); // arms
+      ctx.fillStyle = "#b23a3a";
+      ctx.fillRect(x + 10, g - 62, 24, 26); // shirt
+      ctx.fillStyle = "#e8c97a";
+      ctx.beginPath();
+      ctx.arc(x + 22, g - 72, 10, 0, Math.PI * 2); // head
+      ctx.fill();
+      ctx.fillStyle = "#7a5a2e";
+      ctx.fillRect(x + 10, g - 86, 24, 6); // hat
+      ctx.fillRect(x + 15, g - d.h, 14, 8);
+      break;
+    case "barn":
+      ctx.fillStyle = "#a33327";
+      ctx.fillRect(x, g - 78, d.w, 78);
+      ctx.beginPath();
+      ctx.moveTo(x - 8, g - 78);
+      ctx.lineTo(x + 30, g - d.h);
+      ctx.lineTo(x + 120, g - d.h);
+      ctx.lineTo(x + d.w + 8, g - 78);
+      ctx.fill();
+      ctx.fillStyle = "#7a2118";
+      ctx.fillRect(x + 55, g - 46, 40, 46); // door
+      ctx.strokeStyle = "#f0e6d2";
+      ctx.lineWidth = 3;
+      ctx.strokeRect(x + 55, g - 46, 40, 46);
+      ctx.beginPath();
+      ctx.moveTo(x + 55, g - 46); ctx.lineTo(x + 95, g);
+      ctx.moveTo(x + 95, g - 46); ctx.lineTo(x + 55, g);
+      ctx.stroke();
+      break;
+    case "palmTree": {
+      ctx.strokeStyle = "#8a6b48";
+      ctx.lineWidth = 9;
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.moveTo(x + 14, g);
+      ctx.quadraticCurveTo(x + 18, g - 60, x + 30, g - 102);
+      ctx.stroke();
+      ctx.fillStyle = "#3d8b4f";
+      for (let fr = 0; fr < 6; fr++) {
+        const a = (fr / 6) * Math.PI * 2;
+        ctx.beginPath();
+        ctx.ellipse(x + 30 + Math.cos(a) * 17, g - 104 + Math.sin(a) * 8,
+                    20, 6, a * 0.5 - 0.4, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      break;
+    }
+    case "convertible":
+      ctx.fillStyle = "#d64550";
+      ctx.fillRect(x, g - 40, d.w, 26);
+      ctx.fillStyle = "#8fd3f4"; // windshield
+      ctx.beginPath();
+      ctx.moveTo(x + 78, g - 40);
+      ctx.lineTo(x + 88, g - d.h);
+      ctx.lineTo(x + 94, g - 40);
+      ctx.fill();
+      ctx.fillStyle = "#222";
+      ctx.beginPath();
+      ctx.arc(x + 28, g - 10, 11, 0, Math.PI * 2);
+      ctx.arc(x + 102, g - 10, 11, 0, Math.PI * 2);
+      ctx.fill();
+      break;
+    case "wave":
+      ctx.fillStyle = "#3a86c8";
+      ctx.beginPath();
+      ctx.moveTo(x, g);
+      ctx.quadraticCurveTo(x + 10, g - d.h, x + 52, g - 56);
+      ctx.quadraticCurveTo(x + 72, g - 54, x + 66, g - 38);
+      ctx.quadraticCurveTo(x + 60, g - 24, x + 48, g - 30);
+      ctx.quadraticCurveTo(x + 58, g - 10, x + 70, g);
+      ctx.closePath();
+      ctx.fill();
+      ctx.fillStyle = "rgba(255,255,255,0.7)"; // foam
+      ctx.beginPath();
+      ctx.arc(x + 52, g - 54, 7, 0, Math.PI * 2);
+      ctx.arc(x + 63, g - 46, 6, 0, Math.PI * 2);
+      ctx.fill();
+      break;
+    case "lifeguardTower":
+      ctx.fillStyle = "#c9a36a"; // stilts + ramp
+      ctx.fillRect(x + 16, g - 62, 8, 62);
+      ctx.fillRect(x + 56, g - 62, 8, 62);
+      ctx.beginPath();
+      ctx.moveTo(x + 12, g - 62); ctx.lineTo(x - 10, g);
+      ctx.lineTo(x + 2, g); ctx.lineTo(x + 20, g - 56);
+      ctx.fill();
+      ctx.fillStyle = "#e0685c"; // cabin
+      ctx.fillRect(x + 12, g - d.h, 56, 36);
+      ctx.fillStyle = "#fff";
+      ctx.fillRect(x + 22, g - 88, 18, 14); // window
+      break;
+    case "tacoTruck":
+      ctx.fillStyle = "#f0e6d2";
+      ctx.fillRect(x, g - 74, d.w, 60);
+      ctx.fillStyle = "#e8a13a";
+      ctx.fillRect(x, g - d.h, d.w, 12); // sign band
+      ctx.fillStyle = "#5a4632";
+      ctx.font = "bold 10px sans-serif";
+      ctx.fillText("TACOS", x + 52, g - 75);
+      ctx.fillStyle = "#7fd0c8";
+      ctx.fillRect(x + 18, g - 62, 56, 26); // serving window
+      ctx.fillStyle = "#222";
+      ctx.beginPath();
+      ctx.arc(x + 30, g - 8, 11, 0, Math.PI * 2);
+      ctx.arc(x + 110, g - 8, 11, 0, Math.PI * 2);
+      ctx.fill();
+      break;
+    case "cherryTree":
+      ctx.fillStyle = "#6b4a32";
+      ctx.fillRect(x + 30, g - 52, 10, 52); // trunk
+      ctx.fillStyle = "#f2b7cd"; // blossoms
+      ctx.beginPath();
+      ctx.arc(x + 20, g - 58, 18, 0, Math.PI * 2);
+      ctx.arc(x + 40, g - 68, 22, 0, Math.PI * 2);
+      ctx.arc(x + 56, g - 54, 16, 0, Math.PI * 2);
+      ctx.fill();
+      break;
+    case "limo":
+      ctx.fillStyle = "#151820";
+      ctx.fillRect(x, g - 38, d.w, 26);
+      ctx.fillRect(x + 30, g - d.h, 110, 18); // cabin
+      ctx.fillStyle = "#3d4757";
+      for (let wnd = 0; wnd < 4; wnd++)
+        ctx.fillRect(x + 38 + wnd * 26, g - 50, 18, 11);
+      ctx.fillStyle = "#222";
+      ctx.beginPath();
+      ctx.arc(x + 30, g - 9, 10, 0, Math.PI * 2);
+      ctx.arc(x + 140, g - 9, 10, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = "#888"; // hood flag
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(x + 10, g - 38);
+      ctx.lineTo(x + 10, g - 56);
+      ctx.stroke();
+      ctx.fillStyle = "#b23a3a";
+      ctx.fillRect(x + 10, g - 56, 11, 7);
+      break;
+    case "barricade":
+      ctx.fillStyle = "#9aa0a8";
+      ctx.beginPath();
+      ctx.moveTo(x + 4, g);
+      ctx.lineTo(x + 14, g - d.h);
+      ctx.lineTo(x + 42, g - d.h);
+      ctx.lineTo(x + 52, g);
+      ctx.fill();
+      ctx.fillStyle = "#e0a63a";
+      ctx.fillRect(x + 14, g - d.h + 4, 28, 7); // hazard stripe
+      break;
+    case "foodCart":
+      ctx.fillStyle = "#d8d3c8";
+      ctx.fillRect(x + 6, g - 46, 58, 34); // cart
+      ctx.fillStyle = "#222";
+      ctx.beginPath();
+      ctx.arc(x + 22, g - 7, 8, 0, Math.PI * 2);
+      ctx.arc(x + 48, g - 7, 8, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = "#888"; // umbrella
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(x + 35, g - 46);
+      ctx.lineTo(x + 35, g - 62);
+      ctx.stroke();
+      ctx.fillStyle = "#b23a3a";
+      ctx.beginPath();
+      ctx.arc(x + 35, g - 60, 26, Math.PI, 0);
+      ctx.fill();
+      break;
+  }
+  ctx.restore();
+}
+
+// ---- the star of the show: running fingers ----
+function drawPlayer() {
+  const flash = S.invuln > 0 && Math.floor(S.invuln * 10) % 2 === 0;
+  if (flash) return;
+
+  const px = player.x, py = player.y; // py = feet level
+  ctx.save();
+  ctx.translate(px, py);
+
+  const skin = "#e8b48f", skinShade = "#d49b74";
+
+  // finger legs: two fingers scissoring while grounded, tucked in air
+  let a1, a2;
+  if (player.onGround && S.ride === "run") {
+    a1 = Math.sin(player.legPhase) * 0.55;
+    a2 = Math.sin(player.legPhase + Math.PI) * 0.55;
+  } else if (S.ride === "run") {
+    a1 = 0.35; a2 = -0.5; // mid-leap split
+  } else {
+    a1 = 0.18; a2 = -0.18; // standing on a board/bike
+  }
+
+  // ride vehicles under the fingers
+  if (S.ride === "skateboard") {
+    ctx.fillStyle = "#333";
+    ctx.fillRect(-30, -8, 60, 6);
+    ctx.fillStyle = "#e94560";
+    ctx.beginPath();
+    ctx.arc(-18, 0, 6, 0, Math.PI * 2);
+    ctx.arc(18, 0, 6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.translate(0, -8);
+  } else if (S.ride === "motorcycle") {
+    ctx.fillStyle = "#c0392b";
+    ctx.fillRect(-34, -22, 68, 12);
+    ctx.fillStyle = "#222";
+    ctx.beginPath();
+    ctx.arc(-26, -4, 11, 0, Math.PI * 2);
+    ctx.arc(26, -4, 11, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "#888"; ctx.lineWidth = 4;
+    ctx.beginPath(); ctx.moveTo(26, -20); ctx.lineTo(34, -38); ctx.stroke();
+    ctx.translate(0, -22);
+  }
+
+  // legs (index + middle finger)
+  const legLen = 34;
+  ctx.lineCap = "round";
+  ctx.strokeStyle = skinShade; ctx.lineWidth = 13;
+  ctx.beginPath();
+  ctx.moveTo(-4, -legLen);
+  ctx.lineTo(-4 + Math.sin(a2) * legLen, -legLen + Math.cos(a2) * legLen);
+  ctx.stroke();
+  ctx.strokeStyle = skin;
+  ctx.beginPath();
+  ctx.moveTo(4, -legLen);
+  ctx.lineTo(4 + Math.sin(a1) * legLen, -legLen + Math.cos(a1) * legLen);
+  ctx.stroke();
+
+  // palm / fist (folded fingers = the "body")
+  ctx.fillStyle = skin;
+  ctx.beginPath();
+  ctx.ellipse(2, -legLen - 18, 24, 20, -0.15, 0, Math.PI * 2);
+  ctx.fill();
+  // knuckle bumps
+  ctx.fillStyle = skinShade;
+  for (let i = 0; i < 3; i++) {
+    ctx.beginPath();
+    ctx.arc(14 - i * 11, -legLen - 35, 5.5, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  // thumb tucked at the front
+  ctx.fillStyle = skin;
+  ctx.beginPath();
+  ctx.ellipse(22, -legLen - 12, 9, 7, 0.5, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.restore();
+}
+
+function drawRain() {
+  for (const d of S.drops) {
+    // hazard bead with a wind-smeared tail trailing toward the front of the car
+    ctx.strokeStyle = "rgba(160,205,255,0.45)";
+    ctx.lineWidth = 3.5;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(d.x + 10, d.y - 3);
+    ctx.lineTo(d.x + 46, d.y - 10);
+    ctx.stroke();
+    const g = ctx.createRadialGradient(d.x - 3, d.y - 3, 1, d.x, d.y, 12);
+    g.addColorStop(0, "rgba(235,248,255,0.95)");
+    g.addColorStop(1, "rgba(120,180,240,0.55)");
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.ellipse(d.x, d.y, 11, 8, -0.12, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  if (S.raining) {
+    ctx.fillStyle = "rgba(40,50,90,0.10)";
+    ctx.fillRect(0, 0, W, H);
+  }
+}
+
+function drawHUD(theme) {
+  ctx.fillStyle = "rgba(0,0,0,0.4)";
+  ctx.beginPath();
+  ctx.roundRect(28, 26, W - 56, 36, 10);
+  ctx.fill();
+  ctx.fillStyle = "#fff";
+  ctx.font = "bold 18px 'Trebuchet MS', sans-serif";
+  ctx.fillText(Math.floor(S.distance) + "m", 44, 51);
+  ctx.font = "13px 'Trebuchet MS', sans-serif";
+  ctx.fillStyle = "#ffd166";
+  ctx.fillText("BEST " + S.best + "m", 130, 50);
+  ctx.fillStyle = "#aaa";
+  ctx.fillText(theme.name, 250, 50);
+  ctx.fillText("RADIO: " + (Radio.era === "off" ? "OFF" : "'" + Radio.era), 440, 50);
+  ctx.fillText("RIDE: " + S.ride.toUpperCase(), 580, 50);
+  // lives as little hearts
+  for (let i = 0; i < 3; i++) {
+    ctx.fillStyle = i < S.lives ? "#e94560" : "#444";
+    const hx = W - 128 + i * 28, hy = 42;
+    ctx.beginPath();
+    ctx.arc(hx - 4, hy, 6, 0, Math.PI * 2);
+    ctx.arc(hx + 4, hy, 6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(hx - 9, hy + 2);
+    ctx.lineTo(hx, hy + 13);
+    ctx.lineTo(hx + 9, hy + 2);
+    ctx.fill();
+  }
+
+  if (S.banner) {
+    ctx.fillStyle = "rgba(0,0,0,0.5)";
+    ctx.fillRect(0, 200, W, 66);
+    ctx.fillStyle = "#fff";
+    ctx.font = "bold 32px 'Trebuchet MS', sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(S.banner.text, W / 2, 244);
+    ctx.textAlign = "left";
+  }
+  if (S.toast) {
+    ctx.fillStyle = "#ffd166";
+    ctx.font = "bold 18px 'Trebuchet MS', sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(S.toast.text, W / 2, 90);
+    ctx.textAlign = "left";
+  }
+}
+
+// ============================================================
+// MAIN LOOP
+// ============================================================
+let lastTime = 0;
+function frame(t) {
+  const dt = Math.min((t - lastTime) / 1000, 0.05);
+  lastTime = t;
+  if (S.running) update(dt);
+  draw();
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+draw(); // paint the first frame behind the menu
+
+// ---------- load real music playlist (falls back to chiptunes if absent) ----------
+// Inline copy so music works even when index.html is opened directly from
+// the filesystem (fetch is blocked on file://). When served over http,
+// radio/music/playlist.json overrides this — keep both in sync.
+Radio.playlist = {
+  "70s": [],
+  "80s": [],
+  "90s": ["Blue Hairclip.mp3", "Blue Tape Corner.mp3", "Chain Link Riot.mp3", "Hammer of Asgard.mp3", "Spin Me Right.mp3"],
+  "00s": ["Backseat Sunrise.mp3", "Paper Plane Pulse.mp3"],
+};
+fetch("radio/music/playlist.json")
+  .then((r) => (r.ok ? r.json() : null))
+  .then((p) => { if (p) Radio.playlist = p; })
+  .catch(() => {});
+
+// ---------- DJ clip manifest ----------
+// Inline copy for file:// opens; radio/clips/clips.json overrides when served.
+DJ.setFiles([
+  "90s_ad_1.mp3", "90s_ad_2.mp3", "90s_id_1.mp3", "90s_id_2.mp3",
+  "90s_city_desert_1.mp3", "90s_city_farmland_1.mp3", "90s_city_losangeles_1.mp3",
+  "90s_city_newyork_1.mp3", "90s_city_sanfrancisco_1.mp3", "90s_city_washingtondc_1.mp3",
+  "90s_rain_1.mp3", "90s_unlock_motorcycle_1.mp3", "90s_unlock_skateboard_1.mp3",
+  "90s_intro_bluehairclip_1.mp3", "90s_intro_bluehairclip_2.mp3", "90s_intro_bluehairclip_3.mp3",
+  "90s_intro_bluetapecorner_1.mp3", "90s_intro_bluetapecorner_2.mp3", "90s_intro_bluetapecorner_3.mp3",
+  "90s_intro_chainlinkriot_1.mp3", "90s_intro_chainlinkriot_2.mp3", "90s_intro_chainlinkriot_3.mp3", "90s_intro_chainlinkriot_4.mp3",
+  "90s_intro_hammerofasgard_1.mp3", "90s_intro_hammerofasgard_2.mp3", "90s_intro_hammerofasgard_3.mp3",
+  "90s_intro_spinmeright_1.mp3", "90s_intro_spinmeright_2.mp3", "90s_intro_spinmeright_3.mp3",
+  "90s_outro_bluehairclip_1.mp3", "90s_outro_bluehairclip_2.mp3",
+  "90s_outro_bluetapecorner_1.mp3", "90s_outro_bluetapecorner_2.mp3",
+  "90s_outro_chainlinkriot_1.mp3", "90s_outro_chainlinkriot_2.mp3",
+  "90s_outro_hammerofasgard_1.mp3", "90s_outro_hammerofasgard_2.mp3",
+  "90s_outro_spinmeright_1.mp3", "90s_outro_spinmeright_2.mp3",
+]);
+fetch("radio/clips/clips.json")
+  .then((r) => (r.ok ? r.json() : null))
+  .then((l) => { if (l) DJ.setFiles(l); })
+  .catch(() => {});
+
+// ---------- menu wiring ----------
+document.getElementById("startBtn").addEventListener("click", () => {
+  document.getElementById("overlay").classList.add("hidden");
+  resetGame();
+  Radio.start();
+  updateStopBtn();
+});
+document.getElementById("stopMusicBtn").addEventListener("click", () => {
+  Radio.stop();
+  updateStopBtn();
+});
+document.querySelectorAll(".decade").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".decade").forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+    Radio.era = btn.dataset.era;
+    if (S.running) Radio.start();
+  });
+});
+</script>
+</body>
+</html>
