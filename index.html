@@ -124,7 +124,7 @@
         Run your fingers along the horizon. Jump over landmarks and land on
         fences and rooftops.<br><br>
         <kbd>Space</kbd> / <kbd>&uarr;</kbd> / <kbd>click</kbd> to jump &nbsp;•&nbsp; hold to jump higher<br>
-        <kbd>1</kbd> fingers &nbsp; <kbd>2</kbd> skateboard (unlocks at 300m) &nbsp; <kbd>3</kbd> motorcycle (unlocks at 800m)
+        <kbd>1</kbd> fingers &nbsp; <kbd>2</kbd> skateboard (unlocks halfway across, 5400m) &nbsp; <kbd>3</kbd> motorcycle (unlocks coast-to-coast, 10800m)
       </p>
       <div class="radio">
         <label>&#128251; CAR RADIO</label>
@@ -213,6 +213,7 @@ const THEMES = [
   },
 ];
 const THEME_LENGTH = 1800; // meters per route before the next city
+const LOOP_LENGTH = THEME_LENGTH * THEMES.length; // one full coast-to-coast lap
 
 // ---------- Obstacle catalog ----------
 // landable: true means you can run along the top (fences, rooftops)
@@ -290,6 +291,8 @@ function resetGame() {
   S.themeIndex = 0; S.obstacles = []; S.spawnTimer = 1.2;
   S.raining = false; S.rainTimer = 14; S.drops = [];
   S.rainAnnounced = false; // Meg calls the weather once per run
+  // clear skies until around the end of the first leg
+  S.rainGate = THEME_LENGTH * (0.9 + Math.random() * 0.6);
   Glass.drops = [];
   S.ride = "run";
   S.banner = { text: "NOW ENTERING: " + THEMES[0].name, timer: 2.5 };
@@ -568,13 +571,13 @@ function update(dt) {
   }
 
   // unlocks
-  if (!S.unlocked.skateboard && S.distance >= 300) {
+  if (!S.unlocked.skateboard && S.distance >= LOOP_LENGTH / 2) {
     S.unlocked.skateboard = true;
     S.toast = { text: "SKATEBOARD UNLOCKED! Press 2", timer: 3 };
     Sfx.unlock();
     DJ.event("unlock", "skateboard");
   }
-  if (!S.unlocked.motorcycle && S.distance >= 800) {
+  if (!S.unlocked.motorcycle && S.distance >= LOOP_LENGTH) {
     S.unlocked.motorcycle = true;
     S.toast = { text: "MOTORCYCLE UNLOCKED! Press 3", timer: 3 };
     Sfx.unlock();
@@ -631,7 +634,9 @@ function update(dt) {
 
   // ---- weather ----
   S.rainTimer -= dt;
-  if (S.rainTimer <= 0) {
+  if (S.rainTimer <= 0 && !S.raining && S.distance < S.rainGate) {
+    S.rainTimer = 6; // too early in the trip for weather; check again soon
+  } else if (S.rainTimer <= 0) {
     S.raining = !S.raining;
     S.rainTimer = S.raining ? 8 + Math.random() * 5 : 12 + Math.random() * 10;
     if (S.raining) {
