@@ -140,7 +140,7 @@
   </div>
 
   <div id="hud-help">
-    Routes: New York &rarr; Desert &rarr; San Francisco &rarr; Farmland &rarr; Los Angeles &rarr; Washington D.C. (loops)
+    Routes: New York &rarr; Washington D.C. &rarr; Farmland &rarr; Desert &rarr; Los Angeles &rarr; San Francisco (loops)
   </div>
 
 <script>
@@ -160,30 +160,27 @@ const GROUND_Y = 460;
 // ---------- Themes (the "routes" you drive through) ----------
 // Each theme = sky colors, far landmark silhouettes, mid skyline,
 // and the obstacle set that spawns in the play lane.
+// Ordered like a real cross-country trip: east coast to west coast.
 const THEMES = [
   {
     name: "NEW YORK CITY",
+    sky: "dusk",
     skyTop: "#0f1b3d", skyBottom: "#e8734a",
     far: "#1b2a52", mid: "#25355f", ground: "#3a3a44", groundLine: "#55555f",
     landmarks: ["empireState", "statueOfLiberty", "skyline"],
     obstacles: ["hydrant", "taxi", "fence", "waterTower", "mailbox"],
   },
   {
-    name: "DESERT SOUTHWEST",
-    skyTop: "#2b1055", skyBottom: "#f5af19",
-    far: "#6b2d5c", mid: "#a04c3c", ground: "#c98850", groundLine: "#a06838",
-    landmarks: ["devilsTower", "mesa", "canyon"],
-    obstacles: ["cactus", "tumbleweed", "rock", "fence", "roadSign"],
-  },
-  {
-    name: "SAN FRANCISCO",
-    skyTop: "#1c3f60", skyBottom: "#f7b2a3",
-    far: "#2c4f70", mid: "#3d5f80", ground: "#4a4a55", groundLine: "#66666f",
-    landmarks: ["goldenGate", "transamerica", "paintedLadies"],
-    obstacles: ["cableCar", "hydrant", "fence", "paintedHouse", "mailbox"],
+    name: "WASHINGTON D.C.",
+    sky: "dcNight",
+    skyTop: "#20284e", skyBottom: "#d9a05e",
+    far: "#2e3860", mid: "#3d4a75", ground: "#4a4a52", groundLine: "#66666e",
+    landmarks: ["washingtonMonument", "capitol", "lincolnMemorial"],
+    obstacles: ["cherryTree", "limo", "barricade", "foodCart", "hydrant", "fence"],
   },
   {
     name: "HEARTLAND FARMS",
+    sky: "farm",
     skyTop: "#3f7fb5", skyBottom: "#f5d76e",
     far: "#4f6f3f", mid: "#5f8a48", ground: "#79a356", groundLine: "#5c7f43",
     midStyle: "hills",
@@ -191,21 +188,31 @@ const THEMES = [
     obstacles: ["cow", "hayBale", "tractor", "scarecrow", "barn", "fence"],
   },
   {
+    name: "DESERT SOUTHWEST",
+    sky: "desertSun",
+    skyTop: "#2b1055", skyBottom: "#f5af19",
+    far: "#6b2d5c", mid: "#a04c3c", ground: "#c98850", groundLine: "#a06838",
+    landmarks: ["devilsTower", "mesa", "canyon"],
+    obstacles: ["cactus", "tumbleweed", "rock", "fence", "roadSign"],
+  },
+  {
     name: "LOS ANGELES",
+    sky: "la",
     skyTop: "#4a5899", skyBottom: "#f2957d",
     far: "#5a548c", mid: "#6b6499", ground: "#8f8778", groundLine: "#6f6a5c",
     landmarks: ["hollywoodSign", "palmRow", "pier", "waves"],
     obstacles: ["palmTree", "convertible", "wave", "lifeguardTower", "tacoTruck"],
   },
   {
-    name: "WASHINGTON D.C.",
-    skyTop: "#20284e", skyBottom: "#d9a05e",
-    far: "#2e3860", mid: "#3d4a75", ground: "#4a4a52", groundLine: "#66666e",
-    landmarks: ["washingtonMonument", "capitol", "lincolnMemorial"],
-    obstacles: ["cherryTree", "limo", "barricade", "foodCart", "hydrant", "fence"],
+    name: "SAN FRANCISCO",
+    sky: "fog",
+    skyTop: "#1c3f60", skyBottom: "#f7b2a3",
+    far: "#2c4f70", mid: "#3d5f80", ground: "#4a4a55", groundLine: "#66666f",
+    landmarks: ["goldenGate", "transamerica", "paintedLadies"],
+    obstacles: ["cableCar", "hydrant", "fence", "paintedHouse", "mailbox"],
   },
 ];
-const THEME_LENGTH = 1200; // meters per route before the next city
+const THEME_LENGTH = 1800; // meters per route before the next city
 
 // ---------- Obstacle catalog ----------
 // landable: true means you can run along the top (fences, rooftops)
@@ -557,7 +564,7 @@ function update(dt) {
   if (idx !== S.themeIndex) {
     S.themeIndex = idx;
     S.banner = { text: "NOW ENTERING: " + currentTheme().name, timer: 2.5 };
-    DJ.event("city", ["newyork", "desert", "sanfrancisco", "farmland", "losangeles", "washingtondc"][idx]);
+    DJ.event("city", ["newyork", "washingtondc", "farmland", "desert", "losangeles", "sanfrancisco"][idx]);
   }
 
   // unlocks
@@ -745,8 +752,7 @@ function drawSky(theme) {
   ctx.fillStyle = sky;
   ctx.fillRect(0, 0, W, GROUND_Y);
 
-  const kind = S.themeIndex % THEMES.length;
-  if (kind === 0) {
+  if (theme.sky === "dusk") {
     // NYC dusk: first stars + crescent moon
     ctx.fillStyle = "rgba(255,255,255,0.7)";
     for (let i = 0; i < 26; i++) {
@@ -756,7 +762,7 @@ function drawSky(theme) {
     ctx.beginPath(); ctx.arc(W - 170, 115, 26, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = theme.skyTop;
     ctx.beginPath(); ctx.arc(W - 182, 107, 24, 0, Math.PI * 2); ctx.fill();
-  } else if (kind === 1) {
+  } else if (theme.sky === "desertSun") {
     // desert: big low sun with haze halo
     const sx = W - 250, sy = GROUND_Y - 170;
     ctx.fillStyle = "rgba(255,180,80,0.14)";
@@ -765,7 +771,7 @@ function drawSky(theme) {
     ctx.beginPath(); ctx.arc(sx, sy, 58, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = "#ffd27a";
     ctx.beginPath(); ctx.arc(sx, sy, 42, 0, Math.PI * 2); ctx.fill();
-  } else if (kind === 2) {
+  } else if (theme.sky === "fog") {
     // SF: fog banks drifting along the horizon
     ctx.fillStyle = "rgba(230,235,245,0.16)";
     for (let i = 0; i < 3; i++) {
@@ -774,7 +780,7 @@ function drawSky(theme) {
       ctx.ellipse(fx, GROUND_Y - 60 - i * 26, 260, 34, 0, 0, Math.PI * 2);
       ctx.fill();
     }
-  } else if (kind === 3) {
+  } else if (theme.sky === "farm") {
     // farmland: high afternoon sun and a few birds
     ctx.fillStyle = "rgba(255,244,200,0.9)";
     ctx.beginPath(); ctx.arc(W - 190, 90, 34, 0, Math.PI * 2); ctx.fill();
@@ -789,7 +795,7 @@ function drawSky(theme) {
       ctx.quadraticCurveTo(bx + 4, by, bx + 8, by + 5);
       ctx.stroke();
     }
-  } else if (kind === 4) {
+  } else if (theme.sky === "la") {
     // LA: hazy sun sinking over the ocean, smog band on the horizon
     ctx.fillStyle = "rgba(255,170,120,0.25)";
     ctx.beginPath(); ctx.arc(210, GROUND_Y - 210, 62, 0, Math.PI * 2); ctx.fill();
