@@ -1,0 +1,13 @@
+{
+  "name": "Road Trip Runner",
+  "short_name": "RoadTrip",
+  "description": "Your fingers vs. the great American landscape.",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#1a1a2e",
+  "theme_color": "#1a1a2e",
+  "start_url": ".",
+  "icons": [
+    { "src": "icon.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

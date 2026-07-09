@@ -2,7 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#1a1a2e">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon.png">
 <title>Road Trip Runner</title>
 <style>
   :root {
@@ -41,7 +47,75 @@
     border-radius: 10px;
     background: #000;
     box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+    touch-action: none;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
   }
+  /* ---- mobile: rotate prompt in portrait ---- */
+  #rotateNote {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    background: var(--bg);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 20px;
+    line-height: 1.8;
+    padding: 30px;
+  }
+  #rotateNote .phone {
+    font-size: 56px;
+    animation: tip 1.6s ease-in-out infinite;
+    display: inline-block;
+  }
+  @keyframes tip {
+    0%, 30% { transform: rotate(0deg); }
+    60%, 100% { transform: rotate(90deg); }
+  }
+  #rotateNote .small { font-size: 13px; opacity: 0.6; margin-top: 8px; }
+  @media (pointer: coarse) and (orientation: portrait) {
+    #rotateNote { display: flex; }
+  }
+  /* ---- mobile landscape: edge-to-edge game ---- */
+  @media (pointer: coarse) and (orientation: landscape) {
+    body { padding: 0; justify-content: center; }
+    h1, .tagline, #hud-help { display: none; }
+    #gameWrap {
+      height: 100vh;
+      height: 100dvh;
+      aspect-ratio: 16 / 9;
+      max-width: 100vw;
+      width: auto;
+    }
+    canvas { height: 100%; border-radius: 0; box-shadow: none; }
+    #overlay { border-radius: 0; }
+  }
+  /* ---- touch ride-switcher (fingers / skateboard / motorcycle) ---- */
+  #rideBar {
+    display: none;
+    position: absolute;
+    right: 14px;
+    bottom: 58px;
+    gap: 8px;
+    z-index: 10;
+  }
+  @media (pointer: coarse) { #rideBar { display: flex; } }
+  #rideBar button {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.25);
+    background: rgba(10,12,30,0.55);
+    font-size: 22px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  #rideBar button.active { border-color: var(--accent); background: rgba(233,69,96,0.35); }
+  #rideBar button.locked { opacity: 0.35; }
   #overlay {
     position: absolute;
     inset: 0;
@@ -116,8 +190,19 @@
   <h1>Road Trip <span>Runner</span></h1>
   <div class="tagline">Your fingers vs. the great American landscape. Just like the back seat of the station wagon.</div>
 
+  <div id="rotateNote">
+    <span class="phone">&#128241;</span><br>
+    Turn your phone sideways
+    <div class="small">Road trips are a landscape experience.</div>
+  </div>
+
   <div id="gameWrap">
     <canvas id="game" width="960" height="540"></canvas>
+    <div id="rideBar">
+      <button data-ride="run" title="Fingers">&#9995;</button>
+      <button data-ride="skateboard" title="Skateboard">&#128761;</button>
+      <button data-ride="motorcycle" title="Motorcycle">&#127949;</button>
+    </div>
     <div id="overlay">
       <h2 id="ovTitle">ROAD TRIP RUNNER</h2>
       <p id="ovText">
@@ -297,6 +382,7 @@ function resetGame() {
   S.ride = "run";
   S.banner = { text: "NOW ENTERING: " + THEMES[0].name, timer: 2.5 };
   player.y = GROUND_Y; player.vy = 0; player.onGround = true;
+  updateRideBar();
 }
 
 // ============================================================
@@ -336,7 +422,23 @@ function setRide(r) {
   }
   S.ride = r;
   S.toast = { text: "Ride: " + r.toUpperCase(), timer: 1.2 };
+  updateRideBar();
 }
+
+// touch ride-switcher buttons (shown on touch devices only)
+function updateRideBar() {
+  document.querySelectorAll("#rideBar button").forEach((b) => {
+    const r = b.dataset.ride;
+    b.classList.toggle("active", S.ride === r);
+    b.classList.toggle("locked", r !== "run" && !S.unlocked[r]);
+  });
+}
+document.querySelectorAll("#rideBar button").forEach((b) => {
+  b.addEventListener("pointerdown", (e) => {
+    e.stopPropagation(); // don't trigger a jump
+    setRide(b.dataset.ride);
+  });
+});
 
 // ============================================================
 // AUDIO — placeholder era "radio" built on WebAudio.
@@ -576,12 +678,14 @@ function update(dt) {
     S.toast = { text: "SKATEBOARD UNLOCKED! Press 2", timer: 3 };
     Sfx.unlock();
     DJ.event("unlock", "skateboard");
+    updateRideBar();
   }
   if (!S.unlocked.motorcycle && S.distance >= LOOP_LENGTH) {
     S.unlocked.motorcycle = true;
     S.toast = { text: "MOTORCYCLE UNLOCKED! Press 3", timer: 3 };
     Sfx.unlock();
     DJ.event("unlock", "motorcycle");
+    updateRideBar();
   }
 
   // ---- player physics ----
@@ -1688,8 +1792,27 @@ fetch("radio/clips/clips.json")
   .catch(() => {});
 
 // ---------- menu wiring ----------
+// on phones: go fullscreen and try to lock landscape (works on Android;
+// iOS ignores both, but the manifest covers home-screen launches there)
+function goFullscreenOnMobile() {
+  if (!matchMedia("(pointer: coarse)").matches) return;
+  if (document.fullscreenElement) return;
+  const el = document.documentElement;
+  try {
+    const p = el.requestFullscreen ? el.requestFullscreen()
+            : el.webkitRequestFullscreen && el.webkitRequestFullscreen();
+    if (p && p.then) {
+      p.then(() => {
+        if (screen.orientation && screen.orientation.lock)
+          screen.orientation.lock("landscape").catch(() => {});
+      }).catch(() => {});
+    }
+  } catch (e) { /* not supported — fine */ }
+}
+
 document.getElementById("startBtn").addEventListener("click", () => {
   document.getElementById("overlay").classList.add("hidden");
+  goFullscreenOnMobile();
   resetGame();
   Radio.start();
   updateStopBtn();
