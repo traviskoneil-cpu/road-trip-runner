@@ -65,14 +65,79 @@
           "band": "Wölfhammer",
           "song": "Hammer of Asgard",
           "style": "thrash metal, 180 BPM gallop, gang vocals, Viking everything"
+        },
+        {
+          "file": "Greedy Fly.mp3",
+          "band": "The Gauze",
+          "song": "Greedy Fly",
+          "style": "British post-grunge, brooding, menacing crunch (Bush-ish)"
+        },
+        {
+          "file": "Burning Bright.mp3",
+          "band": "Kaydee Sparx",
+          "song": "Burning Bright",
+          "style": "teen dance-pop, glossy, romantic (Britney-ish)"
+        },
+        {
+          "file": "Talk Till Dawn.mp3",
+          "band": "The Pen Pals",
+          "song": "Talk Till Dawn",
+          "style": "nerdy fast-talk folk-pop, cozy (Barenaked Ladies-ish)"
+        },
+        {
+          "file": "Monsoon.mp3",
+          "band": "Big Swell",
+          "song": "Monsoon",
+          "style": "west-coast 90s R&B/rap, laid-back groove (Montell Jordan-ish)"
+        },
+        {
+          "file": "Birthday Cake.mp3",
+          "band": "Prince Sunday",
+          "song": "Birthday Cake",
+          "style": "west-coast rap, smooth and menacing, recorded live"
+        },
+        {
+          "file": "What a Nice Idea.mp3",
+          "band": "Joni Spite",
+          "song": "What a Nice Idea",
+          "style": "confessional alt, dreamy but pointed (Alanis-ish)"
+        },
+        {
+          "file": "Tell Me.mp3",
+          "band": "The Wednesday Pale",
+          "song": "Tell Me",
+          "style": "dream-alt, ethereal female vocals, dramatic (Cranberries-ish)"
+        },
+        {
+          "file": "Just to Be a Ghost.mp3",
+          "band": "The Wednesday Pale",
+          "song": "Just to Be a Ghost",
+          "style": "dream-alt, haunted, female-vocal bridge (Cranberries-ish)"
+        },
+        {
+          "file": "Dune Line.mp3",
+          "band": "Sidewalk Curfew",
+          "song": "Dune Line",
+          "style": "snotty pop-punk, three chords, fast (Green Day-ish)"
+        },
+        {
+          "file": "Paper Crown.mp3",
+          "band": "Homeroom Heroes",
+          "song": "Paper Crown",
+          "style": "mall pop-punk, gang-vocal chorus (New Found Glory-ish)"
+        },
+        {
+          "file": "Paper Hands.mp3",
+          "band": "Cardigan Weather",
+          "song": "Paper Hands",
+          "style": "earnest flannel arena-grunge, mumbled verses (Pearl Jam-ish)"
+        },
+        {
+          "file": "Into the Rain.mp3",
+          "band": "Barefoot Caravan",
+          "song": "Into the Rain",
+          "style": "hippie jam-band, too much percussion (Rusted Root-ish)"
         }
-      ],
-      "bands": [
-        { "band": "Dishwater Halo", "song": "Flannel Cathedral" },
-        { "band": "Sadie vs. The Microwave", "song": "Dial-Up Heart" },
-        { "band": "The Chunky Sweaters", "song": "Thrift Store Prophet" },
-        { "band": "Pavement Enthusiast", "song": "Parking Lot Sunset" },
-        { "band": "Grape Soda Riot", "song": "Saturday Cartoon Bones" }
       ]
     },
     "00s": {

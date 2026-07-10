@@ -216,6 +216,137 @@ named Thunder and Also Thunder.
 - `90s_outro_hammerofasgard_1.mp3` — "Wölfhammer. The drummer names his kick pedals. Thunder... and Also Thunder. ...You just heard both."
 - `90s_outro_hammerofasgard_2.mp3` — "That was 'Hammer of Asgard.' ...I would die for them. Don't print that. This is radio. There's no printing. ...Whatever."
 
+**"Greedy Fly" — The Gauze**
+British post-grunge. Frontman Rex Vane refuses to explain a single lyric.
+Insists the fly is "a real fly. And also capitalism. And also a fly."
+
+*Intros:*
+- `90s_intro_greedyfly_1.mp3` — "This is The Gauze. British. Very... damp. The singer says this song is about a fly. A literal fly. ...I believe him. 'Greedy Fly.'"
+- `90s_intro_greedyfly_2.mp3` — "Okay so 'Greedy Fly.' The chorus is 'keep your mouth off mine.' To a fly. ...The nineties were angry at insects, I guess. The Gauze."
+
+*Outros:*
+- `90s_outro_greedyfly_1.mp3` — "That was The Gauze. Rex Vane once did a forty-minute interview and explained nothing. ...Icon."
+
+**"Burning Bright" — Kaydee Sparx**
+Teen-pop starlet. She's on The Dirt purely because the request line wouldn't
+stop. Meg is appalled that it's catchy.
+
+*Intros:*
+- `90s_intro_burningbright_1.mp3` — "So. There's a pop star on The Dirt now. I don't make the rules. Actually I do, and I broke them. This is Kaydee Sparx, 'Burning Bright.'"
+- `90s_intro_burningbright_2.mp3` — "'Even fleeting can leave a mark.' That's a Kaydee Sparx lyric. It's on a bright pink song. ...It's kind of good. I'm upset about it."
+
+*Outros:*
+- `90s_outro_burningbright_1.mp3` — "Kaydee Sparx. 'Burning Bright.' ...I've listened to it four times. For work. Only for work."
+
+**"Talk Till Dawn" — The Pen Pals**
+Nerdy fast-talk folk-pop sextet from Ontario. Spoken-word bits between verses.
+They tour with a thesaurus.
+
+*Intros:*
+- `90s_intro_talktilldawn_1.mp3` — "The Pen Pals. Six guys from Ontario. This one's about staying up talking until the birds come out. ...It's very sweet. Don't tell them I said sweet. 'Talk Till Dawn.'"
+- `90s_intro_talktilldawn_2.mp3` — "This is 'Talk Till Dawn.' There's a line about a kettle going cold. I think about it more than I'd like. The Pen Pals."
+
+*Outros:*
+- `90s_outro_talktilldawn_1.mp3` — "That was The Pen Pals. I know all the words. I don't want to know all the words. ...Anyway."
+
+**"Monsoon" — Big Swell**
+West-coast R&B/rap. Six-foot-eight frontman. Every song is weather used as a
+metaphor for arguing.
+
+*Intros:*
+- `90s_intro_monsoon_1.mp3` — "Okay, this does NOT belong on a college station and I love it. Big Swell. 'Monsoon.' ...'Bring the raft out.' Yeah."
+- `90s_intro_monsoon_2.mp3` — "West coast on The Dirt. Bold. This is Big Swell — the whole song is about arguing on a sunny day. Relatable. 'Monsoon.'"
+
+*Outros:*
+- `90s_outro_monsoon_1.mp3` — "Big Swell, 'Monsoon.' ...I don't have a raft. I've thought about it. Moving on."
+
+**"Birthday Cake" — Prince Sunday**
+Recorded live at a club called The Frosting — you can hear the crowd. Smooth
+and quietly menacing.
+
+*Intros:*
+- `90s_intro_birthdaycake_1.mp3` — "This one's live — you can hear the room. Prince Sunday, recorded at a club called The Frosting. ...'Birthday Cake.' It's darker than it sounds."
+- `90s_intro_birthdaycake_2.mp3` — "Prince Sunday. 'Bad habit for the birthday cake.' ...I don't know what it means and I'm a little scared to. Here it is."
+
+*Outros:*
+- `90s_outro_birthdaycake_1.mp3` — "Prince Sunday, live at The Frosting. That crowd you hear? They knew every word. ...Respect."
+
+**"What a Nice Idea" — Joni Spite**
+Confessional alt. Wrote this in a parking lot in eleven minutes and tells that
+story at every single show. Meg's favorite.
+
+*Intros:*
+- `90s_intro_whataniceidea_1.mp3` — "Joni Spite. She wrote this in a parking lot in eleven minutes. She'll tell you that. At length. ...It's still great. 'What a Nice Idea.'"
+- `90s_intro_whataniceidea_2.mp3` — "This is Joni Spite. 'You get the shape but not the full contents.' ...Yeah. Cool. I'm normal. 'What a Nice Idea.'"
+
+*Outros:*
+- `90s_outro_whataniceidea_1.mp3` — "That was Joni Spite. ...She's the only person I'd let read my diary. She would, too. Unprompted."
+
+**"Tell Me" — The Wednesday Pale**
+Dream-alt, ethereal female vocals. Singer Saoirse hums the parts she hasn't
+written yet. (Two singles in rotation — see also "Just to Be a Ghost.")
+
+*Intros:*
+- `90s_intro_tellme_1.mp3` — "The Wednesday Pale. The singer hums the parts she hasn't finished writing yet. ...It works, somehow. 'Tell Me.'"
+- `90s_intro_tellme_2.mp3` — "This gets dramatic. 'Are you ready to die' — that's the chorus. On a Tuesday. ...Great. The Wednesday Pale, 'Tell Me.'"
+
+*Outros:*
+- `90s_outro_tellme_1.mp3` — "The Wednesday Pale. ...I had to sit down after that one the first time. Anyway. Don't."
+
+**"Just to Be a Ghost" — The Wednesday Pale**
+The follow-up single. The ghost is an ex. Or a real ghost. Saoirse won't say.
+
+*Intros:*
+- `90s_intro_justtobeaghost_1.mp3` — "More Wednesday Pale. This one's about a ghost. Or an ex. Saoirse won't confirm which. ...Probably both. 'Just to Be a Ghost.'"
+- `90s_intro_justtobeaghost_2.mp3` — "'The makeup don't go.' Meaning you can't cover up the ghost. ...I've thought about this lyric on the bus. The Wednesday Pale."
+
+*Outros:*
+- `90s_outro_justtobeaghost_1.mp3` — "That was 'Just to Be a Ghost.' The female vocal at the end still gets me. ...We'll pretend it didn't."
+
+**"Dune Line" — Sidewalk Curfew**
+Snotty pop-punk trio. All three claim to have written it; none of them play it
+the same way twice.
+
+*Intros:*
+- `90s_intro_duneline_1.mp3` — "Sidewalk Curfew. Three guys, one song, three different stories about who wrote it. ...Fast one. 'Dune Line.'"
+- `90s_intro_duneline_2.mp3` — "This is 'Dune Line.' It's ninety seconds of complaining and I mean that as the highest compliment. Sidewalk Curfew."
+
+*Outros:*
+- `90s_outro_duneline_1.mp3` — "Sidewalk Curfew. They've never played it the same way twice. ...That's either art or they can't remember it. Both."
+
+**"Paper Crown" — Homeroom Heroes**
+Mall pop-punk, matching studded belts. They once sang backup on an N2U track
+and will deny it to your face.
+
+*Intros:*
+- `90s_intro_papercrown_1.mp3` — "Homeroom Heroes. Matching belts. Big feelings. They once sang backup for N2U and will deny it to your face. 'Paper Crown.'"
+- `90s_intro_papercrown_2.mp3` — "This is 'Paper Crown.' The chorus has a gang vocal, which means all five of them yell at once. ...It's fine. It's good. Whatever."
+
+*Outros:*
+- `90s_outro_papercrown_1.mp3` — "Homeroom Heroes. ...I saw them at a food court. It ruled. I'm not proud. 'Paper Crown.'"
+
+**"Paper Hands" — Cardigan Weather**
+Earnest flannel arena-grunge. The frontman mumbles on purpose. Meg respects it,
+genuinely.
+
+*Intros:*
+- `90s_intro_paperhands_1.mp3` — "Cardigan Weather. The singer mumbles on purpose. It's a whole thing. ...I respect it, genuinely. 'Paper Hands.'"
+- `90s_intro_paperhands_2.mp3` — "This one's big and earnest and flannel to the bone. Cardigan Weather, 'Paper Hands.' ...Go stand in a field for this one."
+
+*Outros:*
+- `90s_outro_paperhands_1.mp3` — "That was Cardigan Weather. I understood maybe four words and felt all of them. ...That's grunge, baby."
+
+**"Into the Rain" — Barefoot Caravan**
+Hippie jam band with too many percussionists. Tour in a converted school bus.
+Nobody knows the exact member count.
+
+*Intros:*
+- `90s_intro_intotherain_1.mp3` — "Barefoot Caravan. Nobody knows how many of them there are. There's at least four drummers. ...'Into the Rain.' Take your shoes off, I guess."
+- `90s_intro_intotherain_2.mp3` — "This is 'Into the Rain.' It's a jam band, so it's either four minutes or forty — I genuinely can't promise. Barefoot Caravan."
+
+*Outros:*
+- `90s_outro_intotherain_1.mp3` — "Barefoot Caravan. ...I saw them live once. I think I'm still there in some way. Anyway."
+
 **Game-event lines** *(the game triggers these on weather, city changes, and unlocks)*
 - `90s_rain_1.mp3` — "It's gonna rain. The drops do that thing where they race across the window. You know the thing. ...Good luck, I guess."
 - `90s_city_newyork_1.mp3` — "New York. Where dreams go to pay rent."
