@@ -8,11 +8,26 @@
       "dj": "Velvet Vince Delacroix",
       "voiceDirection": "Deep male, slow, warm, near-whisper 70s FM announcer. Long pauses.",
       "bands": [
-        { "band": "Sasquatch Canyon", "song": "Gravel Road Woman" },
-        { "band": "The Marmalade Skyway", "song": "Velour Sunrise" },
-        { "band": "Donna Fontaine & The Foxfire", "song": "Roller Rink Romance" },
-        { "band": "Brass Aquarium", "song": "Funky Interstate (Pt. 2)" },
-        { "band": "Cactus Telephone", "song": "Long Distance Desert Call" }
+        {
+          "band": "Sasquatch Canyon",
+          "song": "Gravel Road Woman"
+        },
+        {
+          "band": "The Marmalade Skyway",
+          "song": "Velour Sunrise"
+        },
+        {
+          "band": "Donna Fontaine & The Foxfire",
+          "song": "Roller Rink Romance"
+        },
+        {
+          "band": "Brass Aquarium",
+          "song": "Funky Interstate (Pt. 2)"
+        },
+        {
+          "band": "Cactus Telephone",
+          "song": "Long Distance Desert Call"
+        }
       ]
     },
     "80s": {
@@ -22,11 +37,26 @@
       "dj": "Rick 'Hurricane' Hammers",
       "voiceDirection": "High-energy male rock DJ, fast, loud, gravelly, monster-truck-ad delivery.",
       "bands": [
-        { "band": "Chrome Viper", "song": "Midnight Accelerator" },
-        { "band": "Neon Prophecy", "song": "She's Electric (In a Legal Sense)" },
-        { "band": "Tiffany Blackout", "song": "Mall Heart" },
-        { "band": "The Velcro Militia", "song": "Radical Maneuvers" },
-        { "band": "Stallion Force", "song": "Training Montage" }
+        {
+          "band": "Chrome Viper",
+          "song": "Midnight Accelerator"
+        },
+        {
+          "band": "Neon Prophecy",
+          "song": "She's Electric (In a Legal Sense)"
+        },
+        {
+          "band": "Tiffany Blackout",
+          "song": "Mall Heart"
+        },
+        {
+          "band": "The Velcro Militia",
+          "song": "Radical Maneuvers"
+        },
+        {
+          "band": "Stallion Force",
+          "song": "Training Montage"
+        }
       ]
     },
     "90s": {
@@ -40,103 +70,120 @@
           "file": "Spin Me Right.mp3",
           "band": "N2U",
           "song": "Spin Me Right",
-          "style": "boy-band dance-pop, four-on-the-floor, key-change finale"
+          "style": "boy-band dance-pop, four-on-the-floor, key-change finale",
+          "bio": "Five guys who met at a mall shoe store. Their choreographer quit over 'The Spin.'"
         },
         {
           "file": "Blue Hairclip.mp3",
           "band": "N2U",
           "song": "Blue Hairclip",
-          "style": "boy-band dance-pop, call-and-response backing vocals"
+          "style": "boy-band dance-pop, call-and-response backing vocals",
+          "bio": "The follow-up single. Steve, the quiet one, secretly writes everything."
         },
         {
           "file": "Chain Link Riot.mp3",
           "band": "Karpet Burn",
           "song": "Chain Link Riot",
-          "style": "nu metal rap rock, gang vocals, turntable scratches"
+          "style": "nu metal rap rock, gang vocals, turntable scratches",
+          "bio": "Nu-metal born in a storage unit. The cinder-block wall they smash is foam."
         },
         {
           "file": "Blue Tape Corner.mp3",
           "band": "Motel Soap",
           "song": "Blue Tape Corner",
-          "style": "funky alt-rock, turntable scratches, half-time bridge"
+          "style": "funky alt-rock, turntable scratches, half-time bridge",
+          "bio": "Cincinnati funk-rock. Their DJ is credited only as 'Wristwatch.'"
         },
         {
           "file": "Hammer of Asgard.mp3",
           "band": "Wölfhammer",
           "song": "Hammer of Asgard",
-          "style": "thrash metal, 180 BPM gallop, gang vocals, Viking everything"
+          "style": "thrash metal, 180 BPM gallop, gang vocals, Viking everything",
+          "bio": "Thrash-metal Vikings from Ohio. The singer's real name is Gary."
         },
         {
           "file": "Greedy Fly.mp3",
           "band": "The Gauze",
           "song": "Greedy Fly",
-          "style": "British post-grunge, brooding, menacing crunch (Bush-ish)"
+          "style": "British post-grunge, brooding, menacing crunch (Bush-ish)",
+          "bio": "British post-grunge. The fly is 'a real fly. And also capitalism.'"
         },
         {
           "file": "Burning Bright.mp3",
           "band": "Kaydee Sparx",
           "song": "Burning Bright",
-          "style": "teen dance-pop, glossy, romantic (Britney-ish)"
+          "style": "teen dance-pop, glossy, romantic (Britney-ish)",
+          "bio": "A pop star on a college station. Even Meg admits it's catchy."
         },
         {
           "file": "Talk Till Dawn.mp3",
           "band": "The Pen Pals",
           "song": "Talk Till Dawn",
-          "style": "nerdy fast-talk folk-pop, cozy (Barenaked Ladies-ish)"
+          "style": "nerdy fast-talk folk-pop, cozy (Barenaked Ladies-ish)",
+          "bio": "Six nerds from Ontario who tour with a thesaurus."
         },
         {
           "file": "Monsoon.mp3",
           "band": "Big Swell",
           "song": "Monsoon",
-          "style": "west-coast 90s R&B/rap, laid-back groove (Montell Jordan-ish)"
+          "style": "west-coast 90s R&B/rap, laid-back groove (Montell Jordan-ish)",
+          "bio": "West-coast R&B. Every song is weather as a metaphor for arguing."
         },
         {
           "file": "Birthday Cake.mp3",
           "band": "Prince Sunday",
           "song": "Birthday Cake",
-          "style": "west-coast rap, smooth and menacing, recorded live"
+          "style": "west-coast rap, smooth and menacing, recorded live",
+          "bio": "Recorded live at a club called The Frosting. Darker than it sounds."
         },
         {
           "file": "What a Nice Idea.mp3",
           "band": "Joni Spite",
           "song": "What a Nice Idea",
-          "style": "confessional alt, dreamy but pointed (Alanis-ish)"
+          "style": "confessional alt, dreamy but pointed (Alanis-ish)",
+          "bio": "Wrote it in a parking lot in eleven minutes. Tells you at every show."
         },
         {
           "file": "Tell Me.mp3",
           "band": "The Wednesday Pale",
           "song": "Tell Me",
-          "style": "dream-alt, ethereal female vocals, dramatic (Cranberries-ish)"
+          "style": "dream-alt, ethereal female vocals, dramatic (Cranberries-ish)",
+          "bio": "Dream-alt. Singer Saoirse hums the parts she hasn't written yet."
         },
         {
           "file": "Just to Be a Ghost.mp3",
           "band": "The Wednesday Pale",
           "song": "Just to Be a Ghost",
-          "style": "dream-alt, haunted, female-vocal bridge (Cranberries-ish)"
+          "style": "dream-alt, haunted, female-vocal bridge (Cranberries-ish)",
+          "bio": "The follow-up. The ghost is an ex. Or a real ghost. She won't say."
         },
         {
           "file": "Dune Line.mp3",
           "band": "Sidewalk Curfew",
           "song": "Dune Line",
-          "style": "snotty pop-punk, three chords, fast (Green Day-ish)"
+          "style": "snotty pop-punk, three chords, fast (Green Day-ish)",
+          "bio": "Pop-punk trio. All three claim they wrote it; none play it the same twice."
         },
         {
           "file": "Paper Crown.mp3",
           "band": "Homeroom Heroes",
           "song": "Paper Crown",
-          "style": "mall pop-punk, gang-vocal chorus (New Found Glory-ish)"
+          "style": "mall pop-punk, gang-vocal chorus (New Found Glory-ish)",
+          "bio": "Mall pop-punk. Sang backup for N2U and will deny it to your face."
         },
         {
           "file": "Paper Hands.mp3",
           "band": "Cardigan Weather",
           "song": "Paper Hands",
-          "style": "earnest flannel arena-grunge, mumbled verses (Pearl Jam-ish)"
+          "style": "earnest flannel arena-grunge, mumbled verses (Pearl Jam-ish)",
+          "bio": "Flannel arena-grunge. The singer mumbles on purpose."
         },
         {
           "file": "Into the Rain.mp3",
           "band": "Barefoot Caravan",
           "song": "Into the Rain",
-          "style": "hippie jam-band, too much percussion (Rusted Root-ish)"
+          "style": "hippie jam-band, too much percussion (Rusted Root-ish)",
+          "bio": "Jam-band hippies. At least four drummers. Member count unknown."
         }
       ]
     },
@@ -147,16 +194,76 @@
       "dj": "Jamie & The Toad",
       "voiceDirection": "Jamie: bright caffeinated female pop-radio voice. The Toad: dopey male, two-word interjections, record separately.",
       "tracks": [
-        { "file": "Backseat Sunrise.mp3", "band": "The Sunroofs", "song": "Backseat Sunrise", "style": "bright up-tempo dance-pop road anthem (Oakenfold 'Starry Eyed Surprise'-ish)" },
-        { "file": "Paper Plane Pulse.mp3", "band": "DJ Contrail", "song": "Paper Plane Pulse", "style": "ethereal trance, 'take me higher' build (Oakenfold-ish)" },
-        { "file": "Text Me Back (Or Else) 2000s.mp3", "band": "Britney Alexandra", "song": "Text Me Back (Or Else)", "style": "2000s teen-pop, sassy (Britney-ish); half of the Text Me Back battle" },
-        { "file": "Text Me Back (Or Else).mp3", "band": "Mandy Sincere", "song": "Text Me Back (Or Else)", "style": "bright bubbly pop, sunny (Natasha Bedingfield-ish); other half of the battle" },
-        { "file": "Snake Charmer (Ringtone Remix).mp3", "band": "DJ Nokia", "song": "Snake Charmer (Ringtone Remix)", "style": "ringtone-beat pop, bubbly female vocal" },
-        { "file": "Last Time.mp3", "band": "Colt Maddox", "song": "Last Time", "style": "country-rap crossover, 'one last time' anthem" },
-        { "file": "Halogen Lamps.mp3", "band": "Kilowatt Youth", "song": "Halogen Lamps", "style": "dark synth/electro-pop, moody" },
-        { "file": "Frosted Tips Forever.mp3", "band": "The O.C. Parking Lot", "song": "Frosted Tips Forever", "style": "00s emo nostalgia, pop-punk" },
-        { "file": "Parking Lot Codes.mp3", "band": "Kacie Vandal", "song": "Parking Lot Codes", "style": "mall pop-punk, 'blue blue blue' hook (Avril-ish)" },
-        { "file": "Broken Link.mp3", "band": "Kacie Vandal", "song": "Broken Link", "style": "pop-punk breakup ballad (Avril-ish)" }
+        {
+          "file": "Backseat Sunrise.mp3",
+          "band": "The Sunroofs",
+          "song": "Backseat Sunrise",
+          "style": "bright up-tempo dance-pop road anthem (Oakenfold 'Starry Eyed Surprise'-ish)",
+          "bio": "Dance-pop one-hit-wonder. Best days of your life, allegedly."
+        },
+        {
+          "file": "Paper Plane Pulse.mp3",
+          "band": "DJ Contrail",
+          "song": "Paper Plane Pulse",
+          "style": "ethereal trance, 'take me higher' build (Oakenfold-ish)",
+          "bio": "Trance producer who performs behind a wall of fog. No one's seen his face."
+        },
+        {
+          "file": "Text Me Back (Or Else) 2000s.mp3",
+          "band": "Britney Alexandra",
+          "song": "Text Me Back (Or Else)",
+          "style": "2000s teen-pop, sassy (Britney-ish); half of the Text Me Back battle",
+          "bio": "Teen-pop royalty. Text her back or she moves on."
+        },
+        {
+          "file": "Text Me Back (Or Else).mp3",
+          "band": "Mandy Sincere",
+          "song": "Text Me Back (Or Else)",
+          "style": "bright bubbly pop, sunny (Natasha Bedingfield-ish); other half of the battle",
+          "bio": "The sunny version. Same demand, more sunshine."
+        },
+        {
+          "file": "Snake Charmer (Ringtone Remix).mp3",
+          "band": "DJ Nokia",
+          "song": "Snake Charmer (Ringtone Remix)",
+          "style": "ringtone-beat pop, bubbly female vocal",
+          "bio": "Every beat is a phone sound. The ringtone costs more than the song."
+        },
+        {
+          "file": "Last Time.mp3",
+          "band": "Colt Maddox",
+          "song": "Last Time",
+          "style": "country-rap crossover, 'one last time' anthem",
+          "bio": "Country crossover. He swears it's the last time. It never is."
+        },
+        {
+          "file": "Halogen Lamps.mp3",
+          "band": "Kilowatt Youth",
+          "song": "Halogen Lamps",
+          "style": "dark synth/electro-pop, moody",
+          "bio": "Moody electro-pop, possibly about two robots falling in love."
+        },
+        {
+          "file": "Frosted Tips Forever.mp3",
+          "band": "The O.C. Parking Lot",
+          "song": "Frosted Tips Forever",
+          "style": "00s emo nostalgia, pop-punk",
+          "bio": "Emo, named after a parking lot they've never actually visited."
+        },
+        {
+          "file": "Parking Lot Codes.mp3",
+          "band": "Kacie Vandal",
+          "song": "Parking Lot Codes",
+          "style": "mall pop-punk, 'blue blue blue' hook (Avril-ish)",
+          "bio": "Mall pop-punk. Blue, blue, blue — you know the code."
+        },
+        {
+          "file": "Broken Link.mp3",
+          "band": "Kacie Vandal",
+          "song": "Broken Link",
+          "style": "pop-punk breakup ballad (Avril-ish)",
+          "bio": "The weepy one. You were close."
+        }
       ]
     }
   }

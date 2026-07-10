@@ -179,6 +179,54 @@
   }
   .btn-stop:hover { opacity: 1; border-color: var(--accent); }
   .btn-stop.show { display: inline-block; }
+  .btn-mixtape {
+    background: transparent; color: var(--text);
+    border: 2px solid var(--accent); font-size: 15px; font-weight: bold;
+    padding: 9px 26px; border-radius: 24px; cursor: pointer; margin-top: 14px;
+    letter-spacing: 1px;
+  }
+  .btn-mixtape:hover { background: var(--accent); }
+  /* ---- My Mixtape library ---- */
+  #library {
+    position: fixed; inset: 0; z-index: 60; padding: 16px;
+    background: rgba(8, 10, 24, 0.93);
+    display: flex; align-items: center; justify-content: center;
+  }
+  #library.hidden { display: none; }
+  .lib-panel {
+    width: 900px; max-width: 100%; height: 90vh; height: 90dvh;
+    background: var(--panel); border-radius: 14px; overflow: hidden;
+    display: flex; flex-direction: column; box-shadow: 0 20px 80px rgba(0,0,0,0.7);
+  }
+  .lib-head { display: flex; align-items: center; gap: 14px; padding: 16px 20px; border-bottom: 1px solid #2a3350; }
+  .lib-head h2 { font-size: 24px; letter-spacing: 2px; }
+  .lib-head h2::before { content: "📼 "; }
+  .lib-count { font-size: 13px; opacity: 0.6; }
+  .lib-close { margin-left: auto; background: transparent; border: none; color: var(--text); font-size: 22px; cursor: pointer; opacity: 0.7; }
+  .lib-close:hover { opacity: 1; }
+  .lib-body { flex: 1; overflow-y: auto; padding: 16px 20px 24px; }
+  .lib-empty { opacity: 0.6; font-size: 14px; padding: 20px; text-align: center; }
+  .lib-station { font-size: 13px; letter-spacing: 1px; text-transform: uppercase; color: #ffd166; margin: 18px 0 10px; }
+  .lib-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  @media (max-width: 640px) { .lib-grid { grid-template-columns: 1fr; } }
+  .lib-card { display: flex; align-items: center; gap: 12px; background: #1b2138; border-radius: 10px; padding: 10px; }
+  .lib-card.locked { opacity: 0.5; }
+  .lib-cover {
+    width: 54px; height: 54px; border-radius: 8px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; font-weight: bold; color: rgba(255,255,255,0.92);
+    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+  }
+  .lib-cover.locked { background: #2a3350; color: #55617f; text-shadow: none; }
+  .lib-info { flex: 1; min-width: 0; }
+  .lib-song { font-weight: bold; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .lib-band { font-size: 12px; color: var(--accent); margin-bottom: 3px; }
+  .lib-bio { font-size: 11.5px; opacity: 0.72; line-height: 1.35; }
+  .lib-play { flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%; border: none; background: var(--accent); color: #fff; font-size: 15px; cursor: pointer; }
+  .lib-now { display: flex; align-items: center; gap: 12px; padding: 12px 20px; border-top: 1px solid #2a3350; background: #141a2e; }
+  .lib-now.hidden { display: none; }
+  #libNowText { flex: 1; font-size: 13px; color: #ffd166; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #libNowStop { background: transparent; border: 1px solid #556; color: var(--text); border-radius: 16px; padding: 5px 14px; cursor: pointer; font-size: 12px; }
   #hud-help { font-size: 12px; opacity: 0.55; margin-top: 10px; text-align: center; line-height: 1.6; }
   kbd {
     background: #333; border-radius: 4px; padding: 1px 6px;
@@ -220,7 +268,23 @@
         <button class="decade" data-era="off">OFF</button>
       </div>
       <button class="btn" id="startBtn">START THE TRIP</button>
+      <button class="btn-mixtape" id="mixtapeBtn">&#9834; MY MIXTAPE</button>
       <button class="btn-stop" id="stopMusicBtn">&#9632; STOP MUSIC</button>
+    </div>
+  </div>
+
+  <div id="library" class="hidden">
+    <div class="lib-panel">
+      <div class="lib-head">
+        <h2>MY MIXTAPE</h2>
+        <span id="libCount" class="lib-count"></span>
+        <button id="libClose" class="lib-close">&#10005;</button>
+      </div>
+      <div id="libBody" class="lib-body"></div>
+      <div id="libNow" class="lib-now hidden">
+        <span id="libNowText"></span>
+        <button id="libNowStop">&#9632; stop</button>
+      </div>
     </div>
   </div>
 
@@ -509,9 +573,10 @@ const Radio = {
     DJ.playSeq(seq, () => this.playSong(nextFile, tracks, battleToast));
   },
   playSong(file, tracks, toastOverride) {
+    this.nowFile = file;
     this.audio = new Audio("radio/music/" + this.era + "/" + encodeURIComponent(file));
     this.audio.volume = 0.65;
-    this.audio.onended = () => this.playBreak(file, tracks);
+    this.audio.onended = () => { Library.collect(this.era, file); this.playBreak(file, tracks); };
     this.audio.onerror = () => {
       // bad/missing file: skip ahead instead of going silent, but give up
       // after one full pass so a missing folder can't loop forever
@@ -542,7 +607,7 @@ const Radio = {
     this.queue = [];
     if (this.audio) {
       this.audio.volume = 0.65; // un-duck in case Meg was mid-line
-      this.audio.onended = () => { this.audio = null; updateStopBtn(); };
+      this.audio.onended = () => { Library.collect(this.era, this.nowFile); this.audio = null; updateStopBtn(); };
       this.audio.onerror = () => { this.audio = null; updateStopBtn(); };
     }
   },
@@ -1932,6 +1997,124 @@ fetch("radio/clips/clips.json")
   .then((l) => { if (l) DJ.setFiles(l); })
   .catch(() => {});
 
+// ============================================================
+// MY MIXTAPE — finish a song during a run and it's collected forever.
+// Browse + replay collected tracks (with the artist bio) from the menu.
+// ============================================================
+const STATION_LABEL = {
+  "70s": "KWAX 96.9 — The Wax Museum", "80s": "KRZR 104 — The Razor",
+  "90s": "KDRT 91.3 — The Dirt", "00s": "HITZ 99.5 — The Blender",
+};
+const Library = {
+  meta: {}, order: ["90s", "00s", "70s", "80s"],
+  collected: new Set(JSON.parse(localStorage.getItem("rtr_collected") || "[]")),
+  player: null, playingKey: null,
+  load() {
+    fetch("radio/stations.json").then((r) => (r.ok ? r.json() : null)).then((d) => {
+      if (!d) return;
+      for (const era of ["70s", "80s", "90s", "00s"])
+        this.meta[era] = (d.stations[era] && d.stations[era].tracks) || [];
+      this.updateButton();
+    }).catch(() => {});
+  },
+  key(era, file) { return era + "|" + file; },
+  total() { let n = 0; for (const e in this.meta) n += this.meta[e].length; return n; },
+  collect(era, file) {
+    if (!file) return;
+    const k = this.key(era, file);
+    if (this.collected.has(k)) return;
+    this.collected.add(k);
+    localStorage.setItem("rtr_collected", JSON.stringify([...this.collected]));
+    S.toast = { text: "★ ADDED TO MIXTAPE: " + file.replace(/\.[^.]+$/, ""), timer: 4 };
+    Sfx.unlock();
+    this.updateButton();
+  },
+  updateButton() {
+    const b = document.getElementById("mixtapeBtn");
+    if (b) b.textContent = "♫ MY MIXTAPE — " + this.collected.size + "/" + (this.total() || "?");
+  },
+  hue(s) { let h = 0; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) % 360; return h; },
+  open() {
+    if (Radio.audio) Radio.audio.pause(); // don't overlap a playing-out song
+    this.render();
+    document.getElementById("library").classList.remove("hidden");
+  },
+  close() { this.stopPlayer(); document.getElementById("library").classList.add("hidden"); },
+  stopPlayer() {
+    if (this.player) { this.player.pause(); this.player = null; }
+    this.playingKey = null;
+    document.getElementById("libNow").classList.add("hidden");
+    document.querySelectorAll(".lib-play").forEach((b) => (b.textContent = "▶"));
+  },
+  toggle(era, file, btn) {
+    const k = this.key(era, file);
+    if (this.playingKey === k) { this.stopPlayer(); return; }
+    this.stopPlayer();
+    this.player = new Audio("radio/music/" + era + "/" + encodeURIComponent(file));
+    this.player.volume = 0.85;
+    this.player.onended = () => this.stopPlayer();
+    this.player.play().catch(() => {});
+    this.playingKey = k;
+    btn.textContent = "⏸";
+    document.getElementById("libNowText").textContent = "♫ " + file.replace(/\.[^.]+$/, "");
+    document.getElementById("libNow").classList.remove("hidden");
+  },
+  render() {
+    const body = document.getElementById("libBody");
+    body.innerHTML = "";
+    document.getElementById("libCount").textContent =
+      this.collected.size + " of " + this.total() + " collected";
+    for (const era of this.order) {
+      const tracks = this.meta[era] || [];
+      if (!tracks.length) continue;
+      const got = tracks.filter((t) => this.collected.has(this.key(era, t.file))).length;
+      const h = document.createElement("div");
+      h.className = "lib-station";
+      h.textContent = STATION_LABEL[era] + "  ·  " + got + "/" + tracks.length;
+      body.appendChild(h);
+      const grid = document.createElement("div");
+      grid.className = "lib-grid";
+      const sorted = tracks.slice().sort((a, b) =>
+        (this.collected.has(this.key(era, a.file)) ? 0 : 1) -
+        (this.collected.has(this.key(era, b.file)) ? 0 : 1));
+      for (const t of sorted) {
+        const has = this.collected.has(this.key(era, t.file));
+        const card = document.createElement("div");
+        card.className = "lib-card" + (has ? "" : " locked");
+        if (has) {
+          const hue = this.hue(t.song);
+          card.innerHTML =
+            '<div class="lib-cover" style="background:linear-gradient(135deg,hsl(' + hue +
+            ',65%,48%),hsl(' + ((hue + 45) % 360) + ',60%,30%))"></div>' +
+            '<div class="lib-info"><div class="lib-song"></div><div class="lib-band"></div><div class="lib-bio"></div></div>' +
+            '<button class="lib-play">▶</button>';
+          card.querySelector(".lib-cover").textContent = (t.band[0] || "♪");
+          card.querySelector(".lib-song").textContent = t.song;
+          card.querySelector(".lib-band").textContent = t.band;
+          card.querySelector(".lib-bio").textContent = t.bio || t.style || "";
+          const btn = card.querySelector(".lib-play");
+          btn.addEventListener("click", () => this.toggle(era, t.file, btn));
+        } else {
+          card.innerHTML =
+            '<div class="lib-cover locked">?</div>' +
+            '<div class="lib-info"><div class="lib-song">? ? ?</div>' +
+            '<div class="lib-bio">Finish this song during a run to collect it.</div></div>';
+        }
+        grid.appendChild(card);
+      }
+      body.appendChild(grid);
+    }
+    if (!this.collected.size) {
+      const empty = document.createElement("div");
+      empty.className = "lib-empty";
+      empty.textContent = "Your mixtape is empty. Finish a song while you run to collect it.";
+      body.prepend(empty);
+    }
+  },
+};
+Library.load();
+Library.updateButton();
+
 // ---------- menu wiring ----------
 // on phones: go fullscreen and try to lock landscape (works on Android;
 // iOS ignores both, but the manifest covers home-screen launches there)
@@ -1962,6 +2145,9 @@ document.getElementById("stopMusicBtn").addEventListener("click", () => {
   Radio.stop();
   updateStopBtn();
 });
+document.getElementById("mixtapeBtn").addEventListener("click", () => Library.open());
+document.getElementById("libClose").addEventListener("click", () => Library.close());
+document.getElementById("libNowStop").addEventListener("click", () => Library.stopPlayer());
 document.querySelectorAll(".decade").forEach((btn) => {
   btn.addEventListener("click", () => {
     document.querySelectorAll(".decade").forEach((b) => b.classList.remove("active"));
