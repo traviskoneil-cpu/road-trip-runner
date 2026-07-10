@@ -1631,7 +1631,7 @@ function drawSpriteHand(a1, a2) {
     const kneeT = 0.5;
     const kx = hx + Math.sin(ang) * legLen * kneeT;
     const ky = hipY + Math.cos(ang) * legLen * kneeT;
-    const ang2 = ang + 0.28;
+    const ang2 = ang - 0.28; // lower joint tucks back under, like a curling finger
     const fx = kx + Math.sin(ang2) * legLen * (1 - kneeT);
     const fy = ky + Math.cos(ang2) * legLen * (1 - kneeT);
     ctx.strokeStyle = legOutline; ctx.lineWidth = 19;
