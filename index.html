@@ -1695,18 +1695,20 @@ function drawPlayer() {
   ctx.beginPath();
   ctx.ellipse(bodyCX + 22, bodyCY + 8, 8, 6, 0.5, 0, Math.PI * 2);
   ctx.fill(); ctx.stroke();
-  // navy sleeve cuff where the wrist trails up and back
+  // navy sleeve cuff on the trailing (screen-left) side of the wrist, so it
+  // reads as a sleeve behind the hand rather than a hat on top. Inside the
+  // horizontal flip, positive x renders on the left of the screen.
   ctx.save();
-  ctx.translate(bodyCX - 6, bodyCY - 16);
-  ctx.rotate(-0.35);
+  ctx.translate(bodyCX + 20, bodyCY - 2);
+  ctx.rotate(0.6);
   ctx.fillStyle = cuff;
   ctx.strokeStyle = outline; ctx.lineWidth = 2.5;
   ctx.beginPath();
-  ctx.ellipse(0, 0, 17, 11, 0, 0, Math.PI * 2);
+  ctx.ellipse(0, 0, 15, 10, 0, 0, Math.PI * 2);
   ctx.fill(); ctx.stroke();
   ctx.fillStyle = "rgba(255,255,255,0.15)";
   ctx.beginPath();
-  ctx.ellipse(-3, -3, 11, 5, 0, 0, Math.PI * 2);
+  ctx.ellipse(-3, -3, 9, 4, 0, 0, Math.PI * 2);
   ctx.fill();
   ctx.restore();
 
