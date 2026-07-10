@@ -146,12 +146,17 @@
       "tagline": "ALL the hits, ALL the time, ALL AT ONCE.",
       "dj": "Jamie & The Toad",
       "voiceDirection": "Jamie: bright caffeinated female pop-radio voice. The Toad: dopey male, two-word interjections, record separately.",
-      "bands": [
-        { "band": "Sk8er Confession", "song": "My Mom Drove Us To The Show" },
-        { "band": "Britney Alexandra", "song": "Text Me Back (Or Else)" },
-        { "band": "B4NDW1DTH", "song": "Buffering... (My Heart)" },
-        { "band": "The O.C. Parking Lot", "song": "Frosted Tips Forever" },
-        { "band": "DJ Nokia", "song": "Snake Charmer (Ringtone Remix)" }
+      "tracks": [
+        { "file": "Backseat Sunrise.mp3", "band": "The Sunroofs", "song": "Backseat Sunrise", "style": "bright up-tempo dance-pop road anthem (Oakenfold 'Starry Eyed Surprise'-ish)" },
+        { "file": "Paper Plane Pulse.mp3", "band": "DJ Contrail", "song": "Paper Plane Pulse", "style": "ethereal trance, 'take me higher' build (Oakenfold-ish)" },
+        { "file": "Text Me Back (Or Else) 2000s.mp3", "band": "Britney Alexandra", "song": "Text Me Back (Or Else)", "style": "2000s teen-pop, sassy (Britney-ish); half of the Text Me Back battle" },
+        { "file": "Text Me Back (Or Else).mp3", "band": "Mandy Sincere", "song": "Text Me Back (Or Else)", "style": "bright bubbly pop, sunny (Natasha Bedingfield-ish); other half of the battle" },
+        { "file": "Snake Charmer (Ringtone Remix).mp3", "band": "DJ Nokia", "song": "Snake Charmer (Ringtone Remix)", "style": "ringtone-beat pop, bubbly female vocal" },
+        { "file": "Last Time.mp3", "band": "Colt Maddox", "song": "Last Time", "style": "country-rap crossover, 'one last time' anthem" },
+        { "file": "Halogen Lamps.mp3", "band": "Kilowatt Youth", "song": "Halogen Lamps", "style": "dark synth/electro-pop, moody" },
+        { "file": "Frosted Tips Forever.mp3", "band": "The O.C. Parking Lot", "song": "Frosted Tips Forever", "style": "00s emo nostalgia, pop-punk" },
+        { "file": "Parking Lot Codes.mp3", "band": "Kacie Vandal", "song": "Parking Lot Codes", "style": "mall pop-punk, 'blue blue blue' hook (Avril-ish)" },
+        { "file": "Broken Link.mp3", "band": "Kacie Vandal", "song": "Broken Link", "style": "pop-punk breakup ballad (Avril-ish)" }
       ]
     }
   }

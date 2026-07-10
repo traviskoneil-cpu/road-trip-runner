@@ -459,6 +459,7 @@ const Radio = {
   },
   start() {
     this.stop();
+    this._battle = false;
     if (this.era === "off") return;
     if (!this.actx) this.actx = new (window.AudioContext || window.webkitAudioContext)();
     if (this.actx.state === "suspended") this.actx.resume();
@@ -471,11 +472,27 @@ const Radio = {
   },
   // DJ break: outro for what just played, sometimes a station ID or ad,
   // then the intro for what's next — like actual radio
+  battleTracks: ["Text Me Back (Or Else).mp3", "Text Me Back (Or Else) 2000s.mp3"],
   playBreak(prevFile, tracks) {
     if (!this.queue.length) this.queue = tracks.slice().sort(() => Math.random() - 0.5);
     const nextFile = this.queue.shift();
     const seq = [];
-    if (prevFile && Math.random() < 0.7) {
+    // "Text Me Back" chart battle: sometimes run the two rival versions
+    // back to back and let the player judge (00s only)
+    let battleToast = null;
+    if (this.era === "00s" && this.battleTracks.includes(nextFile)) {
+      if (this._battle) { // this is the answer song
+        battleToast = "⚔ TEXT ME BACK BATTLE — Round 2! You be the judge.";
+        this._battle = false;
+      } else if (this.battleTracks.every((f) => tracks.includes(f)) && Math.random() < 0.3) {
+        this.queue.unshift(this.battleTracks.find((f) => f !== nextFile));
+        this._battle = true;
+        battleToast = "⚔ TEXT ME BACK BATTLE — Round 1! Same song, two divas.";
+        const b = DJ.pick("battle", "textmeback");
+        if (b) seq.push(b);
+      }
+    }
+    if (prevFile && !battleToast && Math.random() < 0.7) {
       const outro = DJ.pick("outro", DJ.slugOf(prevFile));
       if (outro) seq.push(outro);
     }
@@ -483,15 +500,15 @@ const Radio = {
     if (!prevFile) { // show open: always lead with the station ID
       const id = DJ.pick("id");
       if (id) seq.push(id);
-    } else if (DJ.breaks % 2 === 1) { // every other break gets an ID or ad
+    } else if (!battleToast && DJ.breaks % 2 === 1) { // every other break gets an ID or ad
       const spot = DJ.pick(Math.random() < 0.65 ? "id" : "ad") || DJ.pick("id");
       if (spot) seq.push(spot);
     }
     const intro = DJ.pick("intro", DJ.slugOf(nextFile));
     if (intro) seq.push(intro);
-    DJ.playSeq(seq, () => this.playSong(nextFile, tracks));
+    DJ.playSeq(seq, () => this.playSong(nextFile, tracks, battleToast));
   },
-  playSong(file, tracks) {
+  playSong(file, tracks, toastOverride) {
     this.audio = new Audio("radio/music/" + this.era + "/" + encodeURIComponent(file));
     this.audio.volume = 0.65;
     this.audio.onended = () => this.playBreak(file, tracks);
@@ -507,7 +524,9 @@ const Radio = {
     };
     this.audio.oncanplay = () => { this._errs = 0; };
     this.audio.play().catch(() => {});
-    S.toast = { text: "♪ NOW PLAYING: " + file.replace(/\.[^.]+$/, ""), timer: 3.5 };
+    S.toast = toastOverride
+      ? { text: toastOverride, timer: 4.5 }
+      : { text: "♪ NOW PLAYING: " + file.replace(/\.[^.]+$/, ""), timer: 3.5 };
   },
   stop() {
     if (this.timer) { clearInterval(this.timer); this.timer = null; }
@@ -574,7 +593,7 @@ const DJ = {
   setFiles(files) {
     this.reg = {};
     for (const f of files) {
-      const m = /^(\d0s)_(id|ad|rain|intro|outro|city|unlock)(?:_([a-z0-9]+))?_\d+\.mp3$/.exec(f);
+      const m = /^(\d0s)_(id|ad|rain|intro|outro|city|unlock|battle)(?:_([a-z0-9]+))?_\d+\.mp3$/.exec(f);
       if (!m) continue;
       const era = m[1], type = m[2], slug = m[3];
       const r = (this.reg[era] = this.reg[era] || {});

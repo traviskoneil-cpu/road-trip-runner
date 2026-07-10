@@ -380,6 +380,54 @@ separately: "YEAH!", "SO GOOD!", "TOOOAD!"*
 | **The O.C. Parking Lot** | "Frosted Tips Forever" | Emo-adjacent. Named after a parking lot they've never been to. |
 | **DJ Nokia** | "Snake Charmer (Ringtone Remix)" | Producer. Every beat is made from phone sounds. His hit is 30 seconds long, on purpose. |
 
+### Real tracks on rotation (from `radio/music/00s/`)
+
+Jamie carries the line; The Toad's two-word interjections are marked `(Toad: "…")`
+and recorded separately. Filenames use `00s_…` (see the naming table at the end).
+
+**"Backseat Sunrise" — The Sunroofs** *(bright up-tempo dance-pop road anthem)*
+- `00s_intro_backseatsunrise_1.mp3` — "It's a BEAUTIFUL day in The Blender and here come The Sunroofs! Toad, roll the windows down! — (Toad: 'DOWN!') — 'Backseat Sunrise!'"
+- `00s_outro_backseatsunrise_1.mp3` — "The Sunroofs, everybody! Best days of our LIVES! — (Toad: 'SO GOOD!')"
+
+**"Paper Plane Pulse" — DJ Contrail** *(ethereal trance; performs behind a wall of fog, no one's seen his face)*
+- `00s_intro_paperplanepulse_1.mp3` — "Okaaay slowing it WAY down — this is DJ Contrail, he plays behind a wall of fog, we have LITERALLY never seen his face! 'Paper Plane Pulse!' — (Toad: 'HIGHER!')"
+- `00s_outro_paperplanepulse_1.mp3` — "DJ Contrail! Still foggy! Still a total mystery! — (Toad: 'SPOOKY!')"
+
+**"Text Me Back (Or Else)" — Britney Alexandra** *(the 2000s version; half of the battle)*
+- `00s_intro_textmebackorelse2000s_1.mp3` — "This is the ORIGINAL — Britney Alexandra, 'Text Me Back... Or Else!' If he doesn't text back that's HIS loss, Toad! — (Toad: 'HIS LOSS!')"
+- `00s_outro_textmebackorelse2000s_1.mp3` — "Britney Alexandra! Text her back or she moves ON! — (Toad: 'MOVE ON!')"
+
+**"Text Me Back (Or Else)" — Mandy Sincere** *(the sunny bubbly version; other half of the battle)*
+- `00s_intro_textmebackorelse_1.mp3` — "Now THIS is the sunny one — Mandy Sincere, 'Text Me Back!' Same demand, way more sunshine! — (Toad: 'SUNSHINE!')"
+- `00s_outro_textmebackorelse_1.mp3` — "Mandy Sincere! So bright I need SUNGLASSES! — (Toad: 'SHADES!')"
+
+**The Text Me Back battle** *(plays when the game runs the two versions back to back)*
+- `00s_battle_textmeback_1.mp3` — "Whoa whoa WHOA — we're doing it — BACK TO BACK — Britney Alexandra VERSUS Mandy Sincere, SAME song, and YOU decide who did it better! Toad, ring the bell! — (Toad: 'DING DING!')"
+
+**"Snake Charmer (Ringtone Remix)" — DJ Nokia** *(every beat is a phone sound)*
+- `00s_intro_snakecharmerringtoneremix_1.mp3` — "DJ Nokia in THREE, TWO — Toad, the airhorn — (airhorn) — 'Snake Charmer!' Every single beat is a PHONE! — (Toad: 'BRRRING!')"
+- `00s_outro_snakecharmerringtoneremix_1.mp3` — "DJ Nokia! That ringtone's for sale and it costs MORE than the song! — (Toad: 'BUY IT!')"
+
+**"Last Time" — Colt Maddox** *(the one country-crossover The Blender is required to play)*
+- `00s_intro_lasttime_1.mp3` — "We are contractually required to play ONE country song a day and HERE it is — Colt Maddox, 'Last Time!' He says it's the last time. It is NEVER the last time. — (Toad: 'NEVER!')"
+- `00s_outro_lasttime_1.mp3` — "Colt Maddox! He'll be back doing it all again next hour! — (Toad: 'AGAIN!')"
+
+**"Halogen Lamps" — Kilowatt Youth** *(moody dark electro-pop)*
+- `00s_intro_halogenlamps_1.mp3` — "Ooh this one gets MOODY — Kilowatt Youth, 'Halogen Lamps' — I THINK it's about two robots falling in love? Toad, are you crying again? — (Toad: 'ROBOTS!')"
+- `00s_outro_halogenlamps_1.mp3` — "Kilowatt Youth! Nothing lasts forever EXCEPT that chorus in my HEAD! — (Toad: 'FOREVER!')"
+
+**"Frosted Tips Forever" — The O.C. Parking Lot** *(00s emo nostalgia)*
+- `00s_intro_frostedtipsforever_1.mp3` — "FROSTED TIPS! FOREVER! The O.C. Parking Lot — named after a parking lot they have NEVER been to! — (Toad: 'FROSTY!')"
+- `00s_outro_frostedtipsforever_1.mp3` — "The O.C. Parking Lot! I'm not crying, TOAD'S crying! — (Toad: 'SO GOOD!')"
+
+**"Parking Lot Codes" — Kacie Vandal** *(mall pop-punk; two singles in rotation)*
+- `00s_intro_parkinglotcodes_1.mp3` — "Blue! Blue! BLUE! You know the code! Mall pop-punk royalty Kacie Vandal — 'Parking Lot Codes!' — (Toad: 'BLUE!')"
+- `00s_outro_parkinglotcodes_1.mp3` — "Kacie Vandal! I don't KNOW the code but I'm screaming it anyway! — (Toad: 'BLUE!')"
+
+**"Broken Link" — Kacie Vandal** *(the weepy one)*
+- `00s_intro_brokenlink_1.mp3` — "More Kacie Vandal and this one's a WEEPER — 'Broken Link' — grab the tissues, Toad — (Toad: 'TISSUES!')"
+- `00s_outro_brokenlink_1.mp3` — "Kacie Vandal, 'Broken Link.' We were CLOSE, Toad! — (Toad: 'SO CLOSE!')"
+
 ### Banter library
 
 **Song intros**
@@ -431,6 +479,7 @@ All clips go flat into `radio/clips/` (no subfolders). Lowercase, no spaces:
 | Rain warning | `{era}_rain_{n}.mp3` | `90s_rain_1.mp3` |
 | City arrival | `{era}_city_{newyork\|desert\|sanfrancisco\|farmland\|losangeles\|washingtondc}_{n}.mp3` | `90s_city_desert_1.mp3` |
 | Unlock | `{era}_unlock_{skateboard\|motorcycle}_{n}.mp3` | `90s_unlock_skateboard_1.mp3` |
+| Battle | `{era}_battle_{slug}_{n}.mp3` | `00s_battle_textmeback_1.mp3` |
 
 `{songslug}` = the song title lowercased with spaces/punctuation removed
 (`Blue Tape Corner` → `bluetapecorner`). `{n}` = 1, 2, 3... for alternate
