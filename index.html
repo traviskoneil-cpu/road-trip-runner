@@ -1588,6 +1588,73 @@ function drawObstacle(o, theme) {
 }
 
 // ---- the star of the show: running fingers ----
+// ---- optional hand sprite (assets/hand.png): a legless fist body that we
+// composite with code-drawn, animated finger-legs. Falls back to the fully
+// drawn hand if the file is missing. Attach points are measured from the art.
+const HandSprite = {
+  ready: false, cv: null,
+  ax: 820, ay: 711,   // attach midpoint (image px)
+  lax: 775, lay: 715, // left/back finger attaches here
+  rax: 865, ray: 707, // right/front finger attaches here
+  scale: 0.116,
+  load() {
+    const img = new Image();
+    img.onload = () => this.process(img);
+    img.onerror = () => {}; // missing file -> drawn-hand fallback stays
+    img.src = "assets/hand.png";
+  },
+  process(img) {
+    const c = document.createElement("canvas");
+    c.width = img.naturalWidth; c.height = img.naturalHeight;
+    const g = c.getContext("2d");
+    g.drawImage(img, 0, 0);
+    // knock out the faint leftover cutout halo/shadow
+    const id = g.getImageData(0, 0, c.width, c.height), d = id.data;
+    for (let i = 3; i < d.length; i += 4) if (d[i] < 100) d[i] = 0;
+    g.putImageData(id, 0, 0);
+    this.cv = c; this.ready = true;
+  },
+};
+HandSprite.load();
+
+// body sprite + two animated finger-legs drawn to match the art's palette
+function drawSpriteHand(a1, a2) {
+  const s = HandSprite.scale, legLen = 36;
+  const legSkin = "#ffa54d", legShade = "#ef8a3a", legOutline = "#141414", legPad = "#ffd89f";
+  const bob = -Math.abs(Math.sin(player.legPhase)) * 2; // subtle run bounce
+  const hipY = -33 + bob;
+  const lx = (HandSprite.lax - HandSprite.ax) * s;
+  const rx = (HandSprite.rax - HandSprite.ax) * s;
+  ctx.lineCap = "round"; ctx.lineJoin = "round";
+
+  function leg(hx, ang, fill) {
+    const kneeT = 0.5;
+    const kx = hx + Math.sin(ang) * legLen * kneeT;
+    const ky = hipY + Math.cos(ang) * legLen * kneeT;
+    const ang2 = ang + 0.28;
+    const fx = kx + Math.sin(ang2) * legLen * (1 - kneeT);
+    const fy = ky + Math.cos(ang2) * legLen * (1 - kneeT);
+    ctx.strokeStyle = legOutline; ctx.lineWidth = 19;
+    ctx.beginPath(); ctx.moveTo(hx, hipY); ctx.lineTo(kx, ky); ctx.lineTo(fx, fy); ctx.stroke();
+    ctx.strokeStyle = fill; ctx.lineWidth = 14;
+    ctx.beginPath(); ctx.moveTo(hx, hipY); ctx.lineTo(kx, ky); ctx.stroke();
+    ctx.lineWidth = 12;
+    ctx.beginPath(); ctx.moveTo(kx, ky); ctx.lineTo(fx, fy); ctx.stroke();
+    ctx.fillStyle = fill; ctx.strokeStyle = legOutline; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.arc(fx, fy, 8, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = legPad; // nail highlight
+    ctx.beginPath(); ctx.arc(fx - 2, fy - 2, 3.2, 0, Math.PI * 2); ctx.fill();
+  }
+
+  leg(lx, a2, legShade); // back leg (behind the body)
+  ctx.save();
+  ctx.translate(0, hipY);
+  ctx.scale(s, s);
+  ctx.drawImage(HandSprite.cv, -HandSprite.ax, -HandSprite.ay);
+  ctx.restore();
+  leg(rx, a1, legSkin);  // front leg (over the body)
+}
+
 function drawPlayer() {
   const flash = S.invuln > 0 && Math.floor(S.invuln * 10) % 2 === 0;
   if (flash) return;
@@ -1632,7 +1699,10 @@ function drawPlayer() {
     ctx.translate(0, -22);
   }
 
-  // Drawn natively facing right (direction of travel). The pose is the real
+  // real hand sprite (assets/hand.png) + animated legs, when it has loaded
+  if (HandSprite.ready) { drawSpriteHand(a1, a2); ctx.restore(); return; }
+
+  // Fallback: fully drawn hand, natively facing right. The pose is the real
   // "walking fingers" gesture: index + middle finger are the legs, the rest of
   // the hand is a fist, and the wrist/forearm trails up and back to a sleeve.
   const hipY = -33, legLen = 33;
