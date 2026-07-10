@@ -1596,7 +1596,7 @@ function drawPlayer() {
   ctx.save();
   ctx.translate(px, py);
 
-  const skin = "#e8b48f", skinShade = "#d49b74";
+  const skin = "#eeb892", skinShade = "#d99b73", outline = "#5b3a26", cuff = "#33405f";
 
   // finger legs: two fingers scissoring while grounded, tucked in air
   let a1, a2;
@@ -1632,37 +1632,82 @@ function drawPlayer() {
     ctx.translate(0, -22);
   }
 
-  // legs (index + middle finger)
-  const legLen = 34;
+  const hipY = -33, legLen = 33;
   ctx.lineCap = "round";
-  ctx.strokeStyle = skinShade; ctx.lineWidth = 13;
-  ctx.beginPath();
-  ctx.moveTo(-4, -legLen);
-  ctx.lineTo(-4 + Math.sin(a2) * legLen, -legLen + Math.cos(a2) * legLen);
-  ctx.stroke();
-  ctx.strokeStyle = skin;
-  ctx.beginPath();
-  ctx.moveTo(4, -legLen);
-  ctx.lineTo(4 + Math.sin(a1) * legLen, -legLen + Math.cos(a1) * legLen);
-  ctx.stroke();
+  ctx.lineJoin = "round";
 
-  // palm / fist (folded fingers = the "body")
+  // one tapered finger-leg: knuckle -> knee bend -> rounded fingertip pad,
+  // drawn with a dark outline underneath the skin so it reads as a limb
+  function leg(hipX, ang, fill) {
+    const kneeT = 0.52;
+    const kx = hipX + Math.sin(ang) * legLen * kneeT;
+    const ky = hipY + Math.cos(ang) * legLen * kneeT;
+    const ang2 = ang + 0.28; // lower joint bends toward travel = running knee
+    const fx = kx + Math.sin(ang2) * legLen * (1 - kneeT);
+    const fy = ky + Math.cos(ang2) * legLen * (1 - kneeT);
+    // outline pass
+    ctx.strokeStyle = outline; ctx.lineWidth = 16;
+    ctx.beginPath();
+    ctx.moveTo(hipX, hipY); ctx.lineTo(kx, ky); ctx.lineTo(fx, fy);
+    ctx.stroke();
+    // taper: thick shin, thinner toward the tip
+    ctx.strokeStyle = fill; ctx.lineWidth = 13;
+    ctx.beginPath(); ctx.moveTo(hipX, hipY); ctx.lineTo(kx, ky); ctx.stroke();
+    ctx.lineWidth = 11;
+    ctx.beginPath(); ctx.moveTo(kx, ky); ctx.lineTo(fx, fy); ctx.stroke();
+    // fingertip pad
+    ctx.fillStyle = fill;
+    ctx.strokeStyle = outline; ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.arc(fx, fy, 7, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+  }
+
+  // back leg (shaded, drawn first so it sits behind the body)
+  leg(-3, a2, skinShade);
+
+  // fist body (folded fingers) with outline
+  const bodyCX = 2, bodyCY = -56, bodyRX = 25, bodyRY = 23;
+  ctx.strokeStyle = outline; ctx.lineWidth = 3;
   ctx.fillStyle = skin;
   ctx.beginPath();
-  ctx.ellipse(2, -legLen - 18, 24, 20, -0.15, 0, Math.PI * 2);
-  ctx.fill();
-  // knuckle bumps
+  ctx.ellipse(bodyCX, bodyCY, bodyRX, bodyRY, -0.12, 0, Math.PI * 2);
+  ctx.fill(); ctx.stroke();
+  // knuckle ridge along the front/top edge (the folded fingertips)
   ctx.fillStyle = skinShade;
-  for (let i = 0; i < 3; i++) {
+  ctx.strokeStyle = outline; ctx.lineWidth = 1.5;
+  for (let i = 0; i < 4; i++) {
     ctx.beginPath();
-    ctx.arc(14 - i * 11, -legLen - 35, 5.5, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.arc(bodyCX + 16 - i * 9, bodyCY - 16 + i * 1.5, 5, 0, Math.PI * 2);
+    ctx.fill(); ctx.stroke();
   }
+  // crease where the fingers fold under
+  ctx.strokeStyle = "rgba(91,58,38,0.4)"; ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(bodyCX - 18, bodyCY + 4);
+  ctx.quadraticCurveTo(bodyCX, bodyCY + 10, bodyCX + 20, bodyCY);
+  ctx.stroke();
   // thumb tucked at the front
   ctx.fillStyle = skin;
+  ctx.strokeStyle = outline; ctx.lineWidth = 2.5;
   ctx.beginPath();
-  ctx.ellipse(22, -legLen - 12, 9, 7, 0.5, 0, Math.PI * 2);
+  ctx.ellipse(bodyCX + 22, bodyCY + 8, 8, 6, 0.5, 0, Math.PI * 2);
+  ctx.fill(); ctx.stroke();
+  // navy sleeve cuff where the wrist trails up and back
+  ctx.save();
+  ctx.translate(bodyCX - 6, bodyCY - 16);
+  ctx.rotate(-0.35);
+  ctx.fillStyle = cuff;
+  ctx.strokeStyle = outline; ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  ctx.ellipse(0, 0, 17, 11, 0, 0, Math.PI * 2);
+  ctx.fill(); ctx.stroke();
+  ctx.fillStyle = "rgba(255,255,255,0.15)";
+  ctx.beginPath();
+  ctx.ellipse(-3, -3, 11, 5, 0, 0, Math.PI * 2);
   ctx.fill();
+  ctx.restore();
+
+  // front leg (full skin, drawn last so it sits in front of the body)
+  leg(5, a1, skin);
 
   ctx.restore();
 }
