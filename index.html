@@ -1632,6 +1632,10 @@ function drawPlayer() {
     ctx.translate(0, -22);
   }
 
+  // the hand faces right, into the direction of travel (the ride vehicles
+  // above already do). Without this the runner appears to moonwalk.
+  ctx.save();
+  ctx.scale(-1, 1);
   const hipY = -33, legLen = 33;
   ctx.lineCap = "round";
   ctx.lineJoin = "round";
@@ -1709,6 +1713,7 @@ function drawPlayer() {
   // front leg (full skin, drawn last so it sits in front of the body)
   leg(5, a1, skin);
 
+  ctx.restore(); // pop the facing flip
   ctx.restore();
 }
 
