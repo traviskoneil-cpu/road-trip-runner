@@ -1632,10 +1632,9 @@ function drawPlayer() {
     ctx.translate(0, -22);
   }
 
-  // the hand faces right, into the direction of travel (the ride vehicles
-  // above already do). Without this the runner appears to moonwalk.
-  ctx.save();
-  ctx.scale(-1, 1);
+  // Drawn natively facing right (direction of travel). The pose is the real
+  // "walking fingers" gesture: index + middle finger are the legs, the rest of
+  // the hand is a fist, and the wrist/forearm trails up and back to a sleeve.
   const hipY = -33, legLen = 33;
   ctx.lineCap = "round";
   ctx.lineJoin = "round";
@@ -1649,73 +1648,74 @@ function drawPlayer() {
     const ang2 = ang + 0.28; // lower joint bends toward travel = running knee
     const fx = kx + Math.sin(ang2) * legLen * (1 - kneeT);
     const fy = ky + Math.cos(ang2) * legLen * (1 - kneeT);
-    // outline pass
     ctx.strokeStyle = outline; ctx.lineWidth = 16;
     ctx.beginPath();
     ctx.moveTo(hipX, hipY); ctx.lineTo(kx, ky); ctx.lineTo(fx, fy);
     ctx.stroke();
-    // taper: thick shin, thinner toward the tip
     ctx.strokeStyle = fill; ctx.lineWidth = 13;
     ctx.beginPath(); ctx.moveTo(hipX, hipY); ctx.lineTo(kx, ky); ctx.stroke();
     ctx.lineWidth = 11;
     ctx.beginPath(); ctx.moveTo(kx, ky); ctx.lineTo(fx, fy); ctx.stroke();
-    // fingertip pad
     ctx.fillStyle = fill;
     ctx.strokeStyle = outline; ctx.lineWidth = 2.5;
     ctx.beginPath(); ctx.arc(fx, fy, 7, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
   }
 
-  // back leg (shaded, drawn first so it sits behind the body)
-  leg(-3, a2, skinShade);
+  // back finger-leg (shaded, behind everything)
+  leg(-1, a2, skinShade);
 
-  // fist body (folded fingers) with outline
-  const bodyCX = 2, bodyCY = -56, bodyRX = 25, bodyRY = 23;
+  // ---- forearm trailing up and back to the sleeve cuff ----
+  // this is the cue that says "a hand on an arm" rather than a floating blob
+  const wx = -30, wy = -82; // wrist/cuff anchor: up and behind
+  ctx.strokeStyle = outline; ctx.lineWidth = 22;
+  ctx.beginPath(); ctx.moveTo(-8, -54); ctx.lineTo(wx, wy); ctx.stroke();
+  ctx.strokeStyle = skin; ctx.lineWidth = 18;
+  ctx.beginPath(); ctx.moveTo(-8, -54); ctx.lineTo(wx, wy); ctx.stroke();
+  // navy sleeve cuff at the top of the forearm
+  ctx.save();
+  ctx.translate(wx, wy); ctx.rotate(-0.72);
+  ctx.fillStyle = cuff; ctx.strokeStyle = outline; ctx.lineWidth = 2.5;
+  ctx.beginPath(); ctx.ellipse(0, 0, 13, 10, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = "rgba(255,255,255,0.15)";
+  ctx.beginPath(); ctx.ellipse(-2, -3, 8, 4, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
+
+  // ---- fist: oblong back-of-hand, wider than tall, tilted slightly ----
   ctx.strokeStyle = outline; ctx.lineWidth = 3;
   ctx.fillStyle = skin;
   ctx.beginPath();
-  ctx.ellipse(bodyCX, bodyCY, bodyRX, bodyRY, -0.12, 0, Math.PI * 2);
+  ctx.ellipse(0, -52, 25, 18, -0.14, 0, Math.PI * 2);
   ctx.fill(); ctx.stroke();
-  // knuckle ridge along the front/top edge (the folded fingertips)
+
+  // knuckle ridge along the top (back of the hand): bumps front -> back
   ctx.fillStyle = skinShade;
   ctx.strokeStyle = outline; ctx.lineWidth = 1.5;
   for (let i = 0; i < 4; i++) {
     ctx.beginPath();
-    ctx.arc(bodyCX + 16 - i * 9, bodyCY - 16 + i * 1.5, 5, 0, Math.PI * 2);
+    ctx.arc(16 - i * 10, -64 + i * 2, 5, 0, Math.PI * 2);
     ctx.fill(); ctx.stroke();
   }
-  // crease where the fingers fold under
-  ctx.strokeStyle = "rgba(91,58,38,0.4)"; ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(bodyCX - 18, bodyCY + 4);
-  ctx.quadraticCurveTo(bodyCX, bodyCY + 10, bodyCX + 20, bodyCY);
-  ctx.stroke();
-  // thumb tucked at the front
-  ctx.fillStyle = skin;
-  ctx.strokeStyle = outline; ctx.lineWidth = 2.5;
-  ctx.beginPath();
-  ctx.ellipse(bodyCX + 22, bodyCY + 8, 8, 6, 0.5, 0, Math.PI * 2);
-  ctx.fill(); ctx.stroke();
-  // navy sleeve cuff on the trailing (screen-left) side of the wrist, so it
-  // reads as a sleeve behind the hand rather than a hat on top. Inside the
-  // horizontal flip, positive x renders on the left of the screen.
+
+  // curled-finger creases on the front (leading) face: concave knuckle folds
+  ctx.strokeStyle = "rgba(91,58,38,0.5)"; ctx.lineWidth = 2;
+  for (let i = 0; i < 3; i++) {
+    const yy = -57 + i * 8;
+    ctx.beginPath();
+    ctx.moveTo(22, yy);
+    ctx.quadraticCurveTo(15, yy + 4, 7, yy + 2);
+    ctx.stroke();
+  }
+
+  // thumb wrapping across the front of the fist
+  ctx.fillStyle = skin; ctx.strokeStyle = outline; ctx.lineWidth = 2.5;
   ctx.save();
-  ctx.translate(bodyCX + 20, bodyCY - 2);
-  ctx.rotate(0.6);
-  ctx.fillStyle = cuff;
-  ctx.strokeStyle = outline; ctx.lineWidth = 2.5;
-  ctx.beginPath();
-  ctx.ellipse(0, 0, 15, 10, 0, 0, Math.PI * 2);
-  ctx.fill(); ctx.stroke();
-  ctx.fillStyle = "rgba(255,255,255,0.15)";
-  ctx.beginPath();
-  ctx.ellipse(-3, -3, 9, 4, 0, 0, Math.PI * 2);
-  ctx.fill();
+  ctx.translate(12, -43); ctx.rotate(0.55);
+  ctx.beginPath(); ctx.ellipse(0, 0, 11, 6, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
   ctx.restore();
 
-  // front leg (full skin, drawn last so it sits in front of the body)
-  leg(5, a1, skin);
+  // front finger-leg (full skin, in front of the body)
+  leg(7, a1, skin);
 
-  ctx.restore(); // pop the facing flip
   ctx.restore();
 }
 
