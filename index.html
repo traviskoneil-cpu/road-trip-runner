@@ -609,7 +609,9 @@ const Radio = {
     this.queue = [];
     if (this.audio) {
       this.audio.volume = 0.65; // un-duck in case Meg was mid-line
-      this.audio.onended = () => { Library.collect(this.era, this.nowFile); this.audio = null; updateStopBtn(); };
+      // NB: no collect() here — a song only counts if you finish it alive,
+      // not by dying and letting it play out over the game-over screen
+      this.audio.onended = () => { this.audio = null; updateStopBtn(); };
       this.audio.onerror = () => { this.audio = null; updateStopBtn(); };
     }
   },
