@@ -71,119 +71,136 @@
           "band": "N2U",
           "song": "Spin Me Right",
           "style": "boy-band dance-pop, four-on-the-floor, key-change finale",
-          "bio": "Five guys who met at a mall shoe store. Their choreographer quit over 'The Spin.'"
+          "bio": "Five guys who met at a mall shoe store. Their choreographer quit over 'The Spin.'",
+          "genre": "Boy Band"
         },
         {
           "file": "Blue Hairclip.mp3",
           "band": "N2U",
           "song": "Blue Hairclip",
           "style": "boy-band dance-pop, call-and-response backing vocals",
-          "bio": "The follow-up single. Steve, the quiet one, secretly writes everything."
+          "bio": "The follow-up single. Steve, the quiet one, secretly writes everything.",
+          "genre": "Boy Band"
         },
         {
           "file": "Chain Link Riot.mp3",
           "band": "Karpet Burn",
           "song": "Chain Link Riot",
           "style": "nu metal rap rock, gang vocals, turntable scratches",
-          "bio": "Nu-metal born in a storage unit. The cinder-block wall they smash is foam."
+          "bio": "Nu-metal born in a storage unit. The cinder-block wall they smash is foam.",
+          "genre": "Nu-Metal"
         },
         {
           "file": "Blue Tape Corner.mp3",
           "band": "Motel Soap",
           "song": "Blue Tape Corner",
           "style": "funky alt-rock, turntable scratches, half-time bridge",
-          "bio": "Cincinnati funk-rock. Their DJ is credited only as 'Wristwatch.'"
+          "bio": "Cincinnati funk-rock. Their DJ is credited only as 'Wristwatch.'",
+          "genre": "Funk-Rock"
         },
         {
           "file": "Hammer of Asgard.mp3",
           "band": "Wölfhammer",
           "song": "Hammer of Asgard",
           "style": "thrash metal, 180 BPM gallop, gang vocals, Viking everything",
-          "bio": "Thrash-metal Vikings from Ohio. The singer's real name is Gary."
+          "bio": "Thrash-metal Vikings from Ohio. The singer's real name is Gary.",
+          "genre": "Thrash Metal"
         },
         {
           "file": "Greedy Fly.mp3",
           "band": "The Gauze",
           "song": "Greedy Fly",
           "style": "British post-grunge, brooding, menacing crunch (Bush-ish)",
-          "bio": "British post-grunge. The fly is 'a real fly. And also capitalism.'"
+          "bio": "British post-grunge. The fly is 'a real fly. And also capitalism.'",
+          "genre": "Post-Grunge"
         },
         {
           "file": "Burning Bright.mp3",
           "band": "Kaydee Sparx",
           "song": "Burning Bright",
           "style": "teen dance-pop, glossy, romantic (Britney-ish)",
-          "bio": "A pop star on a college station. Even Meg admits it's catchy."
+          "bio": "A pop star on a college station. Even Meg admits it's catchy.",
+          "genre": "Teen Pop"
         },
         {
           "file": "Talk Till Dawn.mp3",
           "band": "The Pen Pals",
           "song": "Talk Till Dawn",
           "style": "nerdy fast-talk folk-pop, cozy (Barenaked Ladies-ish)",
-          "bio": "Six nerds from Ontario who tour with a thesaurus."
+          "bio": "Six nerds from Ontario who tour with a thesaurus.",
+          "genre": "Folk-Pop"
         },
         {
           "file": "Monsoon.mp3",
           "band": "Big Swell",
           "song": "Monsoon",
           "style": "west-coast 90s R&B/rap, laid-back groove (Montell Jordan-ish)",
-          "bio": "West-coast R&B. Every song is weather as a metaphor for arguing."
+          "bio": "West-coast R&B. Every song is weather as a metaphor for arguing.",
+          "genre": "West-Coast R&B"
         },
         {
           "file": "Birthday Cake.mp3",
           "band": "Prince Sunday",
           "song": "Birthday Cake",
           "style": "west-coast rap, smooth and menacing, recorded live",
-          "bio": "Recorded live at a club called The Frosting. Darker than it sounds."
+          "bio": "Recorded live at a club called The Frosting. Darker than it sounds.",
+          "genre": "West-Coast Rap"
         },
         {
           "file": "What a Nice Idea.mp3",
           "band": "Joni Spite",
           "song": "What a Nice Idea",
           "style": "confessional alt, dreamy but pointed (Alanis-ish)",
-          "bio": "Wrote it in a parking lot in eleven minutes. Tells you at every show."
+          "bio": "Wrote it in a parking lot in eleven minutes. Tells you at every show.",
+          "genre": "Alt-Rock"
         },
         {
           "file": "Tell Me.mp3",
           "band": "The Wednesday Pale",
           "song": "Tell Me",
           "style": "dream-alt, ethereal female vocals, dramatic (Cranberries-ish)",
-          "bio": "Dream-alt. Singer Saoirse hums the parts she hasn't written yet."
+          "bio": "Dream-alt. Singer Saoirse hums the parts she hasn't written yet.",
+          "genre": "Dream-Alt"
         },
         {
           "file": "Just to Be a Ghost.mp3",
           "band": "The Wednesday Pale",
           "song": "Just to Be a Ghost",
           "style": "dream-alt, haunted, female-vocal bridge (Cranberries-ish)",
-          "bio": "The follow-up. The ghost is an ex. Or a real ghost. She won't say."
+          "bio": "The follow-up. The ghost is an ex. Or a real ghost. She won't say.",
+          "genre": "Dream-Alt"
         },
         {
           "file": "Dune Line.mp3",
           "band": "Sidewalk Curfew",
           "song": "Dune Line",
           "style": "snotty pop-punk, three chords, fast (Green Day-ish)",
-          "bio": "Pop-punk trio. All three claim they wrote it; none play it the same twice."
+          "bio": "Pop-punk trio. All three claim they wrote it; none play it the same twice.",
+          "genre": "Pop-Punk"
         },
         {
           "file": "Paper Crown.mp3",
           "band": "Homeroom Heroes",
           "song": "Paper Crown",
           "style": "mall pop-punk, gang-vocal chorus (New Found Glory-ish)",
-          "bio": "Mall pop-punk. Sang backup for N2U and will deny it to your face."
+          "bio": "Mall pop-punk. Sang backup for N2U and will deny it to your face.",
+          "genre": "Pop-Punk"
         },
         {
           "file": "Paper Hands.mp3",
           "band": "Cardigan Weather",
           "song": "Paper Hands",
           "style": "earnest flannel arena-grunge, mumbled verses (Pearl Jam-ish)",
-          "bio": "Flannel arena-grunge. The singer mumbles on purpose."
+          "bio": "Flannel arena-grunge. The singer mumbles on purpose.",
+          "genre": "Grunge"
         },
         {
           "file": "Into the Rain.mp3",
           "band": "Barefoot Caravan",
           "song": "Into the Rain",
           "style": "hippie jam-band, too much percussion (Rusted Root-ish)",
-          "bio": "Jam-band hippies. At least four drummers. Member count unknown."
+          "bio": "Jam-band hippies. At least four drummers. Member count unknown.",
+          "genre": "Jam Band"
         }
       ]
     },
@@ -199,70 +216,136 @@
           "band": "The Sunroofs",
           "song": "Backseat Sunrise",
           "style": "bright up-tempo dance-pop road anthem (Oakenfold 'Starry Eyed Surprise'-ish)",
-          "bio": "Dance-pop one-hit-wonder. Best days of your life, allegedly."
+          "bio": "Dance-pop one-hit-wonder. Best days of your life, allegedly.",
+          "genre": "Dance-Pop"
         },
         {
           "file": "Paper Plane Pulse.mp3",
           "band": "DJ Contrail",
           "song": "Paper Plane Pulse",
           "style": "ethereal trance, 'take me higher' build (Oakenfold-ish)",
-          "bio": "Trance producer who performs behind a wall of fog. No one's seen his face."
+          "bio": "Trance producer who performs behind a wall of fog. No one's seen his face.",
+          "genre": "Trance"
         },
         {
           "file": "Text Me Back (Or Else) 2000s.mp3",
           "band": "Britney Alexandra",
           "song": "Text Me Back (Or Else)",
           "style": "2000s teen-pop, sassy (Britney-ish); half of the Text Me Back battle",
-          "bio": "Teen-pop royalty. Text her back or she moves on."
+          "bio": "Teen-pop royalty. Text her back or she moves on.",
+          "genre": "Teen Pop"
         },
         {
           "file": "Text Me Back (Or Else).mp3",
           "band": "Mandy Sincere",
           "song": "Text Me Back (Or Else)",
           "style": "bright bubbly pop, sunny (Natasha Bedingfield-ish); other half of the battle",
-          "bio": "The sunny version. Same demand, more sunshine."
+          "bio": "The sunny version. Same demand, more sunshine.",
+          "genre": "Bubblegum Pop"
         },
         {
           "file": "Snake Charmer (Ringtone Remix).mp3",
           "band": "DJ Nokia",
           "song": "Snake Charmer (Ringtone Remix)",
           "style": "ringtone-beat pop, bubbly female vocal",
-          "bio": "Every beat is a phone sound. The ringtone costs more than the song."
+          "bio": "Every beat is a phone sound. The ringtone costs more than the song.",
+          "genre": "Ringtone Pop"
         },
         {
           "file": "Last Time.mp3",
           "band": "Colt Maddox",
           "song": "Last Time",
           "style": "country-rap crossover, 'one last time' anthem",
-          "bio": "Country crossover. He swears it's the last time. It never is."
+          "bio": "Country crossover. He swears it's the last time. It never is.",
+          "genre": "Country-Rap"
         },
         {
           "file": "Halogen Lamps.mp3",
           "band": "Kilowatt Youth",
           "song": "Halogen Lamps",
           "style": "dark synth/electro-pop, moody",
-          "bio": "Moody electro-pop, possibly about two robots falling in love."
+          "bio": "Moody electro-pop, possibly about two robots falling in love.",
+          "genre": "Electro-Pop"
         },
         {
           "file": "Frosted Tips Forever.mp3",
           "band": "The O.C. Parking Lot",
           "song": "Frosted Tips Forever",
           "style": "00s emo nostalgia, pop-punk",
-          "bio": "Emo, named after a parking lot they've never actually visited."
+          "bio": "Emo, named after a parking lot they've never actually visited.",
+          "genre": "Emo"
         },
         {
           "file": "Parking Lot Codes.mp3",
           "band": "Kacie Vandal",
           "song": "Parking Lot Codes",
           "style": "mall pop-punk, 'blue blue blue' hook (Avril-ish)",
-          "bio": "Mall pop-punk. Blue, blue, blue — you know the code."
+          "bio": "Mall pop-punk. Blue, blue, blue — you know the code.",
+          "genre": "Pop-Punk"
         },
         {
           "file": "Broken Link.mp3",
           "band": "Kacie Vandal",
           "song": "Broken Link",
           "style": "pop-punk breakup ballad (Avril-ish)",
-          "bio": "The weepy one. You were close."
+          "bio": "The weepy one. You were close.",
+          "genre": "Pop-Punk"
+        },
+        {
+          "file": "Don't Follow Me.mp3",
+          "band": "The Tin Kings",
+          "song": "Don't Follow Me",
+          "style": "garage blues-rock stomp (White Stripes / 'Seven Nation Army'-ish)",
+          "genre": "Garage Blues",
+          "bio": "A garage-blues two-piece. The drummer and guitarist may or may not be siblings and refuse to clarify."
+        },
+        {
+          "file": "Passwords.mp3",
+          "band": "Marlowe Kai",
+          "song": "Passwords",
+          "style": "mellow acoustic surf-pop (Jack Johnson-ish)",
+          "genre": "Acoustic Pop",
+          "bio": "A barefoot beach troubadour who records everything in a hammock."
+        },
+        {
+          "file": "Every Time I Close My Eyes.mp3",
+          "band": "Copper Avenue",
+          "song": "Every Time I Close My Eyes",
+          "style": "catchy pop-rock (early Maroon 5-ish)",
+          "genre": "Pop-Rock",
+          "bio": "Relentlessly catchy pop-rock. You'll be humming this against your will."
+        },
+        {
+          "file": "Forever & Ever.mp3",
+          "band": "The Velvet Casino",
+          "song": "Forever & Ever",
+          "style": "anthemic new-wave indie rock (The Killers-ish)",
+          "genre": "Indie Rock",
+          "bio": "Vegas glam-indie. The frontman wears one sequined glove and won't say why."
+        },
+        {
+          "file": "Moon.mp3",
+          "band": "Cheap Halo",
+          "song": "Moon",
+          "style": "loud retro garage rock (Jet-ish)",
+          "genre": "Garage Rock",
+          "bio": "Loud garage rock. Every song is about the moon, or a girl, sometimes both."
+        },
+        {
+          "file": "Drive.mp3",
+          "band": "Archduke",
+          "song": "Drive",
+          "style": "angular art-school dance-punk (Franz Ferdinand-ish)",
+          "genre": "Dance-Punk",
+          "bio": "Art-school dance-punk named after a historical event they can't spell."
+        },
+        {
+          "file": "Through Your Eyes.mp3",
+          "band": "Della Sky",
+          "song": "Through Your Eyes",
+          "style": "upbeat piano pop, sad lyrics (Vanessa Carlton-ish)",
+          "genre": "Piano Pop",
+          "bio": "Piano pop: devastating lyrics over an impossibly happy melody."
         }
       ]
     }

@@ -30,7 +30,10 @@
   .sync:hover { border-color:var(--accent); }
   #syncVal { font-size:14px; min-width:52px; text-align:center; font-variant-numeric:tabular-nums; }
   .synchint { font-size:11px; opacity:0.45; }
-  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:12px; max-width:900px; margin:0 auto; width:100%; }
+  #songGrid { max-width:900px; margin:0 auto; width:100%; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:12px; width:100%; }
+  .decade { font-size:14px; letter-spacing:2px; color:#ffd166; text-transform:uppercase; opacity:0.85; margin:22px 2px 10px; }
+  .song .tag { position:absolute; top:8px; left:8px; background:rgba(8,10,20,0.72); color:#cfe4ff; font-size:10px; letter-spacing:.4px; padding:2px 7px; border-radius:10px; }
   .song { background:var(--panel); border-radius:12px; overflow:hidden; cursor:pointer; transition:transform .1s; position:relative; }
   .song:hover { transform:translateY(-3px); }
   .song .art { width:100%; aspect-ratio:1; object-fit:cover; display:block; background:#2a3350; }
@@ -87,7 +90,7 @@
     <button class="sync" data-s="10">+</button>
     <span class="synchint">notes hitting early? go +  ·  late? go &minus;</span>
   </div>
-  <div class="grid" id="songGrid"></div>
+  <div id="songGrid"></div>
   <div class="keys">
     Desktop: <kbd>F</kbd> <kbd>J</kbd> <kbd>K</kbd> or <kbd>&larr;</kbd> <kbd>&darr;</kbd> <kbd>&rarr;</kbd> &nbsp;·&nbsp; Mobile: tap the three lanes
   </div>
@@ -175,21 +178,34 @@ fetch("../radio/stations.json").then((r) => r.json()).then((d) => {
 function coverURL(m) { return "../radio/covers/" + m.era + "/" + encodeURIComponent(m.file.replace(/\.[^.]+$/, "")) + ".jpg"; }
 function songURL(m) { return "../radio/music/" + m.era + "/" + encodeURIComponent(m.file); }
 
+const ERA_LABEL = { "90s": "THE '90s · The Dirt", "00s": "THE '00s · The Blender", "80s": "THE '80s · The Razor", "70s": "THE '70s · The Wax Museum" };
 function renderGrid() {
-  const g = $("songGrid");
-  g.innerHTML = "";
-  for (const m of META) {
-    const collected = COLLECTED.has(m.era + "|" + m.file);
-    const el = document.createElement("div");
-    el.className = "song";
-    el.innerHTML =
-      '<img class="art" alt="" src="' + coverURL(m) + '" onerror="this.style.visibility=\'hidden\'">' +
-      (collected ? '<span class="star">★</span>' : '') +
-      '<div class="meta"><div class="t"></div><div class="b"></div></div>';
-    el.querySelector(".t").textContent = m.song;
-    el.querySelector(".b").textContent = m.band;
-    el.addEventListener("click", () => startSong(m));
-    g.appendChild(el);
+  const host = $("songGrid");
+  host.innerHTML = "";
+  for (const era of ["90s", "00s", "80s", "70s"]) {
+    const tracks = META.filter((m) => m.era === era);
+    if (!tracks.length) continue;
+    const hdr = document.createElement("div");
+    hdr.className = "decade"; hdr.textContent = ERA_LABEL[era] || era;
+    host.appendChild(hdr);
+    const grid = document.createElement("div");
+    grid.className = "grid";
+    for (const m of tracks) {
+      const collected = COLLECTED.has(m.era + "|" + m.file);
+      const el = document.createElement("div");
+      el.className = "song";
+      el.innerHTML =
+        '<img class="art" alt="" src="' + coverURL(m) + '" onerror="this.style.visibility=\'hidden\'">' +
+        (collected ? '<span class="star">★</span>' : '') +
+        (m.genre ? '<span class="tag"></span>' : '') +
+        '<div class="meta"><div class="t"></div><div class="b"></div></div>';
+      el.querySelector(".t").textContent = m.song;
+      el.querySelector(".b").textContent = m.band;
+      if (m.genre) el.querySelector(".tag").textContent = m.genre;
+      el.addEventListener("click", () => startSong(m));
+      grid.appendChild(el);
+    }
+    host.appendChild(grid);
   }
 }
 
