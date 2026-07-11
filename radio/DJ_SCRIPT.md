@@ -370,89 +370,136 @@ The Toad exists only to press the airhorn button and agree.
 upward inflection. The Toad — dopey male voice, two-word answers, records
 separately: "YEAH!", "SO GOOD!", "TOOOAD!"*
 
-### The roster
+### HOW TO RECORD JAMIE & THE TOAD (read this first)
 
-| Band | Hit | The lore |
-|---|---|---|
-| **Sk8er Confession** | "My Mom Drove Us To The Show" | Pop-punk. All four members have the same haircut. It's insured. |
-| **Britney Alexandra** | "Text Me Back (Or Else)" | Pop princess. Her ringtone outsold her album. She's fine with it. |
-| **B4NDW1DTH** | "Buffering... (My Heart)" | Boy band assembled by a website. One member is only available on dial-up. |
-| **The O.C. Parking Lot** | "Frosted Tips Forever" | Emo-adjacent. Named after a parking lot they've never been to. |
-| **DJ Nokia** | "Snake Charmer (Ringtone Remix)" | Producer. Every beat is made from phone sounds. His hit is 30 seconds long, on purpose. |
+The Blender is a two-hander, but ElevenLabs only does one voice at a time —
+so **don't try to record dialogue.** Record them separately and the game
+stitches it live:
 
-### Real tracks on rotation (from `radio/music/00s/`)
+1. **Record all of JAMIE's lines** (below) as the normal clips
+   (`00s_intro_…`, `00s_outro_…`, etc.), in her bright caffeinated voice.
+   End each intro on an up-note — she's tossing to Toad.
+2. **Record THE TOAD's blurt library ONCE** (the short list just below).
+   These are generic, reusable, and dropped in at random.
+3. The game automatically plays a random Toad blurt **right after Jamie's
+   intro** — no editing, no stitching. Toad blurting semi-randomly is the joke.
 
-Jamie carries the line; The Toad's two-word interjections are marked `(Toad: "…")`
-and recorded separately. Filenames use `00s_…` (see the naming table at the end).
+If you ever want a Toad blurt to answer a *specific* Jamie line, tell me and
+I'll pin that pairing — but the random library covers 95% of it.
 
-**"Backseat Sunrise" — The Sunroofs** *(bright up-tempo dance-pop road anthem)*
-- `00s_intro_backseatsunrise_1.mp3` — "It's a BEAUTIFUL day in The Blender and here come The Sunroofs! Toad, roll the windows down! — (Toad: 'DOWN!') — 'Backseat Sunrise!'"
-- `00s_outro_backseatsunrise_1.mp3` — "The Sunroofs, everybody! Best days of our LIVES! — (Toad: 'SO GOOD!')"
+### The Toad — blurt library (record once)
 
-**"Paper Plane Pulse" — DJ Contrail** *(ethereal trance; performs behind a wall of fog, no one's seen his face)*
-- `00s_intro_paperplanepulse_1.mp3` — "Okaaay slowing it WAY down — this is DJ Contrail, he plays behind a wall of fog, we have LITERALLY never seen his face! 'Paper Plane Pulse!' — (Toad: 'HIGHER!')"
-- `00s_outro_paperplanepulse_1.mp3` — "DJ Contrail! Still foggy! Still a total mystery! — (Toad: 'SPOOKY!')"
+Short, punchy, dopey. Each its own file:
 
-**"Text Me Back (Or Else)" — Britney Alexandra** *(the 2000s version; half of the battle)*
-- `00s_intro_textmebackorelse2000s_1.mp3` — "This is the ORIGINAL — Britney Alexandra, 'Text Me Back... Or Else!' If he doesn't text back that's HIS loss, Toad! — (Toad: 'HIS LOSS!')"
-- `00s_outro_textmebackorelse2000s_1.mp3` — "Britney Alexandra! Text her back or she moves ON! — (Toad: 'MOVE ON!')"
+- `00s_toad_1.mp3` — "YEAH!"
+- `00s_toad_2.mp3` — "SO GOOD!"
+- `00s_toad_3.mp3` — "TOOOAD!"
+- `00s_toad_4.mp3` — "WHOA!"
+- `00s_toad_5.mp3` — "BIG!"
+- `00s_toad_6.mp3` — "LET'S GOOO!"
+- `00s_toad_7.mp3` — "NICE!"
+- `00s_toad_8.mp3` — "BANGER!"
+- `00s_toad_9.mp3` — "*(airhorn)*"
+- `00s_toad_10.mp3` — "WOOO!"
+- `00s_toad_11.mp3` — "CLASSIC!"
+- `00s_toad_12.mp3` — "MY JAM!"
+- `00s_toad_13.mp3` — "I LOVE IT!"
+- `00s_toad_14.mp3` — "TOAD APPROVES!"
 
-**"Text Me Back (Or Else)" — Mandy Sincere** *(the sunny bubbly version; other half of the battle)*
-- `00s_intro_textmebackorelse_1.mp3` — "Now THIS is the sunny one — Mandy Sincere, 'Text Me Back!' Same demand, way more sunshine! — (Toad: 'SUNSHINE!')"
-- `00s_outro_textmebackorelse_1.mp3` — "Mandy Sincere! So bright I need SUNGLASSES! — (Toad: 'SHADES!')"
+### JAMIE — Station IDs & ads
 
-**The Text Me Back battle** *(plays when the game runs the two versions back to back)*
-- `00s_battle_textmeback_1.mp3` — "Whoa whoa WHOA — we're doing it — BACK TO BACK — Britney Alexandra VERSUS Mandy Sincere, SAME song, and YOU decide who did it better! Toad, ring the bell! — (Toad: 'DING DING!')"
+- `00s_id_1.mp3` — "You're in The BLENDER! HITZ 99.5! All the hits, all at once!"
+- `00s_id_2.mp3` — "It's Jamie and The Toad and this is HITZ 99.5, The Blender!"
+- `00s_ad_1.mp3` — "This weekend at Cyber Zone Internet Café: LAN party 'til 2 A.M.! Bring your OWN tower! Your MOM can't come! Cyber Zone!"
+- `00s_ad_2.mp3` — "Ringtone Bonanza dot com! Turn YOUR phone into a PARTY! Standard messaging rates DEFINITELY apply!"
+
+### JAMIE — song intros & outros (all 17 tracks in `radio/music/00s/`)
+
+A random Toad blurt auto-plays after each intro — just leave a beat at the end.
+
+**"Backseat Sunrise" — The Sunroofs** *(dance-pop road anthem)*
+- `00s_intro_backseatsunrise_1.mp3` — "It's a GORGEOUS morning in The Blender and here come The Sunroofs — 'Backseat Sunrise' — windows DOWN, people, certified summer banger—"
+- `00s_outro_backseatsunrise_1.mp3` — "The Sunroofs, everybody! Best days of our LIVES and it's not even nine A.M.!"
+
+**"Paper Plane Pulse" — DJ Contrail** *(trance; plays behind a wall of fog)*
+- `00s_intro_paperplanepulse_1.mp3` — "Okaaay we're going up to the CLOUDS — DJ Contrail, the guy who plays behind a wall of fog, we've NEVER seen his face — 'Paper Plane Pulse'—"
+- `00s_outro_paperplanepulse_1.mp3` — "DJ Contrail! Still foggy, still a total mystery, we LOVE a man of secrets!"
+
+**"Text Me Back (Or Else)" — Britney Alexandra** *(the 2000s version)*
+- `00s_intro_textmebackorelse2000s_1.mp3` — "This is the ORIGINAL, the queen herself, Britney Alexandra — 'Text Me Back Or Else' — and if he doesn't text back, that's HIS loss—"
+- `00s_outro_textmebackorelse2000s_1.mp3` — "Britney Alexandra! Text her back or she is GONE — moving on — NEXT!"
+
+**"Text Me Back (Or Else)" — Mandy Sincere** *(the sunny version)*
+- `00s_intro_textmebackorelse_1.mp3` — "Now here's the SUNNY one — Mandy Sincere doing 'Text Me Back' — same demand, twice the sparkle, sunglasses ON—"
+- `00s_outro_textmebackorelse_1.mp3` — "Mandy Sincere! So bright I can't even SEE! Somebody dim her!"
+
+**The Text Me Back battle** *(plays when the game runs both versions back to back)*
+- `00s_battle_textmeback_1.mp3` — "Whoa whoa WHOA — we're doing it — BACK to BACK — Britney Alexandra VERSUS Mandy Sincere, SAME song, and YOU decide who did it better — ring the bell!"
 
 **"Snake Charmer (Ringtone Remix)" — DJ Nokia** *(every beat is a phone sound)*
-- `00s_intro_snakecharmerringtoneremix_1.mp3` — "DJ Nokia in THREE, TWO — Toad, the airhorn — (airhorn) — 'Snake Charmer!' Every single beat is a PHONE! — (Toad: 'BRRRING!')"
-- `00s_outro_snakecharmerringtoneremix_1.mp3` — "DJ Nokia! That ringtone's for sale and it costs MORE than the song! — (Toad: 'BUY IT!')"
+- `00s_intro_snakecharmerringtoneremix_1.mp3` — "DJ Nokia coming in HOT — every single beat in this is a PHONE sound, I'm not kidding — 'Snake Charmer'—"
+- `00s_outro_snakecharmerringtoneremix_1.mp3` — "DJ Nokia! And YES that ringtone's for sale and YES it costs MORE than the song!"
 
-**"Last Time" — Colt Maddox** *(the one country-crossover The Blender is required to play)*
-- `00s_intro_lasttime_1.mp3` — "We are contractually required to play ONE country song a day and HERE it is — Colt Maddox, 'Last Time!' He says it's the last time. It is NEVER the last time. — (Toad: 'NEVER!')"
-- `00s_outro_lasttime_1.mp3` — "Colt Maddox! He'll be back doing it all again next hour! — (Toad: 'AGAIN!')"
+**"Last Time" — Colt Maddox** *(the one country crossover)*
+- `00s_intro_lasttime_1.mp3` — "We are required by LAW to play one country song a day and HERE it is — Colt Maddox, 'Last Time' — he SWEARS it's the last time, it is NEVER the last time—"
+- `00s_outro_lasttime_1.mp3` — "Colt Maddox! He'll be right back next hour doing it all AGAIN!"
 
-**"Halogen Lamps" — Kilowatt Youth** *(moody dark electro-pop)*
-- `00s_intro_halogenlamps_1.mp3` — "Ooh this one gets MOODY — Kilowatt Youth, 'Halogen Lamps' — I THINK it's about two robots falling in love? Toad, are you crying again? — (Toad: 'ROBOTS!')"
-- `00s_outro_halogenlamps_1.mp3` — "Kilowatt Youth! Nothing lasts forever EXCEPT that chorus in my HEAD! — (Toad: 'FOREVER!')"
+**"Halogen Lamps" — Kilowatt Youth** *(moody electro-pop)*
+- `00s_intro_halogenlamps_1.mp3` — "Ooh this one gets MOODY — Kilowatt Youth, 'Halogen Lamps' — I'm PRETTY sure it's about two robots falling in love—"
+- `00s_outro_halogenlamps_1.mp3` — "Kilowatt Youth! Nothing lasts forever EXCEPT that chorus stuck in my HEAD!"
 
-**"Frosted Tips Forever" — The O.C. Parking Lot** *(00s emo nostalgia)*
-- `00s_intro_frostedtipsforever_1.mp3` — "FROSTED TIPS! FOREVER! The O.C. Parking Lot — named after a parking lot they have NEVER been to! — (Toad: 'FROSTY!')"
-- `00s_outro_frostedtipsforever_1.mp3` — "The O.C. Parking Lot! I'm not crying, TOAD'S crying! — (Toad: 'SO GOOD!')"
+**"Frosted Tips Forever" — The O.C. Parking Lot** *(00s emo)*
+- `00s_intro_frostedtipsforever_1.mp3` — "FROSTED! TIPS! FOREVER! The O.C. Parking Lot — named after a parking lot they have never actually BEEN to—"
+- `00s_outro_frostedtipsforever_1.mp3` — "The O.C. Parking Lot! Get your L.A. Looks on — we're not crying, YOU'RE crying!"
 
-**"Parking Lot Codes" — Kacie Vandal** *(mall pop-punk; two singles in rotation)*
-- `00s_intro_parkinglotcodes_1.mp3` — "Blue! Blue! BLUE! You know the code! Mall pop-punk royalty Kacie Vandal — 'Parking Lot Codes!' — (Toad: 'BLUE!')"
-- `00s_outro_parkinglotcodes_1.mp3` — "Kacie Vandal! I don't KNOW the code but I'm screaming it anyway! — (Toad: 'BLUE!')"
+**"Parking Lot Codes" — Kacie Vandal** *(mall pop-punk)*
+- `00s_intro_parkinglotcodes_1.mp3` — "BLUE! BLUE! BLUE! You know the code! Mall pop-punk royalty Kacie Vandal — 'Parking Lot Codes'—"
+- `00s_outro_parkinglotcodes_1.mp3` — "Kacie Vandal! I don't KNOW the code but I'm screaming it in the food court anyway!"
 
-**"Broken Link" — Kacie Vandal** *(the weepy one)*
-- `00s_intro_brokenlink_1.mp3` — "More Kacie Vandal and this one's a WEEPER — 'Broken Link' — grab the tissues, Toad — (Toad: 'TISSUES!')"
-- `00s_outro_brokenlink_1.mp3` — "Kacie Vandal, 'Broken Link.' We were CLOSE, Toad! — (Toad: 'SO CLOSE!')"
+**"Broken Link" — Kacie Vandal** *(the weeper)*
+- `00s_intro_brokenlink_1.mp3` — "More Kacie Vandal and OH this one's a WEEPER — 'Broken Link' — grab a napkin, dab those eyes—"
+- `00s_outro_brokenlink_1.mp3` — "Kacie Vandal, 'Broken Link.' We were SO CLOSE! It's fine! I'm fine!"
 
-### Banter library
+**"Don't Follow Me" — The Tin Kings** *(garage blues-rock)*
+- `00s_intro_dontfollowme_1.mp3` — "Two people, ONE massive sound — The Tin Kings, 'Don't Follow Me' — the drummer and guitarist MIGHT be siblings, they will NOT confirm it—"
+- `00s_outro_dontfollowme_1.mp3` — "The Tin Kings! That riff is gonna live in your skull, rent-FREE!"
 
-**Song intros**
-- "Okaaay it's Jamie and The Toad on HITZ 99.5! This is Sk8er Confession — Toad, did your mom drive you to their show? — *('YEAH!')* — SHE DID! Here's the song about it!"
-- "New Britney Alexandra! If you don't text back after this one, that's ON YOU. 'Text Me Back... Or Else!'"
-- "It's B4NDW1DTH! All five of them! Well — four of them, Chad's still connecting! 'Buffering My Heart!'"
-- "DJ Nokia in THREE! TWO! — Toad, the airhorn — *(airhorn)* — 'SNAKE CHARMER!'"
+**"Passwords" — Marlowe Kai** *(acoustic surf-pop)*
+- `00s_intro_passwords_1.mp3` — "Kick your shoes OFF — this is Marlowe Kai, he records everything in a HAMMOCK — 'Passwords,' so chill it's basically a nap—"
+- `00s_outro_passwords_1.mp3` — "Marlowe Kai! He knows all your passwords now! ...That's the whole song! It's CUTE!"
 
-**Song outros**
-- "The O.C. Parking Lot, everybody! Frosted tips... forever. I'm not crying, Toad's crying! *('SO GOOD!')*"
-- "That was Britney Alexandra and YES her ringtone is available and YES it costs more than the song!"
+**"Every Time I Close My Eyes" — Copper Avenue** *(pop-rock)*
+- `00s_intro_everytimeiclosemyeyes_1.mp3` — "WARNING: this next one is dangerously catchy — Copper Avenue, 'Every Time I Close My Eyes' — you WILL hum it, there is no escape—"
+- `00s_outro_everytimeiclosemyeyes_1.mp3` — "Copper Avenue! It's STUCK in there now! You're welcome! Or... sorry!"
 
-**Station IDs**
-- "HITZ! 99-5! THE BLENDER! *(airhorn)*"
-- "You're in The Blender, baby! Jamie! Toad! *('TOOOAD!')* Hits!"
+**"Forever & Ever" — The Velvet Casino** *(anthemic indie rock)*
+- `00s_intro_foreverever_1.mp3` — "Big lights, BIG feelings — The Velvet Casino, straight outta Vegas, the singer wears ONE sequined glove — 'Forever and Ever'—"
+- `00s_outro_foreverever_1.mp3` — "The Velvet Casino! Forever and EVER! Nobody knows about the glove — nobody ASKS!"
 
-**Fake ads**
-- "This weekend at Cyber Zone Internet Café: LAN party 'til 2 AM! Bring your own tower! Your MOM can't come! Cyber Zone!"
-- "Ringtone Bonanza dot com! Turn YOUR phone into a PARTY! Standard messaging rates DEFINITELY apply!"
+**"Moon" — Cheap Halo** *(garage rock)*
+- `00s_intro_moon_1.mp3` — "Crank it UP — Cheap Halo, 'Moon' — every song they've got is about the moon, or a girl, sometimes BOTH—"
+- `00s_outro_moon_1.mp3` — "Cheap Halo! See you on the MOON! ...We won't, but it's a nice thought!"
 
-**Game-event lines**
-- *(rain incoming)* "Uh-oh! Weather Toad says rain! *('RAIN!')* Watch those windows, road trippers!"
-- *(entering New York)* "NEW YORK! Toad's been there! — *('BIG!')* — He says it's big!"
-- *(entering the desert)* "The desert! Zero bars of signal, Toad! ZERO! How will Britney text back?!"
-- *(skateboard unlock)* "SKATEBOARD UNLOCKED! That is SO Sk8er Confession of you!"
+**"Drive" — Archduke** *(dance-punk)*
+- `00s_intro_drive_1.mp3` — "Get in the CAR — this is Archduke, art-school dance-punk, named after a historical event they cannot SPELL — 'Drive'—"
+- `00s_outro_drive_1.mp3` — "Archduke! We can drive ALL night! Toad's got his learner's permit!"
+
+**"Through Your Eyes" — Della Sky** *(piano pop, sad lyrics / happy melody)*
+- `00s_intro_throughyoureyes_1.mp3` — "Okay this one's SNEAKY — Della Sky, 'Through Your Eyes' — sounds like the happiest song ever, then you read the lyrics and OOF—"
+- `00s_outro_throughyoureyes_1.mp3` — "Della Sky! Happiest sad song of the YEAR! I need a minute! ...A HAPPY minute!"
+
+### JAMIE — game-event lines *(play over the music; no Toad auto-added)*
+
+- `00s_rain_1.mp3` — "Uh-oh — Weather Toad says RAIN! Watch those windows, road-trippers!"
+- `00s_city_newyork_1.mp3` — "NEW YORK, baby! The city so nice they named it ONCE!"
+- `00s_city_washingtondc_1.mp3` — "Washington D.C.! Where the important people make the important DECISIONS!"
+- `00s_city_farmland_1.mp3` — "Look at all that CORN! Toad, wave to the cows!"
+- `00s_city_desert_1.mp3` — "The DESERT! Zero bars of signal! How is ANYONE gonna text back?!"
+- `00s_city_losangeles_1.mp3` — "L.A.! Everyone here is famous! Allegedly!"
+- `00s_city_sanfrancisco_1.mp3` — "San Francisco! Mind the FOG and the HILLS!"
+- `00s_unlock_skateboard_1.mp3` — "SKATEBOARD unlocked! That is SO extreme of you!"
+- `00s_unlock_motorcycle_1.mp3` — "MOTORCYCLE?! Okay big shot — look at YOU!"
+
 
 ---
 
@@ -480,6 +527,7 @@ All clips go flat into `radio/clips/` (no subfolders). Lowercase, no spaces:
 | City arrival | `{era}_city_{newyork\|desert\|sanfrancisco\|farmland\|losangeles\|washingtondc}_{n}.mp3` | `90s_city_desert_1.mp3` |
 | Unlock | `{era}_unlock_{skateboard\|motorcycle}_{n}.mp3` | `90s_unlock_skateboard_1.mp3` |
 | Battle | `{era}_battle_{slug}_{n}.mp3` | `00s_battle_textmeback_1.mp3` |
+| Toad blurt | `{era}_toad_{n}.mp3` | `00s_toad_1.mp3` (auto-played after Jamie's intro) |
 
 `{songslug}` = the song title lowercased with spaces/punctuation removed
 (`Blue Tape Corner` → `bluetapecorner`). `{n}` = 1, 2, 3... for alternate
