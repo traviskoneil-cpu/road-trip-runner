@@ -26,6 +26,10 @@
   .diffbar label { font-size:12px; opacity:0.6; }
   .diff { background:transparent; color:var(--text); border:1px solid #445; padding:6px 16px; border-radius:18px; cursor:pointer; font-size:13px; }
   .diff.active { background:var(--accent); border-color:var(--accent); font-weight:bold; }
+  .sync { background:transparent; color:var(--text); border:1px solid #445; width:30px; height:30px; border-radius:50%; cursor:pointer; font-size:16px; }
+  .sync:hover { border-color:var(--accent); }
+  #syncVal { font-size:14px; min-width:52px; text-align:center; font-variant-numeric:tabular-nums; }
+  .synchint { font-size:11px; opacity:0.45; }
   .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:12px; max-width:900px; margin:0 auto; width:100%; }
   .song { background:var(--panel); border-radius:12px; overflow:hidden; cursor:pointer; transition:transform .1s; position:relative; }
   .song:hover { transform:translateY(-3px); }
@@ -76,6 +80,13 @@
     <button class="diff active" data-d="medium">MEDIUM</button>
     <button class="diff" data-d="hard">HARD</button>
   </div>
+  <div class="diffbar">
+    <label>AUDIO SYNC</label>
+    <button class="sync" data-s="-10">&minus;</button>
+    <span id="syncVal">0 ms</span>
+    <button class="sync" data-s="10">+</button>
+    <span class="synchint">notes hitting early? go +  ·  late? go &minus;</span>
+  </div>
   <div class="grid" id="songGrid"></div>
   <div class="keys">
     Desktop: <kbd>F</kbd> <kbd>J</kbd> <kbd>K</kbd> or <kbd>&larr;</kbd> <kbd>&darr;</kbd> <kbd>&rarr;</kbd> &nbsp;·&nbsp; Mobile: tap the three lanes
@@ -124,6 +135,7 @@ const screens = { select: $("select"), loading: $("loading"), play: $("play"), r
 function show(name) { for (const k in screens) screens[k].classList.toggle("hidden", k !== name); }
 
 let DIFFICULTY = "medium";
+let SYNC_MS = +(localStorage.getItem("tap_sync") || 0); // manual calibration, ms
 const DIFF = { // min spacing between notes (s) and hit windows
   easy:   { spacing: 0.32, k: 1.5 },
   medium: { spacing: 0.20, k: 1.4 },
@@ -176,6 +188,13 @@ document.querySelectorAll(".diff").forEach((b) => b.addEventListener("click", ()
   b.classList.add("active");
   DIFFICULTY = b.dataset.d;
 }));
+function updateSync() { $("syncVal").textContent = (SYNC_MS > 0 ? "+" : "") + SYNC_MS + " ms"; }
+document.querySelectorAll(".sync").forEach((b) => b.addEventListener("click", () => {
+  SYNC_MS = Math.max(-300, Math.min(300, SYNC_MS + (+b.dataset.s)));
+  localStorage.setItem("tap_sync", SYNC_MS);
+  updateSync();
+}));
+updateSync();
 
 // ============================================================
 // CHART GENERATION — multiband onset detection
@@ -302,7 +321,9 @@ function beginPlay() {
   running = true;
   loop();
 }
-function songTime() { return audioCtx.currentTime - startAt; }
+// song clock, compensated for how late the sound actually leaves the speakers
+// (outputLatency) plus the player's manual calibration
+function songTime() { return (audioCtx.currentTime - startAt) - (audioCtx.outputLatency || 0) - SYNC_MS / 1000; }
 
 function loop() {
   if (!running) return;
