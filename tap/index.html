@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#12172b">
+<title>Tap Trip — Road Trip Runner Rhythm</title>
+<style>
+  :root { --bg:#12172b; --panel:#1a2138; --accent:#e94560; --l0:#e94560; --l1:#ffd166; --l2:#4ec3c7; --text:#f0f0f0; }
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { height:100%; }
+  body {
+    background:var(--bg); color:var(--text);
+    font-family:"Trebuchet MS","Segoe UI",sans-serif;
+    overflow:hidden; user-select:none; -webkit-user-select:none;
+  }
+  .screen { position:fixed; inset:0; display:flex; flex-direction:column; }
+  .hidden { display:none !important; }
+
+  /* ---- song select ---- */
+  #select { overflow-y:auto; padding:18px; }
+  #select h1 { font-size:28px; letter-spacing:2px; text-transform:uppercase; text-align:center; margin:8px 0 2px; }
+  #select h1 span { color:var(--accent); }
+  #select .sub { text-align:center; font-size:13px; opacity:0.65; margin-bottom:6px; }
+  .diffbar { display:flex; gap:8px; justify-content:center; align-items:center; margin:12px 0 18px; flex-wrap:wrap; }
+  .diffbar label { font-size:12px; opacity:0.6; }
+  .diff { background:transparent; color:var(--text); border:1px solid #445; padding:6px 16px; border-radius:18px; cursor:pointer; font-size:13px; }
+  .diff.active { background:var(--accent); border-color:var(--accent); font-weight:bold; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:12px; max-width:900px; margin:0 auto; width:100%; }
+  .song { background:var(--panel); border-radius:12px; overflow:hidden; cursor:pointer; transition:transform .1s; position:relative; }
+  .song:hover { transform:translateY(-3px); }
+  .song .art { width:100%; aspect-ratio:1; object-fit:cover; display:block; background:#2a3350; }
+  .song .meta { padding:8px 10px 10px; }
+  .song .t { font-weight:bold; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .song .b { font-size:11px; color:var(--accent); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .song .star { position:absolute; top:8px; right:8px; font-size:14px; filter:drop-shadow(0 1px 2px #000); }
+
+  /* ---- loading ---- */
+  #loading { align-items:center; justify-content:center; text-align:center; gap:14px; }
+  #loading .spin { width:52px; height:52px; border:5px solid #2a3350; border-top-color:var(--accent); border-radius:50%; animation:sp 0.9s linear infinite; }
+  @keyframes sp { to { transform:rotate(360deg); } }
+  #loading .lt { font-size:15px; opacity:0.85; }
+
+  /* ---- play ---- */
+  #play { }
+  #gameCanvas { position:absolute; inset:0; width:100%; height:100%; touch-action:none; }
+  #hud { position:absolute; top:12px; left:0; right:0; display:flex; justify-content:space-between; padding:0 18px; pointer-events:none; z-index:2; }
+  #hud .score { font-size:26px; font-weight:bold; }
+  #hud .right { text-align:right; }
+  #hud .combo { font-size:20px; color:var(--l1); font-weight:bold; }
+  #hud .acc { font-size:13px; opacity:0.7; }
+  #quit { position:absolute; top:12px; right:14px; background:rgba(0,0,0,0.4); border:1px solid #445; color:var(--text); border-radius:50%; width:34px; height:34px; font-size:15px; cursor:pointer; z-index:3; }
+
+  /* ---- result ---- */
+  #result { align-items:center; justify-content:center; text-align:center; gap:6px; padding:20px; }
+  #result .rank { font-size:96px; font-weight:bold; line-height:1; margin-bottom:4px; }
+  #result h2 { font-size:22px; letter-spacing:1px; }
+  #result .rb { font-size:12px; color:var(--accent); margin-bottom:12px; }
+  #result .stat { font-size:15px; opacity:0.9; line-height:1.9; }
+  #result .fc { color:var(--l1); font-weight:bold; letter-spacing:2px; margin:6px 0; }
+  .btn { background:var(--accent); color:#fff; border:none; font-size:16px; font-weight:bold; padding:11px 30px; border-radius:26px; cursor:pointer; margin:6px; letter-spacing:1px; }
+  .btn.ghost { background:transparent; border:2px solid #556; }
+  .keys { font-size:12px; opacity:0.5; margin-top:10px; text-align:center; }
+  kbd { background:#333; border-radius:4px; padding:1px 6px; font-family:monospace; font-size:11px; border:1px solid #555; }
+</style>
+</head>
+<body>
+
+<!-- SONG SELECT -->
+<div id="select" class="screen">
+  <h1>TAP <span>TRIP</span></h1>
+  <div class="sub">Three lanes. Your songs. Tap the notes on the beat.</div>
+  <div class="diffbar">
+    <label>DIFFICULTY</label>
+    <button class="diff" data-d="easy">EASY</button>
+    <button class="diff active" data-d="medium">MEDIUM</button>
+    <button class="diff" data-d="hard">HARD</button>
+  </div>
+  <div class="grid" id="songGrid"></div>
+  <div class="keys">
+    Desktop: <kbd>F</kbd> <kbd>J</kbd> <kbd>K</kbd> or <kbd>&larr;</kbd> <kbd>&darr;</kbd> <kbd>&rarr;</kbd> &nbsp;·&nbsp; Mobile: tap the three lanes
+  </div>
+</div>
+
+<!-- LOADING -->
+<div id="loading" class="screen hidden">
+  <div class="spin"></div>
+  <div class="lt" id="loadText">Building the chart…</div>
+</div>
+
+<!-- PLAY -->
+<div id="play" class="screen hidden">
+  <canvas id="gameCanvas"></canvas>
+  <div id="hud">
+    <div><div class="score" id="hScore">0</div><div class="acc" id="hAcc">100%</div><div class="combo" id="hCombo"></div></div>
+  </div>
+  <button id="quit">✕</button>
+</div>
+
+<!-- RESULT -->
+<div id="result" class="screen hidden">
+  <div class="rank" id="rRank">A</div>
+  <h2 id="rSong"></h2>
+  <div class="rb" id="rBand"></div>
+  <div class="fc hidden" id="rFC">★ FULL COMBO ★</div>
+  <div class="stat" id="rStats"></div>
+  <div>
+    <button class="btn" id="rRetry">RETRY</button>
+    <button class="btn ghost" id="rBack">SONG LIST</button>
+  </div>
+</div>
+
+<script>
+"use strict";
+// ============================================================
+// TAP TRIP — a 3-lane Tap-Tap-Revenge-style rhythm game that
+// reuses Road Trip Runner's songs. Charts are generated from the
+// audio in-browser (multiband onset detection), so every song
+// is instantly playable. Standalone at /tap/.
+// ============================================================
+
+const $ = (id) => document.getElementById(id);
+const screens = { select: $("select"), loading: $("loading"), play: $("play"), result: $("result") };
+function show(name) { for (const k in screens) screens[k].classList.toggle("hidden", k !== name); }
+
+let DIFFICULTY = "medium";
+const DIFF = { // min spacing between notes (s) and hit windows
+  easy:   { spacing: 0.32, k: 1.5 },
+  medium: { spacing: 0.20, k: 1.4 },
+  hard:   { spacing: 0.135, k: 1.3 },
+};
+const LANES = 3;
+const LANE_COLOR = ["#e94560", "#ffd166", "#4ec3c7"];
+const LEAD = 1.5;            // seconds a note is visible before its hit time
+const W_PERFECT = 0.045, W_GOOD = 0.095, W_MISS = 0.13; // timing windows (s)
+
+let audioCtx = null, songBuffer = null, source = null;
+let songMeta = null, chart = [], startAt = 0, running = false, rafId = 0;
+let stats = null;
+
+// ---------- metadata / song select ----------
+const COLLECTED = new Set(JSON.parse(localStorage.getItem("rtr_collected") || "[]"));
+let META = [];
+
+fetch("../radio/stations.json").then((r) => r.json()).then((d) => {
+  for (const era of ["90s", "00s", "70s", "80s"]) {
+    const tracks = (d.stations[era] && d.stations[era].tracks) || [];
+    for (const t of tracks) META.push({ era, ...t });
+  }
+  renderGrid();
+}).catch((e) => { $("loadText").textContent = "Could not load song list."; });
+
+function coverURL(m) { return "../radio/covers/" + m.era + "/" + encodeURIComponent(m.file.replace(/\.[^.]+$/, "")) + ".jpg"; }
+function songURL(m) { return "../radio/music/" + m.era + "/" + encodeURIComponent(m.file); }
+
+function renderGrid() {
+  const g = $("songGrid");
+  g.innerHTML = "";
+  for (const m of META) {
+    const collected = COLLECTED.has(m.era + "|" + m.file);
+    const el = document.createElement("div");
+    el.className = "song";
+    el.innerHTML =
+      '<img class="art" alt="" src="' + coverURL(m) + '" onerror="this.style.visibility=\'hidden\'">' +
+      (collected ? '<span class="star">★</span>' : '') +
+      '<div class="meta"><div class="t"></div><div class="b"></div></div>';
+    el.querySelector(".t").textContent = m.song;
+    el.querySelector(".b").textContent = m.band;
+    el.addEventListener("click", () => startSong(m));
+    g.appendChild(el);
+  }
+}
+
+document.querySelectorAll(".diff").forEach((b) => b.addEventListener("click", () => {
+  document.querySelectorAll(".diff").forEach((x) => x.classList.remove("active"));
+  b.classList.add("active");
+  DIFFICULTY = b.dataset.d;
+}));
+
+// ============================================================
+// CHART GENERATION — multiband onset detection
+// ============================================================
+function lowpass(sig, sr, fc) {
+  const dt = 1 / sr, RC = 1 / (2 * Math.PI * fc), a = dt / (RC + dt);
+  const y = new Float32Array(sig.length); let p = 0;
+  for (let i = 0; i < sig.length; i++) { p += a * (sig[i] - p); y[i] = p; }
+  return y;
+}
+function highpass(sig, sr, fc) {
+  const dt = 1 / sr, RC = 1 / (2 * Math.PI * fc), a = RC / (RC + dt);
+  const y = new Float32Array(sig.length); let py = 0, px = 0;
+  for (let i = 0; i < sig.length; i++) { const x = sig[i]; py = a * (py + x - px); y[i] = py; px = x; }
+  return y;
+}
+function bandOnsets(sig, sr, lane, minGap, kThresh) {
+  const hopS = 0.011, hop = Math.max(1, Math.round(sr * hopS));
+  const nF = Math.floor(sig.length / hop);
+  const env = new Float32Array(nF);
+  for (let f = 0; f < nF; f++) {
+    let s = 0; const start = f * hop;
+    for (let i = 0; i < hop; i++) { const v = sig[start + i] || 0; s += v * v; }
+    env[f] = Math.sqrt(s / hop);
+  }
+  const odf = new Float32Array(nF);
+  for (let f = 1; f < nF; f++) { const d = env[f] - env[f - 1]; odf[f] = d > 0 ? d : 0; }
+  const onsets = [];
+  const Wf = Math.round(0.2 / hopS), gapF = Math.round(minGap / hopS);
+  let last = -1e9;
+  for (let f = 1; f < nF - 1; f++) {
+    let mean = 0, cnt = 0;
+    for (let j = Math.max(0, f - Wf); j <= Math.min(nF - 1, f + Wf); j++) { mean += odf[j]; cnt++; }
+    mean /= cnt;
+    const thr = mean * kThresh + 1e-4;
+    if (odf[f] > thr && odf[f] >= odf[f - 1] && odf[f] >= odf[f + 1] && (f - last) >= gapF) {
+      onsets.push({ t: (f * hop) / sr, lane, s: odf[f] });
+      last = f;
+    }
+  }
+  return onsets;
+}
+function generateChart(buf) {
+  const sr = buf.sampleRate, n = buf.length;
+  const a0 = buf.getChannelData(0), a1 = buf.numberOfChannels > 1 ? buf.getChannelData(1) : a0;
+  const mono = new Float32Array(n);
+  let peak = 1e-6;
+  for (let i = 0; i < n; i++) { const v = 0.5 * (a0[i] + a1[i]); mono[i] = v; if (Math.abs(v) > peak) peak = Math.abs(v); }
+  const g = 1 / peak;
+  for (let i = 0; i < n; i++) mono[i] *= g; // normalize
+
+  const low = lowpass(mono, sr, 150);
+  const high = highpass(mono, sr, 4500);
+  const mid = highpass(lowpass(mono, sr, 3000), sr, 300);
+
+  const D = DIFF[DIFFICULTY];
+  let notes = [];
+  notes = notes.concat(bandOnsets(low, sr, 0, 0.16, D.k + 0.1));
+  notes = notes.concat(bandOnsets(mid, sr, 1, 0.13, D.k + 0.2));
+  notes = notes.concat(bandOnsets(high, sr, 2, 0.10, D.k + 0.35));
+  notes.sort((x, y) => x.t - y.t);
+
+  // thin to a single-note stream at the difficulty spacing, keeping stronger hits
+  const kept = [];
+  for (const nt of notes) {
+    const prev = kept[kept.length - 1];
+    if (!prev || nt.t - prev.t >= D.spacing) kept.push(nt);
+    else if (nt.s > prev.s * 1.3) kept[kept.length - 1] = nt; // replace with the stronger onset
+  }
+  // drop anything in the first 0.4s (dead air / clicks)
+  return kept.filter((nt) => nt.t > 0.4).map((nt) => ({ t: nt.t, lane: nt.lane, hit: false, judged: false }));
+}
+
+// ============================================================
+// GAME
+// ============================================================
+async function startSong(m) {
+  songMeta = m;
+  show("loading");
+  $("loadText").textContent = "Loading “" + m.song + "”…";
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === "suspended") await audioCtx.resume();
+    const arr = await fetch(songURL(m)).then((r) => r.arrayBuffer());
+    $("loadText").textContent = "Building the chart…";
+    songBuffer = await audioCtx.decodeAudioData(arr);
+    chart = generateChart(songBuffer);
+    if (!chart.length) { $("loadText").textContent = "No beats found — try another track."; return; }
+    beginPlay();
+  } catch (e) {
+    $("loadText").textContent = "Couldn't load that one. (" + (e && e.name || "error") + ")";
+    console.error(e);
+  }
+}
+
+const canvas = $("gameCanvas"), ctx = canvas.getContext("2d");
+let CW = 0, CH = 0, laneW = 0, fieldX = 0, fieldW = 0, targetY = 0;
+function resize() {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  CW = canvas.clientWidth; CH = canvas.clientHeight;
+  canvas.width = CW * dpr; canvas.height = CH * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  fieldW = Math.min(CW, 460); fieldX = (CW - fieldW) / 2;
+  laneW = fieldW / LANES;
+  targetY = CH * 0.82;
+}
+window.addEventListener("resize", resize);
+
+let hitFx = [];     // {lane, t} lane flashes
+let judgeFx = null; // {text, color, t}
+function beginPlay() {
+  show("play");
+  resize();
+  stats = { score: 0, combo: 0, maxCombo: 0, perfect: 0, good: 0, miss: 0, mult: 1, total: chart.length };
+  for (const nt of chart) { nt.hit = false; nt.judged = false; }
+  hitFx = []; judgeFx = null;
+  // count-in: start audio a bit ahead so the first notes fall in
+  source = audioCtx.createBufferSource();
+  source.buffer = songBuffer;
+  source.connect(audioCtx.destination);
+  startAt = audioCtx.currentTime + 1.6;
+  source.start(startAt);
+  source.onended = () => { if (running) endSong(); };
+  running = true;
+  loop();
+}
+function songTime() { return audioCtx.currentTime - startAt; }
+
+function loop() {
+  if (!running) return;
+  const t = songTime();
+  // auto-miss notes that passed the window
+  for (const nt of chart) {
+    if (!nt.judged && t - nt.t > W_MISS) { nt.judged = true; registerMiss(); }
+  }
+  draw(t);
+  // end shortly after the last note if the buffer keeps going (or onended fires)
+  if (t > (chart[chart.length - 1].t + 1.2) && stats.perfect + stats.good + stats.miss >= stats.total) {
+    endSong(); return;
+  }
+  rafId = requestAnimationFrame(loop);
+}
+
+function draw(t) {
+  ctx.clearRect(0, 0, CW, CH);
+  // field bg
+  ctx.fillStyle = "rgba(255,255,255,0.03)";
+  ctx.fillRect(fieldX, 0, fieldW, CH);
+  // lane separators + target ring
+  for (let L = 0; L < LANES; L++) {
+    const cx = fieldX + laneW * (L + 0.5);
+    // lane flash
+    const fx = hitFx.find((h) => h.lane === L);
+    if (fx) {
+      const a = Math.max(0, 1 - (performance.now() - fx.t) / 180);
+      ctx.fillStyle = LANE_COLOR[L] + Math.floor(a * 40 + 8).toString(16).padStart(2, "0");
+      ctx.fillRect(fieldX + laneW * L, 0, laneW, CH);
+    }
+    // target ring
+    ctx.beginPath();
+    ctx.arc(cx, targetY, laneW * 0.34, 0, Math.PI * 2);
+    ctx.lineWidth = 3; ctx.strokeStyle = LANE_COLOR[L] + "aa"; ctx.stroke();
+  }
+  ctx.strokeStyle = "rgba(255,255,255,0.08)"; ctx.lineWidth = 1;
+  for (let L = 1; L < LANES; L++) { ctx.beginPath(); ctx.moveTo(fieldX + laneW * L, 0); ctx.lineTo(fieldX + laneW * L, CH); ctx.stroke(); }
+  // target line
+  ctx.strokeStyle = "rgba(255,255,255,0.25)"; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(fieldX, targetY); ctx.lineTo(fieldX + fieldW, targetY); ctx.stroke();
+
+  // notes
+  for (const nt of chart) {
+    if (nt.judged && nt.hit) continue;
+    if (nt.judged && !nt.hit && t - nt.t > 0.2) continue;
+    const frac = (nt.t - t) / LEAD; // 1 at spawn (top), 0 at target
+    if (frac > 1.05) continue;
+    const y = targetY - frac * (targetY + 40);
+    if (y < -40) continue;
+    const cx = fieldX + laneW * (nt.lane + 0.5);
+    const r = laneW * 0.30;
+    ctx.beginPath();
+    ctx.arc(cx, y, r, 0, Math.PI * 2);
+    ctx.fillStyle = LANE_COLOR[nt.lane];
+    ctx.globalAlpha = nt.judged ? 0.3 : 1;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+    ctx.lineWidth = 3; ctx.strokeStyle = "rgba(255,255,255,0.5)"; ctx.stroke();
+  }
+
+  // count-in
+  if (t < 0) {
+    const n = Math.ceil(-t);
+    ctx.fillStyle = "#fff"; ctx.font = "bold 64px sans-serif"; ctx.textAlign = "center";
+    ctx.fillText(n, CW / 2, CH * 0.42);
+    ctx.font = "16px sans-serif"; ctx.fillText("GET READY", CW / 2, CH * 0.5);
+    ctx.textAlign = "left";
+  }
+  // judgment flash
+  if (judgeFx) {
+    const a = Math.max(0, 1 - (performance.now() - judgeFx.t) / 500);
+    if (a > 0) {
+      ctx.globalAlpha = a; ctx.fillStyle = judgeFx.color; ctx.font = "bold 30px sans-serif"; ctx.textAlign = "center";
+      ctx.fillText(judgeFx.text, CW / 2, targetY - 60); ctx.textAlign = "left"; ctx.globalAlpha = 1;
+    }
+  }
+  // live HUD
+  $("hScore").textContent = stats.score.toLocaleString();
+  $("hCombo").textContent = stats.combo > 1 ? stats.combo + "x  ·  " + stats.mult + "×" : "";
+  const done = stats.perfect + stats.good + stats.miss;
+  $("hAcc").textContent = done ? Math.round(((stats.perfect + stats.good * 0.5) / done) * 100) + "%" : "100%";
+}
+
+// ---------- input ----------
+function pressLane(L) {
+  if (!running) return;
+  const t = songTime();
+  // nearest unjudged note in this lane within the good window
+  let best = null, bestDt = 1e9;
+  for (const nt of chart) {
+    if (nt.judged || nt.lane !== L) continue;
+    const dt = Math.abs(nt.t - t);
+    if (dt < bestDt) { bestDt = dt; best = nt; }
+  }
+  hitFx = hitFx.filter((h) => h.lane !== L); hitFx.push({ lane: L, t: performance.now() });
+  if (best && bestDt <= W_GOOD) {
+    best.judged = true; best.hit = true;
+    if (bestDt <= W_PERFECT) registerHit(true); else registerHit(false);
+  }
+  // taps with no note in window are ignored (no penalty) — keeps it forgiving
+}
+function registerHit(perfect) {
+  stats.combo++; stats.maxCombo = Math.max(stats.maxCombo, stats.combo);
+  stats.mult = Math.min(4, 1 + Math.floor(stats.combo / 10));
+  const base = perfect ? 100 : 50;
+  stats.score += base * stats.mult;
+  if (perfect) stats.perfect++; else stats.good++;
+  judgeFx = { text: perfect ? "PERFECT" : "GOOD", color: perfect ? "#4ec3c7" : "#ffd166", t: performance.now() };
+}
+function registerMiss() {
+  stats.miss++; stats.combo = 0; stats.mult = 1;
+  judgeFx = { text: "MISS", color: "#e94560", t: performance.now() };
+}
+
+const KEY_LANE = { "f": 0, "j": 1, "k": 2, "arrowleft": 0, "arrowdown": 1, "arrowright": 2 };
+document.addEventListener("keydown", (e) => {
+  if (e.repeat) return;
+  const L = KEY_LANE[e.key.toLowerCase()];
+  if (L !== undefined) { e.preventDefault(); pressLane(L); }
+  if (e.key === "Escape" && running) quitToSelect();
+});
+canvas.addEventListener("pointerdown", (e) => {
+  const x = e.clientX;
+  if (x < fieldX || x > fieldX + fieldW) { // tapping outside the field still maps to nearest lane
+    pressLane(x < CW / 2 ? 0 : 2); return;
+  }
+  pressLane(Math.min(LANES - 1, Math.floor((x - fieldX) / laneW)));
+});
+
+// ---------- end / result ----------
+function stopSource() { if (source) { try { source.onended = null; source.stop(); } catch (e) {} source = null; } }
+function quitToSelect() { running = false; cancelAnimationFrame(rafId); stopSource(); show("select"); }
+function endSong() {
+  if (!running) return;
+  running = false; cancelAnimationFrame(rafId); stopSource();
+  const done = stats.perfect + stats.good + stats.miss || 1;
+  const acc = (stats.perfect + stats.good * 0.5) / done;
+  const fc = stats.miss === 0 && (stats.perfect + stats.good) > 0;
+  let rank = "D";
+  if (acc >= 0.95) rank = "S"; else if (acc >= 0.88) rank = "A"; else if (acc >= 0.75) rank = "B"; else if (acc >= 0.6) rank = "C";
+  $("rRank").textContent = rank;
+  $("rRank").style.color = rank === "S" ? "#4ec3c7" : rank === "A" ? "#ffd166" : rank === "D" ? "#e94560" : "#fff";
+  $("rSong").textContent = songMeta.song;
+  $("rBand").textContent = songMeta.band;
+  $("rFC").classList.toggle("hidden", !fc);
+  $("rStats").innerHTML =
+    "Score <b>" + stats.score.toLocaleString() + "</b><br>" +
+    "Accuracy <b>" + Math.round(acc * 100) + "%</b><br>" +
+    "Max combo <b>" + stats.maxCombo + "</b><br>" +
+    "<span style='color:#4ec3c7'>Perfect " + stats.perfect + "</span> · " +
+    "<span style='color:#ffd166'>Good " + stats.good + "</span> · " +
+    "<span style='color:#e94560'>Miss " + stats.miss + "</span>";
+  show("result");
+}
+$("quit").addEventListener("click", quitToSelect);
+$("rBack").addEventListener("click", () => show("select"));
+$("rRetry").addEventListener("click", () => startSong(songMeta));
+</script>
+</body>
+</html>
