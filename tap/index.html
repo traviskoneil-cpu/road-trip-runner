@@ -278,7 +278,24 @@ function generateChart(buf) {
     else if (nt.s > prev.s * 1.3) kept[kept.length - 1] = nt; // replace with the stronger onset
   }
   // drop the lead-in click and anything past where the music actually ends
-  return kept.filter((nt) => nt.t > 0.4 && nt.t <= endT).map((nt) => ({ t: nt.t, lane: nt.lane, hit: false, judged: false }));
+  const inRange = kept.filter((nt) => nt.t > 0.4 && nt.t <= endT);
+  // turn a note into a HOLD when it's followed by a gap of sustained energy
+  const out = [];
+  for (let i = 0; i < inRange.length; i++) {
+    const nt = inRange[i];
+    const nextT = i + 1 < inRange.length ? inRange[i + 1].t : endT;
+    const gap = nextT - nt.t;
+    let hold = 0;
+    if (gap >= 0.55) {
+      const f0 = Math.floor(nt.t / hopS), f1 = Math.floor((nt.t + Math.min(gap, 2.4)) / hopS);
+      let above = 0, tot = 0;
+      for (let f = f0; f < f1 && f < benv.length; f++) { tot++; if (benv[f] > gate) above++; }
+      if (tot > 0 && above / tot > 0.72) hold = Math.min(gap - 0.18, 2.0);
+      if (hold < 0.35) hold = 0;
+    }
+    out.push({ t: nt.t, lane: nt.lane, hold, hit: false, judged: false, headHit: false, holding: false, done: false });
+  }
+  return out;
 }
 
 // ============================================================
@@ -316,14 +333,77 @@ function resize() {
 }
 window.addEventListener("resize", resize);
 
+// ---- Dad Mode: hazy highway seen out the windshield, behind the lanes ----
+const Traffic = {
+  cars: [], ready: false, dash: 0,
+  init() { this.cars = []; for (let i = 0; i < 13; i++) this.cars.push(this.make(Math.random())); this.ready = true; },
+  make(z) {
+    return {
+      z, lane: Math.random() * 2.2 - 1.1,        // road offset, left(-)..right(+)
+      vz: (Math.random() * 2 - 1) * 0.05 - 0.015, // relative speed: mostly drifting, some faster/slower
+      semi: Math.random() < 0.34,
+      hue: 205 + Math.random() * 45,
+    };
+  },
+  update(dt) {
+    if (!this.ready) this.init();
+    this.dash = (this.dash + dt * 0.5) % 1;
+    for (const c of this.cars) {
+      c.z += c.vz * dt;
+      if (c.z > 1.18 || c.z < -0.12) Object.assign(c, this.make(c.vz > 0 ? -0.08 : 1.12));
+    }
+  },
+  draw() {
+    const hY = CH * 0.40, vx = CW / 2;
+    // hazy sky + receding road
+    const sky = ctx.createLinearGradient(0, 0, 0, hY);
+    sky.addColorStop(0, "rgba(48,58,88,0.30)"); sky.addColorStop(1, "rgba(120,95,95,0.26)");
+    ctx.fillStyle = sky; ctx.fillRect(0, 0, CW, hY);
+    ctx.fillStyle = "rgba(26,28,38,0.40)";
+    ctx.beginPath();
+    ctx.moveTo(vx - CW * 0.05, hY); ctx.lineTo(vx + CW * 0.05, hY);
+    ctx.lineTo(CW * 1.15, CH); ctx.lineTo(-CW * 0.15, CH); ctx.closePath(); ctx.fill();
+    // center dashes scrolling toward the viewer
+    ctx.strokeStyle = "rgba(255,240,180,0.10)"; ctx.lineCap = "round";
+    for (let k = 0; k < 7; k++) {
+      const z = ((k / 7 + this.dash) % 1);
+      const y = hY + z * (CH - hY), w = 2 + z * 10;
+      ctx.lineWidth = w; ctx.beginPath();
+      ctx.moveTo(vx, y); ctx.lineTo(vx, y + 6 + z * 22); ctx.stroke();
+    }
+    // vehicles, far -> near
+    for (const c of this.cars.slice().sort((a, b) => a.z - b.z)) {
+      if (c.z < 0 || c.z > 1.12) continue;
+      const p = c.z, scale = 0.06 + p * p * 1.0;
+      const y = hY + p * (CH - hY);
+      const x = vx + c.lane * (CW * 0.09 + p * CW * 0.34);
+      const w = (c.semi ? 62 : 44) * scale * 1.7, h = (c.semi ? 80 : 34) * scale * 1.7;
+      const a = 0.09 + p * 0.24;
+      ctx.fillStyle = "hsla(" + c.hue + ",18%," + (28 + p * 22) + "%," + a + ")";
+      ctx.beginPath(); ctx.roundRect(x - w / 2, y - h, w, h, 3 * scale + 1); ctx.fill();
+      ctx.fillStyle = "rgba(235,80,66," + (a * 1.3) + ")"; // hazy tail lights
+      ctx.fillRect(x - w / 2 + 2, y - h * 0.4, w * 0.18, h * 0.18);
+      ctx.fillRect(x + w / 2 - w * 0.18 - 2, y - h * 0.4, w * 0.18, h * 0.18);
+    }
+    // overall haze
+    ctx.fillStyle = "rgba(130,130,150,0.05)"; ctx.fillRect(0, 0, CW, CH);
+    // dashboard / windshield frame silhouette across the bottom
+    ctx.fillStyle = "rgba(8,10,18,0.6)";
+    ctx.beginPath();
+    ctx.moveTo(0, CH); ctx.lineTo(0, CH - 26);
+    ctx.quadraticCurveTo(CW * 0.5, CH - 66, CW, CH - 26); ctx.lineTo(CW, CH); ctx.closePath(); ctx.fill();
+  },
+};
+
 let hitFx = [];     // {lane, t} lane flashes
 let judgeFx = null; // {text, color, t}
 function beginPlay() {
   show("play");
   resize();
   stats = { score: 0, combo: 0, maxCombo: 0, perfect: 0, good: 0, miss: 0, mult: 1, total: chart.length };
-  for (const nt of chart) { nt.hit = false; nt.judged = false; }
-  hitFx = []; judgeFx = null;
+  for (const nt of chart) { nt.hit = false; nt.judged = false; nt.headHit = false; nt.holding = false; nt.done = false; }
+  hitFx = []; judgeFx = null; laneDown = [false, false, false]; lastLoopMs = 0;
+  Traffic.init();
   // count-in: start audio a bit ahead so the first notes fall in
   source = audioCtx.createBufferSource();
   source.buffer = songBuffer;
@@ -338,25 +418,37 @@ function beginPlay() {
 // (outputLatency) plus the player's manual calibration
 function songTime() { return (audioCtx.currentTime - startAt) - (audioCtx.outputLatency || 0) - SYNC_MS / 1000; }
 
+let lastLoopMs = 0;
 function loop() {
   if (!running) return;
+  const now = performance.now();
+  const dt = lastLoopMs ? Math.min(0.05, (now - lastLoopMs) / 1000) : 0.016;
+  lastLoopMs = now;
   const t = songTime();
-  // auto-miss notes that passed the window
+  // auto-miss heads that passed the window
   for (const nt of chart) {
-    if (!nt.judged && t - nt.t > W_MISS) { nt.judged = true; registerMiss(); }
+    if (!nt.judged && t - nt.t > W_MISS) { nt.judged = true; registerMiss(); if (nt.hold > 0) nt.done = true; }
   }
+  // sustain scoring: award while held, complete at the end, break on early release
+  for (const nt of chart) {
+    if (nt.hold <= 0 || !nt.headHit || nt.done) continue;
+    if (t >= nt.t + nt.hold) { completeHold(nt); continue; }
+    if (laneDown[nt.lane]) stats.score += 180 * stats.mult * dt;
+    else breakHold(nt);
+  }
+  Traffic.update(dt);
   draw(t);
-  // end shortly after the last note if the buffer keeps going (or onended fires)
-  if (t > (chart[chart.length - 1].t + 1.2) && stats.perfect + stats.good + stats.miss >= stats.total) {
-    endSong(); return;
-  }
+  const last = chart[chart.length - 1];
+  const lastEnd = last.t + (last.hold || 0);
+  if (t > lastEnd + 1.3) { endSong(); return; }
   rafId = requestAnimationFrame(loop);
 }
 
 function draw(t) {
   ctx.clearRect(0, 0, CW, CH);
-  // field bg
-  ctx.fillStyle = "rgba(255,255,255,0.03)";
+  Traffic.draw(); // Dad Mode: hazy highway behind the lanes
+  // field bg — slightly darkened so notes read over the traffic
+  ctx.fillStyle = "rgba(10,14,28,0.42)";
   ctx.fillRect(fieldX, 0, fieldW, CH);
   // lane separators + target ring
   for (let L = 0; L < LANES; L++) {
@@ -379,23 +471,45 @@ function draw(t) {
   ctx.strokeStyle = "rgba(255,255,255,0.25)"; ctx.lineWidth = 2;
   ctx.beginPath(); ctx.moveTo(fieldX, targetY); ctx.lineTo(fieldX + fieldW, targetY); ctx.stroke();
 
-  // notes
+  // notes (taps + holds)
   for (const nt of chart) {
-    if (nt.judged && nt.hit) continue;
-    if (nt.judged && !nt.hit && t - nt.t > 0.2) continue;
-    const frac = (nt.t - t) / LEAD; // 1 at spawn (top), 0 at target
-    if (frac > 1.05) continue;
-    const y = targetY - frac * (targetY + 40);
-    if (y < -40) continue;
-    const cx = fieldX + laneW * (nt.lane + 0.5);
-    const r = laneW * 0.30;
-    ctx.beginPath();
-    ctx.arc(cx, y, r, 0, Math.PI * 2);
-    ctx.fillStyle = LANE_COLOR[nt.lane];
-    ctx.globalAlpha = nt.judged ? 0.3 : 1;
-    ctx.fill();
-    ctx.globalAlpha = 1;
-    ctx.lineWidth = 3; ctx.strokeStyle = "rgba(255,255,255,0.5)"; ctx.stroke();
+    const isHold = nt.hold > 0;
+    if (!isHold) {
+      if (nt.judged && nt.hit) continue;
+      if (nt.judged && !nt.hit && t - nt.t > 0.2) continue;
+    } else if (nt.done && t - (nt.t + nt.hold) > 0.15) continue;
+    const cx = fieldX + laneW * (nt.lane + 0.5), r = laneW * 0.30;
+    const headFrac = (nt.t - t) / LEAD;
+    const headY = targetY - headFrac * (targetY + 40);
+    // hold tail
+    if (isHold) {
+      const endFrac = (nt.t + nt.hold - t) / LEAD;
+      const yTop = targetY - endFrac * (targetY + 40);
+      let yBot = headY;
+      if (nt.headHit && !nt.done) yBot = Math.max(yTop, targetY); // consumed part clamps to the line
+      if (yTop < CH && yBot > -40) {
+        const bw = laneW * 0.36;
+        ctx.fillStyle = LANE_COLOR[nt.lane];
+        ctx.globalAlpha = nt.holding ? 0.9 : (nt.done ? 0.2 : 0.5);
+        ctx.beginPath();
+        ctx.roundRect(cx - bw / 2, Math.min(yTop, yBot), bw, Math.max(2, Math.abs(yBot - yTop)), bw / 2);
+        ctx.fill(); ctx.globalAlpha = 1;
+      }
+      if (nt.holding) { // pulsing glow at the line while sustaining
+        ctx.beginPath(); ctx.arc(cx, targetY, r * 1.15, 0, Math.PI * 2);
+        ctx.fillStyle = LANE_COLOR[nt.lane];
+        ctx.globalAlpha = 0.45 + 0.3 * Math.abs(Math.sin(performance.now() / 90));
+        ctx.fill(); ctx.globalAlpha = 1;
+      }
+    }
+    // head (hidden once a hold's head is grabbed)
+    if (headFrac <= 1.05 && headY >= -40 && !(isHold && nt.headHit)) {
+      ctx.beginPath(); ctx.arc(cx, headY, r, 0, Math.PI * 2);
+      ctx.fillStyle = LANE_COLOR[nt.lane];
+      ctx.globalAlpha = (nt.judged && !isHold) ? 0.3 : 1;
+      ctx.fill(); ctx.globalAlpha = 1;
+      ctx.lineWidth = 3; ctx.strokeStyle = "rgba(255,255,255,0.5)"; ctx.stroke();
+    }
   }
 
   // count-in
@@ -422,8 +536,10 @@ function draw(t) {
 }
 
 // ---------- input ----------
+let laneDown = [false, false, false];
 function pressLane(L) {
   if (!running) return;
+  laneDown[L] = true;
   const t = songTime();
   // nearest unjudged note in this lane within the good window
   let best = null, bestDt = 1e9;
@@ -436,8 +552,27 @@ function pressLane(L) {
   if (best && bestDt <= W_GOOD) {
     best.judged = true; best.hit = true;
     if (bestDt <= W_PERFECT) registerHit(true); else registerHit(false);
+    if (best.hold > 0) { best.headHit = true; best.holding = true; } // begin the sustain
   }
   // taps with no note in window are ignored (no penalty) — keeps it forgiving
+}
+function releaseLane(L) {
+  laneDown[L] = false;
+  const t = songTime();
+  for (const nt of chart) {
+    if (nt.lane !== L || !nt.holding || nt.done) continue;
+    if (t >= nt.t + nt.hold - W_GOOD) completeHold(nt); else breakHold(nt);
+  }
+}
+function completeHold(nt) {
+  nt.holding = false; nt.done = true;
+  stats.score += 120 * stats.mult;
+  judgeFx = { text: "HOLD!", color: "#4ec3c7", t: performance.now() };
+}
+function breakHold(nt) {
+  nt.holding = false; nt.done = true;
+  stats.combo = 0; stats.mult = 1;
+  judgeFx = { text: "LET GO", color: "#e94560", t: performance.now() };
 }
 function registerHit(perfect) {
   stats.combo++; stats.maxCombo = Math.max(stats.maxCombo, stats.combo);
@@ -459,13 +594,18 @@ document.addEventListener("keydown", (e) => {
   if (L !== undefined) { e.preventDefault(); pressLane(L); }
   if (e.key === "Escape" && running) quitToSelect();
 });
-canvas.addEventListener("pointerdown", (e) => {
-  const x = e.clientX;
-  if (x < fieldX || x > fieldX + fieldW) { // tapping outside the field still maps to nearest lane
-    pressLane(x < CW / 2 ? 0 : 2); return;
-  }
-  pressLane(Math.min(LANES - 1, Math.floor((x - fieldX) / laneW)));
+document.addEventListener("keyup", (e) => {
+  const L = KEY_LANE[e.key.toLowerCase()];
+  if (L !== undefined) releaseLane(L);
 });
+function laneOf(x) {
+  if (x < fieldX || x > fieldX + fieldW) return x < CW / 2 ? 0 : 2; // outside maps to nearest side
+  return Math.min(LANES - 1, Math.floor((x - fieldX) / laneW));
+}
+const pointerLane = {}; // pointerId -> lane, so multi-touch holds work
+canvas.addEventListener("pointerdown", (e) => { const L = laneOf(e.clientX); pointerLane[e.pointerId] = L; pressLane(L); });
+canvas.addEventListener("pointerup", (e) => { const L = pointerLane[e.pointerId]; if (L !== undefined) releaseLane(L); delete pointerLane[e.pointerId]; });
+canvas.addEventListener("pointercancel", (e) => { const L = pointerLane[e.pointerId]; if (L !== undefined) releaseLane(L); delete pointerLane[e.pointerId]; });
 
 // ---------- end / result ----------
 function stopSource() { if (source) { try { source.onended = null; source.stop(); } catch (e) {} source = null; } }
