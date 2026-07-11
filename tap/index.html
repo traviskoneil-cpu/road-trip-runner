@@ -157,7 +157,12 @@ const mkNote = (t, lane, hold) => ({ t, lane, hold, hit: false, judged: false, h
 const LANES = 3;
 const LANE_COLOR = ["#e94560", "#ffd166", "#4ec3c7"];
 const LEAD = 1.5;            // seconds a note is visible before its hit time
-const W_PERFECT = 0.045, W_GOOD = 0.095, W_MISS = 0.13; // timing windows (s)
+// timing windows (s). Touch input has more latency + less precision than a
+// keyboard, so phones/tablets get noticeably more forgiving windows.
+const IS_TOUCH = matchMedia("(pointer: coarse)").matches;
+const W_PERFECT = IS_TOUCH ? 0.070 : 0.045;
+const W_GOOD    = IS_TOUCH ? 0.140 : 0.095;
+const W_MISS    = IS_TOUCH ? 0.180 : 0.130;
 
 let audioCtx = null, songBuffer = null, source = null;
 let songMeta = null, chart = [], startAt = 0, running = false, rafId = 0;
