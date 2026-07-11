@@ -56,11 +56,14 @@ Each game = a "seat" in the car. Build order = fastest-to-fun first.
 - [ ] **Passenger → Bingo / Punch-Buggy** — spot a landmark in the scenery
       before the computer. *Reuses existing scenery art; silent-friendly.*
       **(recommended next build)**
-- [ ] **Trunk / pre-trip → Packing Tetris** — fit the cooler (square), hockey
-      stick (L), duffel, etc. Build as real Tetris, not match-3.
-- [ ] **Back seat → Merge game** — Mom hands snacks/books/toys back to keep the
-      kids happy; merge to unlock. Sticky/idle layer.
+- [ ] **Back seat → Mom Mode (merge)** — Mom hands snacks/drinks/meals/entertainment
+      back to keep the kids happy. Auto-unlocks at **DC** (snacks only); miles unlock
+      the rest of the generators. Sticky/idle layer.
+- [ ] **Trunk → Pack the Car (Tetris)** — fit the cooler (square), hockey stick (L),
+      duffel, etc. **Gates each new vehicle** (pack it before you can drive it), earns
+      miles. Build as real Tetris, not match-3.
 - [ ] ~~Match-3~~ — decided to skip / fold into Packing (weakest theme fit).
+- [ ] Room for more games later — they slot into the same unlock pattern.
 
 ---
 
@@ -78,20 +81,38 @@ Each game = a "seat" in the car. Build order = fastest-to-fun first.
 - [ ] **Entitlement layer** — a `hasUnlock(item)` check that doesn't care whether
       the grant came from gameplay, Stripe, or app-store IAP.
 
-**Economy design:**
-- [x] **First "force → open" gate shipped:** Tap Trip difficulty unlocks — start on
-      Easy only; a C on Easy unlocks Medium, a B on Medium unlocks Hard. This is
-      the pattern the whole economy will use.
-- [ ] **Miles** = one currency, earned by playing any game; drives progress.
-- [ ] **Unlock web:** Cities (miles-gated, the spine) · Games (unlocked by reaching
-      cities) · Cars (spent miles) · Songs (collected by playing; availability
-      gated by unlocked era).
-- [ ] **Car = era = radio** decision — cars unlock/theme a decade's music (starter
-      '90 wagon → '90s; '70s van → '70s; etc.). *(confirm this model)*
-- [ ] **"Force → open" funnel (whole game):** start locked to 1 car / 1 game / 1
-      city / '90s; first miles auto-unlock the next city + Tap Trip; then branches.
-- [ ] **Silent-first rule:** every game fully playable muted; audio is seasoning.
-- [ ] Decide how **Dad Mode / each game unlocks** into the flow.
+## 🎯 Progression — CANONICAL (locked in)
+
+**Per-game rules:**
+- [ ] **Runner** → earns **miles** + **collects songs** (finish a song to collect it).
+      Collected songs show up in the **mixtape playlist AND become playable in Dad
+      Mode.** Always starts in **NYC**; unlocked cities extend how far the route reaches.
+- [x] **Dad Mode (Tap Trip)** → earns **miles** + its own internal unlock (harder
+      difficulties, Easy→Medium→Hard by grade). *(difficulty gate shipped)*
+- [ ] **Mom Mode (merge)** → **auto-unlocks on reaching DC**, starting with ONE
+      generator (**snacks**); spend miles to add **drinks → meals → entertainment**.
+- [ ] **Pack the Car (Tetris)** → tied to **vehicles**: when you get a new car you must
+      **pack it before you can drive it.** First one auto-granted after a milestone
+      (a full trip, or ~reaching the Desert — TBD as more cities are added). Also
+      earns miles.
+
+**Miles (one currency) — earned everywhere, spent on:**
+- [ ] new **map areas / cities** (the spine; cheap early → pricier later)
+- [ ] **Mom Mode generators** (drinks, meals, entertainment)
+- [ ] **new vehicles**
+
+**The unlock ladder (start → mid):**
+1. Start: Runner, NYC, '90s.
+2. Finish the **short starter song** (make it the guaranteed first track) → **unlocks Dad Mode.**
+3. Two miles sources now → bank miles → **unlock DC** (route extends).
+4. Reach DC → **Mom Mode** unlocks (snacks generator only).
+5. Spend miles → more cities, more generators, new vehicles → each new vehicle → **Pack the Car.**
+
+**Notes:**
+- [x] **First "force → open" gate shipped:** Tap Trip difficulty unlocks — the pattern the rest reuses.
+- [ ] **Car = era = radio** — cars theme/unlock a decade's music (starter '90 wagon → '90s, etc.). *(still to confirm; compatible with the above)*
+- [ ] **Silent-first rule:** every game fully playable muted.
+- [ ] Future games slot into the same pattern (unlock via song / miles / city / vehicle).
 
 ---
 
