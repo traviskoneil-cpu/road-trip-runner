@@ -18,8 +18,9 @@ notes throughout for the "why."
 - [x] **'00s station (The Blender):** 17 songs, bands, bios, genres. Script written.
 - [x] **My Mixtape** — collect songs by finishing them; real embedded album art.
 - [x] **Tap Trip** rhythm game (`/tap/`) — beat-detection charts, holds + chords,
-      "Dad Mode" windshield/traffic, difficulty, sync calibration, touch-forgiving
-      windows, decade grouping + genre tags.
+      "Dad Mode" windshield/traffic, sync calibration, touch-forgiving windows,
+      decade grouping + genre tags, and **difficulty unlocks** (Easy → Medium → Hard,
+      gated by grade) backed by the new `Save` profile.
 - [x] Deployed on **Vercel** via GitHub; installable **PWA** basics (manifest/icon).
 
 ---
@@ -66,23 +67,29 @@ Each game = a "seat" in the car. Build order = fastest-to-fun first.
 ## 🏗️ Architecture & progression system
 
 **Foundations to build:**
-- [ ] **Shared save/profile** in localStorage (`rtr_save`): miles, unlockedCities,
-      unlockedGames, unlockedCars, currentCar, collectedSongs, settings (mute, sync).
+- [~] **Shared save/profile** — *started.* `Save` module writing `localStorage.rtr_save`
+      (`{ v, difficulties, settings }`) lives in Tap Trip and migrated the old sync
+      key. Still to fold in: `miles`, `unlockedCities/Games/Cars`, `currentCar`,
+      and the mixtape `collectedSongs` (currently the separate `rtr_collected` key).
       Built abstract + **account-ready** (can graduate to a server later).
 - [ ] **SPA shell** (single-page, view-swapping) — NOT iframes, so it's portable
-      to PWA + Capacitor. Owns the persistent radio + the unlock UI.
+      to PWA + Capacitor. Owns the persistent radio + the unlock UI. Move the
+      `Save` module to a shared file at this point.
 - [ ] **Entitlement layer** — a `hasUnlock(item)` check that doesn't care whether
       the grant came from gameplay, Stripe, or app-store IAP.
 
 **Economy design:**
+- [x] **First "force → open" gate shipped:** Tap Trip difficulty unlocks — start on
+      Easy only; a C on Easy unlocks Medium, a B on Medium unlocks Hard. This is
+      the pattern the whole economy will use.
 - [ ] **Miles** = one currency, earned by playing any game; drives progress.
 - [ ] **Unlock web:** Cities (miles-gated, the spine) · Games (unlocked by reaching
       cities) · Cars (spent miles) · Songs (collected by playing; availability
       gated by unlocked era).
 - [ ] **Car = era = radio** decision — cars unlock/theme a decade's music (starter
       '90 wagon → '90s; '70s van → '70s; etc.). *(confirm this model)*
-- [ ] **"Force → open" funnel:** start locked to 1 car / 1 game / 1 city / '90s;
-      first miles auto-unlock the next city + Tap Trip; then it branches out.
+- [ ] **"Force → open" funnel (whole game):** start locked to 1 car / 1 game / 1
+      city / '90s; first miles auto-unlock the next city + Tap Trip; then branches.
 - [ ] **Silent-first rule:** every game fully playable muted; audio is seasoning.
 - [ ] Decide how **Dad Mode / each game unlocks** into the flow.
 
@@ -110,6 +117,7 @@ Each game = a "seat" in the car. Build order = fastest-to-fun first.
       needs a real-device check)
 - [ ] **Graphics polish** — Tap Trip visuals, runner skateboard/motorcycle sprites,
       more/nicer city art
+- [x] Holds no longer break your streak on early release (bonus forfeited only)
 - [ ] **Hold-length tuning** in Tap Trip (they currently skew short)
 - [ ] **Traffic visibility** tuning in Dad Mode (haze vs. clarity)
 - [ ] **Downloadable MP3s** from the mixtape (optional perk; you own the tracks)
