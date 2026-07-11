@@ -211,7 +211,7 @@ function highpass(sig, sr, fc) {
   for (let i = 0; i < sig.length; i++) { const x = sig[i]; py = a * (py + x - px); y[i] = py; px = x; }
   return y;
 }
-function bandOnsets(sig, sr, lane, minGap, kThresh) {
+function bandOnsets(sig, sr, lane, minGap, kThresh, benv, gate) {
   const hopS = 0.011, hop = Math.max(1, Math.round(sr * hopS));
   const nF = Math.floor(sig.length / hop);
   const env = new Float32Array(nF);
@@ -226,10 +226,11 @@ function bandOnsets(sig, sr, lane, minGap, kThresh) {
   const Wf = Math.round(0.2 / hopS), gapF = Math.round(minGap / hopS);
   let last = -1e9;
   for (let f = 1; f < nF - 1; f++) {
+    if (benv[f] < gate) continue; // loudness gate: no notes in silence / fades / quiet
     let mean = 0, cnt = 0;
     for (let j = Math.max(0, f - Wf); j <= Math.min(nF - 1, f + Wf); j++) { mean += odf[j]; cnt++; }
     mean /= cnt;
-    const thr = mean * kThresh + 1e-4;
+    const thr = mean * kThresh + gate * 0.2; // floor tied to loudness, not a tiny constant
     if (odf[f] > thr && odf[f] >= odf[f - 1] && odf[f] >= odf[f + 1] && (f - last) >= gapF) {
       onsets.push({ t: (f * hop) / sr, lane, s: odf[f] });
       last = f;
@@ -246,15 +247,27 @@ function generateChart(buf) {
   const g = 1 / peak;
   for (let i = 0; i < n; i++) mono[i] *= g; // normalize
 
+  // broadband energy envelope + a loudness-relative gate, so we never chart
+  // silence, fades, or trailing dead air (the source of phantom end-of-song notes)
+  const hopS = 0.011, hop = Math.max(1, Math.round(sr * hopS));
+  const nF = Math.floor(n / hop);
+  const benv = new Float32Array(nF);
+  for (let f = 0; f < nF; f++) { let s = 0; const st = f * hop; for (let i = 0; i < hop; i++) { const v = mono[st + i] || 0; s += v * v; } benv[f] = Math.sqrt(s / hop); }
+  const loud = Array.from(benv).filter((v) => v > 0).sort((x, y) => x - y);
+  const loudRef = loud.length ? loud[Math.floor(loud.length * 0.75)] : 0; // robust "loud" level
+  const gate = loudRef * 0.16;
+  let lastLoud = 0; for (let f = 0; f < nF; f++) if (benv[f] > gate) lastLoud = f;
+  const endT = (lastLoud * hop) / sr; // where the music actually stops
+
   const low = lowpass(mono, sr, 150);
   const high = highpass(mono, sr, 4500);
   const mid = highpass(lowpass(mono, sr, 3000), sr, 300);
 
   const D = DIFF[DIFFICULTY];
   let notes = [];
-  notes = notes.concat(bandOnsets(low, sr, 0, 0.16, D.k + 0.1));
-  notes = notes.concat(bandOnsets(mid, sr, 1, 0.13, D.k + 0.2));
-  notes = notes.concat(bandOnsets(high, sr, 2, 0.10, D.k + 0.35));
+  notes = notes.concat(bandOnsets(low, sr, 0, 0.16, D.k + 0.1, benv, gate));
+  notes = notes.concat(bandOnsets(mid, sr, 1, 0.13, D.k + 0.2, benv, gate));
+  notes = notes.concat(bandOnsets(high, sr, 2, 0.10, D.k + 0.35, benv, gate));
   notes.sort((x, y) => x.t - y.t);
 
   // thin to a single-note stream at the difficulty spacing, keeping stronger hits
@@ -264,8 +277,8 @@ function generateChart(buf) {
     if (!prev || nt.t - prev.t >= D.spacing) kept.push(nt);
     else if (nt.s > prev.s * 1.3) kept[kept.length - 1] = nt; // replace with the stronger onset
   }
-  // drop anything in the first 0.4s (dead air / clicks)
-  return kept.filter((nt) => nt.t > 0.4).map((nt) => ({ t: nt.t, lane: nt.lane, hit: false, judged: false }));
+  // drop the lead-in click and anything past where the music actually ends
+  return kept.filter((nt) => nt.t > 0.4 && nt.t <= endT).map((nt) => ({ t: nt.t, lane: nt.lane, hit: false, judged: false }));
 }
 
 // ============================================================
