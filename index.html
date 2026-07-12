@@ -296,6 +296,7 @@
     Routes: New York &rarr; Washington D.C. &rarr; Farmland &rarr; Desert &rarr; Los Angeles &rarr; San Francisco (loops)
   </div>
 
+<script src="save.js"></script>
 <script>
 "use strict";
 
@@ -405,7 +406,7 @@ const S = {
   t: 0,
   speed: 320,          // px/sec world scroll
   distance: 0,         // meters
-  best: Number(localStorage.getItem("rtr_best") || 0),
+  best: Save.runnerBest,
   lives: 3,
   invuln: 0,
   themeIndex: 0,
@@ -886,10 +887,7 @@ function endGame() {
   S.running = false;
   S.gameOver = true;
   Radio.finishSong(); // the last song plays out over the game-over screen
-  if (S.distance > S.best) {
-    S.best = Math.floor(S.distance);
-    localStorage.setItem("rtr_best", S.best);
-  }
+  if (Save.setRunnerBest(S.distance)) S.best = Save.runnerBest;
   const ov = document.getElementById("overlay");
   document.getElementById("ovTitle").textContent = "OUT OF GAS!";
   document.getElementById("ovText").innerHTML =
@@ -2028,7 +2026,7 @@ const STATION_LABEL = {
 };
 const Library = {
   meta: {}, order: ["90s", "00s", "70s", "80s"],
-  collected: new Set(JSON.parse(localStorage.getItem("rtr_collected") || "[]")),
+  collected: Save.collectedSet(),
   player: null, playingKey: null,
   load() {
     fetch("radio/stations.json").then((r) => (r.ok ? r.json() : null)).then((d) => {
@@ -2043,9 +2041,8 @@ const Library = {
   collect(era, file) {
     if (!file) return;
     const k = this.key(era, file);
-    if (this.collected.has(k)) return;
+    if (!Save.collect(k)) return; // false if already collected
     this.collected.add(k);
-    localStorage.setItem("rtr_collected", JSON.stringify([...this.collected]));
     S.toast = { text: "★ ADDED TO MIXTAPE: " + file.replace(/\.[^.]+$/, ""), timer: 4 };
     Sfx.unlock();
     this.updateButton();

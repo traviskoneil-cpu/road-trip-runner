@@ -129,6 +129,7 @@
   </div>
 </div>
 
+<script src="../save.js"></script>
 <script>
 "use strict";
 // ============================================================
@@ -151,47 +152,12 @@ const $ = (id) => document.getElementById(id);
 const screens = { select: $("select"), loading: $("loading"), play: $("play"), result: $("result") };
 function show(name) { for (const k in screens) screens[k].classList.toggle("hidden", k !== name); }
 
-// ============================================================
-// SAVE — the shared player profile (localStorage "rtr_save").
-// Seed of the eventual account-backed profile; for now it holds
-// difficulty unlocks + settings. Everything reads/writes through here.
-// ============================================================
-const RANK_ORDER = { D: 0, C: 1, B: 2, A: 3, S: 4 };
-const UNLOCK_RULE = { easy: { next: "medium", need: "C" }, medium: { next: "hard", need: "B" } };
-const Save = {
-  data: { v: 1, difficulties: ["easy"], settings: { syncMs: 0 } },
-  load() {
-    try {
-      const raw = JSON.parse(localStorage.getItem("rtr_save") || "null");
-      if (raw && typeof raw === "object") this.data = Object.assign(this.data, raw);
-    } catch (e) {}
-    if (!Array.isArray(this.data.difficulties) || !this.data.difficulties.length) this.data.difficulties = ["easy"];
-    if (!this.data.settings) this.data.settings = { syncMs: 0 };
-    // one-time migration of the old standalone sync key
-    const oldSync = localStorage.getItem("tap_sync");
-    if (oldSync != null && !this.data.settings._syncMigrated) {
-      this.data.settings.syncMs = +oldSync || 0; this.data.settings._syncMigrated = true; this.persist();
-    }
-    return this;
-  },
-  persist() { localStorage.setItem("rtr_save", JSON.stringify(this.data)); },
-  has(diff) { return this.data.difficulties.includes(diff); },
-  highest() { return ["hard", "medium", "easy"].find((d) => this.has(d)) || "easy"; },
-  setSync(ms) { this.data.settings.syncMs = ms; this.persist(); },
-  // record a result; returns the newly-unlocked difficulty name, or null
-  recordResult(diff, rank) {
-    const rule = UNLOCK_RULE[diff];
-    let unlocked = null;
-    if (rule && !this.has(rule.next) && RANK_ORDER[rank] >= RANK_ORDER[rule.need]) {
-      this.data.difficulties.push(rule.next); unlocked = rule.next;
-    }
-    this.persist();
-    return unlocked;
-  },
-};
-Save.load();
-let DIFFICULTY = Save.highest();          // start on the highest you've unlocked (easy at first)
-let SYNC_MS = Save.data.settings.syncMs;  // manual calibration, ms
+// SAVE — the shared player profile lives in ../save.js (global `Save`,
+// localStorage "rtr_save"). Difficulty unlocks, settings, collected songs,
+// miles, cars all flow through it. Loaded before this script.
+const UNLOCK_RULE = Save.UNLOCK_RULE;
+let DIFFICULTY = Save.highest();  // start on the highest you've unlocked (easy at first)
+let SYNC_MS = Save.syncMs;        // manual calibration, ms
 const DIFF = { // spacing: min gap in the main tap stream · simul: chance of extra chord notes (Hard)
   easy:   { spacing: 0.32,  k: 1.5, simul: 0 },
   medium: { spacing: 0.20,  k: 1.4, simul: 0 },
@@ -212,8 +178,36 @@ let audioCtx = null, songBuffer = null, source = null;
 let songMeta = null, chart = [], startAt = 0, running = false, rafId = 0;
 let stats = null;
 
+// ---------- audio hardware warm-up ----------
+// Safari lazily powers up its audio pipeline on the FIRST real playback (a
+// multi-second spin-up). Because our note clock keeps advancing during that
+// spin-up, the music comes out several seconds late and desynced. Priming the
+// context with a silent buffer forces the hardware to initialize up front, so
+// the scheduled song start is actually honored. Harmless on Chrome.
+let audioWarmed = false;
+function ensureCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+function warmAudio() {
+  ensureCtx();
+  audioCtx.resume().catch(() => {}); // Safari re-suspends on tab blur; keep it hot
+  if (audioWarmed) return;
+  try {
+    const len = Math.max(1, Math.round(audioCtx.sampleRate * 0.05));
+    const b = audioCtx.createBuffer(1, len, audioCtx.sampleRate);
+    const s = audioCtx.createBufferSource();
+    s.buffer = b; s.connect(audioCtx.destination); s.start(0);
+    audioWarmed = true;
+  } catch (e) {}
+}
+// Prime on the very first user interaction so the pipeline is hot before the
+// player ever picks a song (capture so it runs before the click handlers).
+["pointerdown", "touchstart", "keydown"].forEach((ev) =>
+  window.addEventListener(ev, warmAudio, { passive: true, capture: true }));
+
 // ---------- metadata / song select ----------
-const COLLECTED = new Set(JSON.parse(localStorage.getItem("rtr_collected") || "[]"));
+const COLLECTED = Save.collectedSet(); // songs collected in the Runner show a ★ here
 let META = [];
 
 fetch("../radio/stations.json").then((r) => r.json()).then((d) => {
@@ -426,9 +420,9 @@ async function startSong(m) {
   show("loading");
   $("loadText").textContent = "Loading “" + m.song + "”…";
   try {
-    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    await audioCtx.resume().catch(() => {}); // unlock inside the click gesture
-    const arr = await fetch(songURL(m)).then((r) => r.arrayBuffer());
+    warmAudio(); // create + resume + prime the hardware inside the click gesture,
+    await audioCtx.resume().catch(() => {}); // so the long fetch/decode below gives
+    const arr = await fetch(songURL(m)).then((r) => r.arrayBuffer()); // it seconds to spin up
     $("loadText").textContent = "Building the chart…";
     songBuffer = await audioCtx.decodeAudioData(arr);
     chart = generateChart(songBuffer);

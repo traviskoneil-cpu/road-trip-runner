@@ -70,11 +70,12 @@ Each game = a "seat" in the car. Build order = fastest-to-fun first.
 ## 🏗️ Architecture & progression system
 
 **Foundations to build:**
-- [~] **Shared save/profile** — *started.* `Save` module writing `localStorage.rtr_save`
-      (`{ v, difficulties, settings }`) lives in Tap Trip and migrated the old sync
-      key. Still to fold in: `miles`, `unlockedCities/Games/Cars`, `currentCar`,
-      and the mixtape `collectedSongs` (currently the separate `rtr_collected` key).
-      Built abstract + **account-ready** (can graduate to a server later).
+- [x] **Shared save/profile** — *done.* One `Save` module in **`/save.js`**, loaded by
+      both games, owns a single `localStorage.rtr_save` blob (`v2`: `difficulties`,
+      `collected`, `miles`, `runnerBest`, `cities`, `cars`, `currentCar`, `settings`).
+      Losslessly migrates the old `rtr_best` / `rtr_collected` / `tap_sync` keys on
+      first load. `miles` earning/spending API is present but not yet wired into
+      gameplay (next step). Built abstract + **account-ready** (can graduate to a server later).
 - [ ] **SPA shell** (single-page, view-swapping) — NOT iframes, so it's portable
       to PWA + Capacitor. Owns the persistent radio + the unlock UI. Move the
       `Save` module to a shared file at this point.
