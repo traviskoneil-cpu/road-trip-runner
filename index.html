@@ -888,11 +888,14 @@ function endGame() {
   S.gameOver = true;
   Radio.finishSong(); // the last song plays out over the game-over screen
   if (Save.setRunnerBest(S.distance)) S.best = Save.runnerBest;
+  const earned = Math.floor(S.distance / 10); // 1 mile per 10m — the trip's payout
+  const totalMiles = Save.addMiles(earned);
   const ov = document.getElementById("overlay");
   document.getElementById("ovTitle").textContent = "OUT OF GAS!";
   document.getElementById("ovText").innerHTML =
     "You made it <b>" + Math.floor(S.distance) + "m</b> down the road." +
-    "<br>Best trip: <b>" + S.best + "m</b>";
+    "<br>Best trip: <b>" + S.best + "m</b>" +
+    "<br>+<b>" + earned + " mi</b> earned · <b>" + totalMiles + " mi</b> banked";
   document.getElementById("startBtn").textContent = "TAKE ANOTHER TRIP";
   ov.classList.remove("hidden");
   updateStopBtn(); // offer to stop the song still playing out
