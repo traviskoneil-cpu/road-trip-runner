@@ -318,9 +318,10 @@ const GROUND_Y = 460;
 const THEMES = [
   {
     name: "NEW YORK CITY",
-    sky: "dusk",
-    skyTop: "#0f1b3d", skyBottom: "#e8734a",
-    far: "#1b2a52", mid: "#25355f", ground: "#3a3a44", groundLine: "#55555f",
+    sky: "nyHarbor",
+    skyTop: "#59c7ea", skyBottom: "#ffd89b",
+    far: "#4f86a2", mid: "#b67a45", ground: "#303137", groundLine: "#696a6d",
+    backgroundArt: "nyHarbor",
     landmarks: ["empireState", "statueOfLiberty", "skyline"],
     obstacles: ["hydrant", "taxi", "fence", "waterTower", "mailbox"],
   },
@@ -329,6 +330,7 @@ const THEMES = [
     sky: "dcNight",
     skyTop: "#20284e", skyBottom: "#d9a05e",
     far: "#2e3860", mid: "#3d4a75", ground: "#4a4a52", groundLine: "#66666e",
+    backgroundArt: "dcMonuments",
     landmarks: ["washingtonMonument", "capitol", "lincolnMemorial"],
     obstacles: ["cherryTree", "limo", "barricade", "foodCart", "hydrant", "fence"],
   },
@@ -336,7 +338,8 @@ const THEMES = [
     name: "HEARTLAND FARMS",
     sky: "farm",
     skyTop: "#3f7fb5", skyBottom: "#f5d76e",
-    far: "#4f6f3f", mid: "#5f8a48", ground: "#79a356", groundLine: "#5c7f43",
+    far: "#4f6f3f", mid: "#5f8a48", ground: "#303137", groundLine: "#696a6d",
+    backgroundArt: "heartlandFarms",
     midStyle: "hills",
     landmarks: ["silo", "windmill", "treeline"],
     obstacles: ["cow", "hayBale", "tractor", "scarecrow", "barn", "fence"],
@@ -345,7 +348,8 @@ const THEMES = [
     name: "DESERT SOUTHWEST",
     sky: "desertSun",
     skyTop: "#2b1055", skyBottom: "#f5af19",
-    far: "#6b2d5c", mid: "#a04c3c", ground: "#c98850", groundLine: "#a06838",
+    far: "#6b2d5c", mid: "#a04c3c", ground: "#303137", groundLine: "#696a6d",
+    backgroundArt: "desertSouthwest",
     landmarks: ["devilsTower", "mesa", "canyon"],
     obstacles: ["cactus", "tumbleweed", "rock", "fence", "roadSign"],
   },
@@ -353,7 +357,8 @@ const THEMES = [
     name: "LOS ANGELES",
     sky: "la",
     skyTop: "#4a5899", skyBottom: "#f2957d",
-    far: "#5a548c", mid: "#6b6499", ground: "#8f8778", groundLine: "#6f6a5c",
+    far: "#5a548c", mid: "#6b6499", ground: "#303137", groundLine: "#696a6d",
+    backgroundArt: "losAngeles",
     landmarks: ["hollywoodSign", "palmRow", "pier", "waves"],
     obstacles: ["palmTree", "convertible", "wave", "lifeguardTower", "tacoTruck"],
   },
@@ -361,13 +366,31 @@ const THEMES = [
     name: "SAN FRANCISCO",
     sky: "fog",
     skyTop: "#1c3f60", skyBottom: "#f7b2a3",
-    far: "#2c4f70", mid: "#3d5f80", ground: "#4a4a55", groundLine: "#66666f",
+    far: "#2c4f70", mid: "#3d5f80", ground: "#303137", groundLine: "#696a6d",
+    backgroundArt: "sanFrancisco",
     landmarks: ["goldenGate", "transamerica", "paintedLadies"],
     obstacles: ["cableCar", "hydrant", "fence", "paintedHouse", "mailbox"],
   },
 ];
 const THEME_LENGTH = 1800; // meters per route before the next city
 const LOOP_LENGTH = THEME_LENGTH * THEMES.length; // one full coast-to-coast lap
+
+const BackgroundArt = {
+  nyHarbor: { src: "assets/backgrounds/ny-harbor-runner.png", img: null, ready: false, failed: false },
+  dcMonuments: { src: "assets/backgrounds/dc-monuments-runner.png", img: null, ready: false, failed: false },
+  heartlandFarms: { src: "assets/backgrounds/heartland-farms-runner.png", img: null, ready: false, failed: false },
+  desertSouthwest: { src: "assets/backgrounds/desert-southwest-runner.png", img: null, ready: false, failed: false },
+  losAngeles: { src: "assets/backgrounds/los-angeles-runner.png", img: null, ready: false, failed: false },
+  sanFrancisco: { src: "assets/backgrounds/san-francisco-runner.png", img: null, ready: false, failed: false },
+};
+
+for (const art of Object.values(BackgroundArt)) {
+  const img = new Image();
+  img.onload = () => { art.ready = true; };
+  img.onerror = () => { art.failed = true; };
+  img.src = art.src;
+  art.img = img;
+}
 
 // ---------- Obstacle catalog ----------
 // landable: true means you can run along the top (fences, rooftops)
@@ -913,9 +936,11 @@ function updateStopBtn() {
 function draw() {
   const theme = currentTheme();
 
-  drawSky(theme);
-  drawLandmarks(theme);
-  drawMidSkyline(theme);
+  if (!drawRasterBackground(theme)) {
+    drawSky(theme);
+    drawLandmarks(theme);
+    drawMidSkyline(theme);
+  }
 
   // ground
   ctx.fillStyle = theme.ground;
@@ -947,6 +972,42 @@ function draw() {
   drawHUD(theme);
 }
 
+function drawRasterBackground(theme) {
+  const art = theme.backgroundArt && BackgroundArt[theme.backgroundArt];
+  if (!art || !art.ready || !art.img) return false;
+
+  const img = art.img;
+  const tileW = W;
+  const tileH = tileW * (img.naturalHeight / img.naturalWidth);
+  const scroll = S.farX * 0.28;
+  const cycle = tileW * 2;
+  const phase = ((scroll % cycle) + cycle) % cycle;
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(0, 0, W, GROUND_Y);
+  ctx.clip();
+  ctx.fillStyle = theme.skyBottom;
+  ctx.fillRect(0, 0, W, GROUND_Y);
+
+  for (let i = -1; i <= Math.ceil(W / tileW) + 2; i++) {
+    const x = -phase + i * tileW;
+    const mirrored = Math.abs(i % 2) === 1;
+    ctx.save();
+    if (mirrored) {
+      ctx.translate(x + tileW, 0);
+      ctx.scale(-1, 1);
+      ctx.drawImage(img, 0, 0, tileW, tileH);
+    } else {
+      ctx.drawImage(img, x, 0, tileW, tileH);
+    }
+    ctx.restore();
+  }
+
+  ctx.restore();
+  return true;
+}
+
 // ---- sky, sun/moon, clouds ----
 function drawSky(theme) {
   const sky = ctx.createLinearGradient(0, 0, 0, GROUND_Y);
@@ -965,6 +1026,14 @@ function drawSky(theme) {
     ctx.beginPath(); ctx.arc(W - 170, 115, 26, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = theme.skyTop;
     ctx.beginPath(); ctx.arc(W - 182, 107, 24, 0, Math.PI * 2); ctx.fill();
+  } else if (theme.sky === "nyHarbor") {
+    // NY fallback while the illustrated harbor asset is still loading.
+    ctx.fillStyle = "rgba(255,223,150,0.25)";
+    ctx.beginPath(); ctx.arc(W - 210, 100, 54, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#ffe3a7";
+    ctx.beginPath(); ctx.arc(W - 210, 100, 34, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "rgba(255,245,220,0.15)";
+    ctx.fillRect(0, GROUND_Y - 145, W, 64);
   } else if (theme.sky === "desertSun") {
     // desert: big low sun with haze halo
     const sx = W - 250, sy = GROUND_Y - 170;
