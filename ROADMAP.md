@@ -18,7 +18,7 @@ notes throughout for the "why."
 - [x] **'00s station (The Blender):** 17 songs, bands, bios, genres. Script written.
 - [x] **My Mixtape** — collect songs by finishing them; real embedded album art.
 - [x] **Tap Trip** rhythm game (`/tap/`) — beat-detection charts, holds + chords,
-      "Dad Mode" windshield/traffic, sync calibration, touch-forgiving windows,
+      "Driver Mode" windshield/traffic, sync calibration, touch-forgiving windows,
       decade grouping + genre tags, and **difficulty unlocks** (Easy → Medium → Hard,
       gated by grade) backed by the new `Save` profile.
 - [x] Deployed on **Vercel** via GitHub; installable **PWA** basics (manifest/icon).
@@ -51,12 +51,12 @@ per-city / unlock / rain event lines, station IDs + fake ads.
 
 Each game = a "seat" in the car. Build order = fastest-to-fun first.
 
-- [x] **Windshield / driver → Tap Trip** (rhythm / Dad Mode)
+- [x] **Windshield / driver → Tap Trip** (rhythm / Driver Mode)
 - [x] **Side window / kid → the Runner** (finger game)
 - [ ] **Passenger → Bingo / Punch-Buggy** — spot a landmark in the scenery
       before the computer. *Reuses existing scenery art; silent-friendly.*
       **(recommended next build)**
-- [ ] **Back seat → Mom Mode (merge)** — Mom hands snacks/drinks/meals/entertainment
+- [ ] **Back seat → Navigator Mode (merge)** — Mom hands snacks/drinks/meals/entertainment
       back to keep the kids happy. Auto-unlocks at **DC** (snacks only); miles unlock
       the rest of the generators. Sticky/idle layer.
 - [ ] **Trunk → Pack the Car (Tetris)** — fit the cooler (square), hockey stick (L),
@@ -69,7 +69,15 @@ Each game = a "seat" in the car. Build order = fastest-to-fun first.
 
 ## 🏗️ Architecture & progression system
 
+> **Naming:** in the UI, **Driver** = the old "Dad Mode" (rhythm) and **Navigator**
+> = the old "Mom Mode" (merge). Code folders stay `tap/` etc. for now so each
+> mini-game keeps opening standalone for testing.
+
 **Foundations to build:**
+- [~] **Map-hub home screen (`/home.html`)** — *started.* The intended-flow front
+      door: mock route map (NYC lit, rest locked), Start the Trip, radio tuner,
+      game cards (Driver / Navigator-locked / Mixtape / Dealership-soon), miles +
+      song counters. Reads the shared `Save`. Becomes the true root at SPA time.
 - [x] **Shared save/profile** — *done.* One `Save` module in **`/save.js`**, loaded by
       both games, owns a single `localStorage.rtr_save` blob (`v2`: `difficulties`,
       `collected`, `miles`, `runnerBest`, `cities`, `cars`, `currentCar`, `settings`).
@@ -81,16 +89,22 @@ Each game = a "seat" in the car. Build order = fastest-to-fun first.
       `Save` module to a shared file at this point.
 - [ ] **Entitlement layer** — a `hasUnlock(item)` check that doesn't care whether
       the grant came from gameplay, Stripe, or app-store IAP.
+- [ ] **Global leaderboard** — *needs a backend (no DB yet).* Per-song / per-mode
+      high scores across players. Ties into the eventual **accounts** layer (same
+      bridge as purchases). For now the profile stores only local bests; design the
+      score-submit API so it can point at a server later without touching gameplay.
 
 ## 🎯 Progression — CANONICAL (locked in)
 
 **Per-game rules:**
 - [ ] **Runner** → earns **miles** + **collects songs** (finish a song to collect it).
-      Collected songs show up in the **mixtape playlist AND become playable in Dad
+      Collected songs show up in the **mixtape playlist AND become playable in Driver
       Mode.** Always starts in **NYC**; unlocked cities extend how far the route reaches.
-- [x] **Dad Mode (Tap Trip)** → earns **miles** + its own internal unlock (harder
-      difficulties, Easy→Medium→Hard by grade). *(difficulty gate shipped)*
-- [ ] **Mom Mode (merge)** → **auto-unlocks on reaching DC**, starting with ONE
+- [~] **Driver Mode (Tap Trip)** → earns **miles** + its own internal unlock (harder
+      difficulties, Easy→Medium→Hard by grade). *Difficulty gate shipped, but it's
+      currently **global** — needs to become **per-song** (each track unlocks its own
+      Medium/Hard). New flow: **click song → click difficulty** (not a global toggle).*
+- [ ] **Navigator Mode (merge)** → **auto-unlocks on reaching DC**, starting with ONE
       generator (**snacks**); spend miles to add **drinks → meals → entertainment**.
 - [ ] **Pack the Car (Tetris)** → tied to **vehicles**: when you get a new car you must
       **pack it before you can drive it.** First one auto-granted after a milestone
@@ -99,14 +113,14 @@ Each game = a "seat" in the car. Build order = fastest-to-fun first.
 
 **Miles (one currency) — earned everywhere, spent on:**
 - [ ] new **map areas / cities** (the spine; cheap early → pricier later)
-- [ ] **Mom Mode generators** (drinks, meals, entertainment)
+- [ ] **Navigator Mode generators** (drinks, meals, entertainment)
 - [ ] **new vehicles**
 
 **The unlock ladder (start → mid):**
 1. Start: Runner, NYC, '90s.
-2. Finish the **short starter song** (make it the guaranteed first track) → **unlocks Dad Mode.**
+2. Finish the **short starter song** (make it the guaranteed first track) → **unlocks Driver Mode.**
 3. Two miles sources now → bank miles → **unlock DC** (route extends).
-4. Reach DC → **Mom Mode** unlocks (snacks generator only).
+4. Reach DC → **Navigator Mode** unlocks (snacks generator only).
 5. Spend miles → more cities, more generators, new vehicles → each new vehicle → **Pack the Car.**
 
 **Notes:**
@@ -141,5 +155,5 @@ Each game = a "seat" in the car. Build order = fastest-to-fun first.
       more/nicer city art
 - [x] Holds no longer break your streak on early release (bonus forfeited only)
 - [ ] **Hold-length tuning** in Tap Trip (they currently skew short)
-- [ ] **Traffic visibility** tuning in Dad Mode (haze vs. clarity)
+- [ ] **Traffic visibility** tuning in Driver Mode (haze vs. clarity)
 - [ ] **Downloadable MP3s** from the mixtape (optional perk; you own the tracks)
