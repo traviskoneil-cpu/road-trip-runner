@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#12172b">
+<title>Road Trip — Home</title>
+<style>
+  :root{
+    --bg:#12172b; --panel:#1a2138; --panel2:#212a45; --accent:#e94560;
+    --gold:#ffd166; --teal:#4ec3c7; --text:#f0f0f0; --muted:#8b93ad;
+    --line:#2c3557; --road:#39415f;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{min-height:100%;}
+  body{
+    background:
+      radial-gradient(1200px 500px at 50% -10%, #23305a 0%, rgba(35,48,90,0) 60%),
+      linear-gradient(180deg,#12172b 0%,#0d1120 100%);
+    color:var(--text); font-family:"Trebuchet MS","Segoe UI",sans-serif;
+    -webkit-user-select:none; user-select:none; padding:0 0 40px; min-height:100vh;
+  }
+  .wrap{max-width:760px; margin:0 auto; padding:16px;}
+
+  /* top bar */
+  .top{display:flex; align-items:center; justify-content:space-between; gap:10px; margin:6px 2px 16px;}
+  .brand{font-size:22px; font-weight:bold; letter-spacing:2px; text-transform:uppercase; line-height:1;}
+  .brand span{color:var(--accent);}
+  .brand small{display:block; font-size:10px; letter-spacing:3px; color:var(--muted); font-weight:normal; margin-top:3px;}
+  .pills{display:flex; gap:8px;}
+  .pill{background:var(--panel); border:1px solid #2c3557; border-radius:20px; padding:6px 12px; font-size:13px; font-weight:bold; display:flex; align-items:center; gap:6px;}
+  .pill .k{color:var(--muted); font-weight:normal; font-size:11px;}
+  .pill.miles{color:var(--gold);}
+  .pill.tape{color:var(--teal);}
+
+  .card{background:var(--panel); border:1px solid #29314f; border-radius:16px; padding:16px; margin-bottom:14px;}
+  .card h2{font-size:12px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); margin-bottom:12px; font-weight:bold;}
+
+  /* MAP (placeholder) */
+  .mapcard{position:relative; overflow:hidden;}
+  .mapnote{position:absolute; top:14px; right:14px; font-size:10px; letter-spacing:1px; color:var(--muted); border:1px dashed #3a446b; border-radius:8px; padding:3px 7px;}
+  .route{position:relative; height:132px; margin:2px 0 14px;}
+  .route svg{position:absolute; inset:0; width:100%; height:100%;}
+  .stop{position:absolute; transform:translate(-50%,-50%); text-align:center; width:78px;}
+  .dot{width:22px; height:22px; border-radius:50%; margin:0 auto 5px; border:3px solid #0d1120; box-shadow:0 0 0 2px #39415f;}
+  .stop.on .dot{background:var(--accent); box-shadow:0 0 0 2px var(--accent),0 0 18px 3px rgba(233,69,96,.6);}
+  .stop.locked .dot{background:#2a3350;}
+  .stop .lbl{font-size:10.5px; line-height:1.15; color:var(--muted);}
+  .stop.on .lbl{color:var(--text); font-weight:bold;}
+  .stop .lock{font-size:9px;}
+  .here{margin:4px 2px 14px; font-size:13px; color:var(--muted);}
+  .here b{color:var(--gold);}
+  .cta{width:100%; background:var(--accent); color:#fff; border:none; font-size:17px; font-weight:bold; letter-spacing:1px; padding:14px; border-radius:12px; cursor:pointer; text-transform:uppercase;}
+  .cta:active{transform:translateY(1px);}
+
+  /* RADIO */
+  .stations{display:grid; grid-template-columns:repeat(4,1fr); gap:8px;}
+  .st{background:var(--panel2); border:1px solid #313b5e; border-radius:11px; padding:10px 6px; text-align:center; cursor:pointer; transition:transform .1s;}
+  .st:hover{transform:translateY(-2px);}
+  .st.tuned{border-color:var(--gold); box-shadow:0 0 0 1px var(--gold);}
+  .st.locked{opacity:.4; cursor:not-allowed;}
+  .st .era{font-size:16px; font-weight:bold; letter-spacing:1px;}
+  .st.tuned .era{color:var(--gold);}
+  .st .nm{font-size:9.5px; color:var(--muted); margin-top:2px; letter-spacing:.5px;}
+  .dial{display:flex; align-items:center; gap:10px; margin-top:12px; font-size:12px; color:var(--muted);}
+  .dial .bar{flex:1; height:6px; border-radius:3px; background:linear-gradient(90deg,#39415f, #39415f); position:relative;}
+  .dial .needle{position:absolute; top:-4px; width:3px; height:14px; background:var(--gold); border-radius:2px; transition:left .25s;}
+  .nowtuned{color:var(--text);}
+
+  /* MODES */
+  .modes{display:grid; grid-template-columns:repeat(2,1fr); gap:10px;}
+  .mode{background:var(--panel2); border:1px solid #313b5e; border-radius:14px; padding:14px; cursor:pointer; display:flex; gap:12px; align-items:center; transition:transform .1s; position:relative;}
+  .mode:hover{transform:translateY(-2px);}
+  .mode .ic{font-size:26px; width:30px; text-align:center;}
+  .mode .tt{font-size:15px; font-weight:bold;}
+  .mode .ds{font-size:11px; color:var(--muted); margin-top:2px;}
+  .mode.locked{opacity:.55; cursor:not-allowed;}
+  .mode.locked .badge{position:absolute; top:8px; right:10px; font-size:9px; letter-spacing:1px; color:var(--muted); border:1px solid #3a446b; border-radius:6px; padding:1px 5px;}
+  .mode.shake{animation:shake .3s;}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+
+  .foot{text-align:center; font-size:11px; color:#586084; margin-top:18px; line-height:1.7;}
+  .foot a{color:var(--muted);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <div class="brand">ROAD<span>TRIP</span><small>THE FAMILY DRIVE</small></div>
+    <div class="pills">
+      <div class="pill miles">🛣️ <span id="miles">0</span> <span class="k">mi</span></div>
+      <div class="pill tape">🎵 <span id="tape">0</span> <span class="k">songs</span></div>
+    </div>
+  </div>
+
+  <!-- MAP -->
+  <div class="card mapcard">
+    <h2>The Route</h2>
+    <div class="mapnote">placeholder map</div>
+    <div class="route" id="route"></div>
+    <div class="here">You're parked in <b id="hereCity">New York</b>. Next stop unlocks with miles.</div>
+    <button class="cta" id="startTrip">🚗 Start the Trip</button>
+  </div>
+
+  <!-- RADIO -->
+  <div class="card">
+    <h2>Radio</h2>
+    <div class="stations" id="stations"></div>
+    <div class="dial">
+      <span>📻</span>
+      <div class="bar"><div class="needle" id="needle" style="left:0%"></div></div>
+      <span class="nowtuned" id="nowTuned">—</span>
+    </div>
+  </div>
+
+  <!-- MODES -->
+  <div class="card">
+    <h2>Games</h2>
+    <div class="modes" id="modes"></div>
+  </div>
+
+  <div class="foot">
+    Each game also opens on its own for testing.<br>
+    Runner → <a href="index.html">/</a> · Driver → <a href="tap/index.html">/tap/</a>
+  </div>
+
+</div>
+
+<script src="save.js"></script>
+<script>
+"use strict";
+const $ = (id)=>document.getElementById(id);
+
+// ---- profile-driven header ----
+$("miles").textContent = Save.miles;
+$("tape").textContent = Save.data.collected.length;
+
+// ---- the route (mock) ----
+// city id, label, and the era its radio unlocks — only the ones in Save.data.cities are lit.
+const ROUTE = [
+  {id:"nyc",     name:"New York",     era:"90s"},
+  {id:"dc",      name:"Washington",   era:"00s"},
+  {id:"farm",    name:"The Heartland",era:"80s"},
+  {id:"desert",  name:"The Desert",   era:"70s"},
+  {id:"la",      name:"Los Angeles",  era:"80s"},
+  {id:"sf",      name:"San Francisco",era:"90s"},
+];
+const unlockedCities = new Set(Save.data.cities);
+(function drawRoute(){
+  const host = $("route");
+  const n = ROUTE.length;
+  // gentle zig-zag positions across the strip
+  const pts = ROUTE.map((c,i)=>({ x: 8 + (i*(84/(n-1))), y: (i%2? 66:34) }));
+  const svg = document.createElementNS("http://www.w3.org/2000/svg","svg");
+  svg.setAttribute("viewBox","0 0 100 100"); svg.setAttribute("preserveAspectRatio","none");
+  let d = "M "+pts[0].x+" "+pts[0].y;
+  for(let i=1;i<n;i++){ const a=pts[i-1],b=pts[i]; d+=` C ${(a.x+b.x)/2} ${a.y}, ${(a.x+b.x)/2} ${b.y}, ${b.x} ${b.y}`; }
+  const road = document.createElementNS("http://www.w3.org/2000/svg","path");
+  road.setAttribute("d",d); road.setAttribute("fill","none");
+  road.setAttribute("stroke","#39415f"); road.setAttribute("stroke-width","3"); road.setAttribute("stroke-linecap","round");
+  const dash = document.createElementNS("http://www.w3.org/2000/svg","path");
+  dash.setAttribute("d",d); dash.setAttribute("fill","none");
+  dash.setAttribute("stroke","#54608c");
+  dash.setAttribute("stroke-width","1"); dash.setAttribute("stroke-dasharray","2 3");
+  svg.appendChild(road); svg.appendChild(dash); host.appendChild(svg);
+  const firstLocked = ROUTE.findIndex(c=>!unlockedCities.has(c.id));
+  ROUTE.forEach((c,i)=>{
+    const on = unlockedCities.has(c.id);
+    const el = document.createElement("div");
+    el.className = "stop"+(on?" on":" locked");
+    el.style.left = pts[i].x+"%"; el.style.top = pts[i].y+"%";
+    el.innerHTML = '<div class="dot"></div><div class="lbl">'+c.name+
+      (on? '' : ' <span class="lock">🔒</span>')+'</div>';
+    host.appendChild(el);
+  });
+})();
+$("hereCity").textContent = (ROUTE.find(c=>unlockedCities.has(c.id))||ROUTE[0]).name;
+$("startTrip").addEventListener("click", ()=>{ location.href = "index.html"; });
+
+// ---- radio tuner ----
+const STATIONS = [
+  {era:"90s", call:"KDRT", name:"The Dirt"},
+  {era:"00s", call:"HITZ", name:"The Blender"},
+  {era:"80s", call:"KRZR", name:"The Razor"},
+  {era:"70s", call:"KWAX", name:"Wax Museum"},
+];
+// which eras are reachable = eras of the cities you've unlocked
+const unlockedEras = new Set(ROUTE.filter(c=>unlockedCities.has(c.id)).map(c=>c.era));
+let tuned = Save.data.settings.station;
+if(!tuned || !unlockedEras.has(tuned)) tuned = STATIONS.find(s=>unlockedEras.has(s.era))?.era || "90s";
+function renderStations(){
+  const host = $("stations"); host.innerHTML = "";
+  STATIONS.forEach((s,i)=>{
+    const open = unlockedEras.has(s.era);
+    const el = document.createElement("div");
+    el.className = "st"+(s.era===tuned?" tuned":"")+(open?"":" locked");
+    el.innerHTML = '<div class="era">'+s.era.toUpperCase()+'</div><div class="nm">'+s.call+' · '+s.name+'</div>';
+    if(open) el.addEventListener("click", ()=>{ tuned=s.era; Save.data.settings.station=tuned; Save.persist(); renderStations(); });
+    host.appendChild(el);
+  });
+  const idx = STATIONS.findIndex(s=>s.era===tuned);
+  $("needle").style.left = (idx/(STATIONS.length-1))*100+"%";
+  const s = STATIONS[idx];
+  $("nowTuned").textContent = s ? (s.call+" — "+s.name) : "—";
+}
+renderStations();
+
+// ---- games ----
+const MODES = [
+  {ic:"🥁", tt:"Driver",     ds:"Rhythm — drum the wheel",   href:"tap/index.html"},
+  {ic:"🧭", tt:"Navigator",  ds:"Keep the kids happy",        locked:!unlockedCities.has("dc"), badge:"AT D.C."},
+  {ic:"🎧", tt:"Mixtape",    ds:"Songs you've collected",     href:"index.html#mixtape"},
+  {ic:"🏁", tt:"Dealership", ds:"New rides to unlock",        locked:true, badge:"SOON"},
+];
+(function renderModes(){
+  const host = $("modes");
+  MODES.forEach(m=>{
+    const el = document.createElement("div");
+    el.className = "mode"+(m.locked?" locked":"");
+    el.innerHTML = '<div class="ic">'+m.ic+'</div><div><div class="tt">'+m.tt+'</div>'+
+      '<div class="ds">'+m.ds+'</div></div>'+(m.locked?'<div class="badge">'+(m.badge||"LOCKED")+'</div>':'');
+    el.addEventListener("click", ()=>{
+      if(m.locked){ el.classList.add("shake"); setTimeout(()=>el.classList.remove("shake"),320); return; }
+      location.href = m.href;
+    });
+    host.appendChild(el);
+  });
+})();
+</script>
+</body>
+</html>
