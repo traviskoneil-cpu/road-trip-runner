@@ -1960,10 +1960,10 @@ const ROUTE = [
 ];
 
 const STATIONS = [
-  { era: "90s", call: "KDRT", name: "The Dirt" },
-  { era: "00s", call: "HITZ", name: "The Blender" },
-  { era: "80s", call: "KRZR", name: "The Razor" },
-  { era: "70s", call: "KWAX", name: "Wax Museum" },
+  { era: "90s", call: "KDRT", name: "The Dirt", car: "minivan" },
+  { era: "00s", call: "HITZ", name: "The Blender", car: "suv" },
+  { era: "80s", call: "KRZR", name: "The Razor", car: "wagon" },
+  { era: "70s", call: "KWAX", name: "Wax Museum", car: "customVan" },
 ];
 
 const NAV_ENERGY_CAP = 100;
@@ -2018,6 +2018,8 @@ const FUTURE_GENERATORS = {
 const CAR_ART = {
   wagon: "assets/vehicles/minivan-blue.png",
   minivan: "assets/vehicles/minivan-blue.png",
+  suv: "assets/vehicles/minivan-blue.png",
+  customVan: "assets/vehicles/minivan-blue.png",
 };
 
 let toastTimer = 0;
@@ -2027,7 +2029,7 @@ let dragState = null;
 let suppressNextGridClick = false;
 
 function carName(id) {
-  return ({ wagon: "Blue Minivan", minivan: "Blue Minivan" })[id] || id;
+  return Save.vehicleName ? Save.vehicleName(id) : ({ minivan: "Blue Minivan", suv: "Family SUV", wagon: "Station Wagon", customVan: "Custom Van" })[id] || id;
 }
 
 function unlockedCities() {
@@ -2045,15 +2047,19 @@ function nextLockedCity() {
 }
 
 function unlockedEras() {
-  const open = unlockedCities();
-  return new Set(ROUTE.filter((city) => open.has(city.id)).map((city) => city.era));
+  return Save.unlockedStationEras ? Save.unlockedStationEras() : new Set(["90s"]);
 }
 
 function currentStation() {
   const eras = unlockedEras();
   let era = Save.data.settings && Save.data.settings.station;
-  if (!era || !eras.has(era)) era = STATIONS.find((station) => eras.has(station.era))?.era || "90s";
+  if (!era || !eras.has(era)) era = Save.firstUnlockedStation ? Save.firstUnlockedStation() : "90s";
   return STATIONS.find((station) => station.era === era) || STATIONS[0];
+}
+
+function nextLockedStation() {
+  const eras = unlockedEras();
+  return STATIONS.find((station) => !eras.has(station.era)) || null;
 }
 
 function persistStation(era) {
@@ -2636,8 +2642,8 @@ function setScreen(screen) {
 function renderStats() {
   $("milesCount").textContent = Save.miles;
   $("songCount").textContent = Save.data.collected.length;
-  $("mapCar").src = CAR_ART[Save.data.currentCar] || CAR_ART.wagon;
-  $("dealerCar").src = CAR_ART[Save.data.currentCar] || CAR_ART.wagon;
+  $("mapCar").src = CAR_ART[Save.data.currentCar] || CAR_ART.minivan;
+  $("dealerCar").src = CAR_ART[Save.data.currentCar] || CAR_ART.minivan;
 }
 
 function renderCities() {
@@ -2665,16 +2671,19 @@ function renderRadio() {
   const station = currentStation();
   persistStation(station.era);
   $("stationLine").textContent = station.call + " - " + station.name;
-  $("stationSub").textContent = unlockedEras().size > 1 ? "Tap station" : "Unlock cities for more stations";
+  const next = nextLockedStation();
+  $("stationSub").textContent = unlockedEras().size > 1
+    ? "Tap station"
+    : (next ? "Buy " + carName(next.car) + " for " + next.call : "All stations tuned");
   $("dockMixtape").className = "mixtape-shape era-" + station.era;
 }
 
 function renderModeScreens() {
   renderNavigator();
 
-  const cars = Array.isArray(Save.data.cars) ? Save.data.cars : ["wagon"];
+  const cars = Array.isArray(Save.data.cars) ? Save.data.cars : ["minivan"];
   $("dealerArt").textContent = Save.miles + " mi banked - " + cars.length + " ride" + (cars.length === 1 ? "" : "s") + " owned";
-  $("dealerDesc").textContent = "Current ride: " + carName(Save.data.currentCar) + ". Vehicle unlocks will spend miles here and update the map marker.";
+  $("dealerDesc").textContent = "Current ride: " + carName(Save.data.currentCar) + ". New rides will unlock car radio stations.";
   $("dealerStatus").textContent = "Not built yet";
 }
 
@@ -2796,7 +2805,8 @@ document.querySelectorAll("[data-future-generator]").forEach((button) => {
 $("radioDock").addEventListener("click", () => {
   const eras = Array.from(unlockedEras());
   if (eras.length < 2) {
-    showToast("Unlock another city to tune more stations.");
+    const next = nextLockedStation();
+    showToast(next ? "Buy " + carName(next.car) + " at the dealership to tune " + next.call + "." : "All stations tuned.");
     return;
   }
   const current = currentStation().era;

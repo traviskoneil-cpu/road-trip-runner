@@ -182,6 +182,11 @@
     font-size: 13px;
   }
   .decade.active { background: var(--accent); border-color: var(--accent); font-weight: bold; }
+  .decade.locked {
+    opacity: 0.42;
+    cursor: not-allowed;
+    border-style: dashed;
+  }
   .btn-stop {
     display: none;
     background: transparent;
@@ -258,7 +263,7 @@
 <body>
   <a class="map-link" href="home.html">MAP</a>
   <h1>Road Trip <span>Runner</span></h1>
-  <div class="tagline">Your fingers vs. the great American landscape. Just like the back seat of the station wagon.</div>
+  <div class="tagline">Your fingers vs. the great American landscape. Just like the back seat of the minivan.</div>
 
   <div id="rotateNote">
     <span class="phone">&#128241;</span><br>
@@ -418,6 +423,8 @@ const CITY_ORDER = ["nyc", "dc", "farm", "desert", "la", "sf"];
 const CAR_STATS = {
   wagon: { routeMultiplier: 1, worldSpeedStart: 260, worldSpeedRamp: 3, worldSpeedMax: 520 },
   minivan: { routeMultiplier: 1, worldSpeedStart: 260, worldSpeedRamp: 3, worldSpeedMax: 520 },
+  suv: { routeMultiplier: 1, worldSpeedStart: 260, worldSpeedRamp: 3, worldSpeedMax: 520 },
+  customVan: { routeMultiplier: 1, worldSpeedStart: 260, worldSpeedRamp: 3, worldSpeedMax: 520 },
 };
 
 const BackgroundArt = {
@@ -611,11 +618,29 @@ function routeLoopIndex() {
 }
 
 function currentCarStats() {
-  return CAR_STATS[Save.data.currentCar] || CAR_STATS.wagon;
+  return CAR_STATS[Save.data.currentCar] || CAR_STATS.minivan;
 }
 
 function routeMetersPerSecond() {
   return BASE_ROUTE_METERS_PER_SECOND * currentCarStats().routeMultiplier;
+}
+
+function vehicleName(id) {
+  return Save.vehicleName ? Save.vehicleName(id) : ({ minivan: "Blue Minivan", suv: "Family SUV", wagon: "Station Wagon", customVan: "Custom Van" })[id] || id;
+}
+
+function radioEraUnlocked(era) {
+  return Save.isStationUnlocked ? Save.isStationUnlocked(era) : era === "90s" || era === "off";
+}
+
+function unlockedRadioEra(era) {
+  if (radioEraUnlocked(era)) return era;
+  return Save.firstUnlockedStation ? Save.firstUnlockedStation() : "90s";
+}
+
+function stationVehicleName(era) {
+  const car = Save.vehicleForStation ? Save.vehicleForStation(era) : null;
+  return car ? vehicleName(car) : "another ride";
 }
 
 function bankedMilesForDistance(distance) {
@@ -703,7 +728,7 @@ document.querySelectorAll("#rideBar button").forEach((b) => {
 // changes. Swap these for AI-generated songs later.
 // ============================================================
 const Radio = {
-  era: (Save.data.settings && Save.data.settings.station) || "90s",
+  era: unlockedRadioEra((Save.data.settings && Save.data.settings.station) || "90s"),
   actx: null, nextNote: 0, step: 0, timer: null,
   playlist: {},        // era -> [filenames], loaded from radio/music/playlist.json
   audio: null, queue: [],
@@ -2637,7 +2662,15 @@ window.addEventListener("hashchange", openLibraryFromHash);
 openLibraryFromHash();
 function setRadioEra(era, persist) {
   if (!Radio.patterns[era] && era !== "off") era = "90s";
-  document.querySelectorAll(".decade").forEach((b) => b.classList.toggle("active", b.dataset.era === era));
+  if (!radioEraUnlocked(era)) era = unlockedRadioEra(era);
+  document.querySelectorAll(".decade").forEach((b) => {
+    const unlocked = radioEraUnlocked(b.dataset.era);
+    b.classList.toggle("active", b.dataset.era === era);
+    b.classList.toggle("locked", !unlocked);
+    b.setAttribute("aria-disabled", unlocked ? "false" : "true");
+    if (!unlocked && b.dataset.era !== "off") b.title = "Buy " + stationVehicleName(b.dataset.era) + " to unlock this station.";
+    else b.removeAttribute("title");
+  });
   Radio.era = era;
   if (persist && era !== "off") {
     if (!Save.data.settings || typeof Save.data.settings !== "object") Save.data.settings = {};
@@ -2648,6 +2681,10 @@ function setRadioEra(era, persist) {
 setRadioEra(Radio.era, false);
 document.querySelectorAll(".decade").forEach((btn) => {
   btn.addEventListener("click", () => {
+    if (!radioEraUnlocked(btn.dataset.era)) {
+      S.toast = { text: "Buy " + stationVehicleName(btn.dataset.era) + " to unlock this station.", timer: 3 };
+      return;
+    }
     setRadioEra(btn.dataset.era, true);
     if (S.running) Radio.start();
   });

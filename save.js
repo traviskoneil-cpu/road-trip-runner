@@ -12,6 +12,13 @@
   const KEY = "rtr_save";
   const NAVIGATOR_BOARD_CELLS = 48;
   const NAVIGATOR_DOG_SNACK_OFFSET = 100;
+  const STARTER_CAR = "minivan";
+  const VEHICLES = {
+    minivan: { name: "Blue Minivan", station: "90s" },
+    suv: { name: "Family SUV", station: "00s" },
+    wagon: { name: "Station Wagon", station: "80s" },
+    customVan: { name: "Custom Van", station: "70s" },
+  };
   const DEFAULTS = {
     v: 6,
     difficulties: ["easy"],   // legacy Dad Mode global difficulty unlocks
@@ -20,8 +27,8 @@
     miles: 0,                 // the one currency (earning wired up in a later step)
     runnerBest: 0,            // Runner high score, meters
     cities: ["nyc"],          // unlocked map areas (the route spine)
-    cars: ["wagon"],          // unlocked vehicles
-    currentCar: "wagon",
+    cars: [STARTER_CAR],      // unlocked vehicles
+    currentCar: STARTER_CAR,
     navigator: {              // back-seat Navigator mode
       energy: 100,
       lastEnergyAt: 0,
@@ -43,7 +50,7 @@
   const clone = (o) => JSON.parse(JSON.stringify(o));
 
   const Save = {
-    RANK_ORDER, UNLOCK_RULE,
+    RANK_ORDER, UNLOCK_RULE, VEHICLES, STARTER_CAR,
     data: clone(DEFAULTS),
 
     load() {
@@ -56,7 +63,7 @@
       if (!d.driverSongs || typeof d.driverSongs !== "object") d.driverSongs = {};
       if (!Array.isArray(d.collected)) d.collected = [];
       if (!Array.isArray(d.cities) || !d.cities.length) d.cities = ["nyc"];
-      if (!Array.isArray(d.cars) || !d.cars.length) d.cars = ["wagon"];
+      if (!Array.isArray(d.cars) || !d.cars.length) d.cars = [STARTER_CAR];
       if (typeof d.miles !== "number") d.miles = 0;
       if (typeof d.runnerBest !== "number") d.runnerBest = 0;
       if (!d.currentCar) d.currentCar = d.cars[0];
@@ -103,10 +110,24 @@
       if ("syncMs" in d.settings) delete d.settings.syncMs;
       if (!d.settings.station) d.settings.station = DEFAULTS.settings.station;
       if (!d._migrated || typeof d._migrated !== "object") d._migrated = {};
+      this._migrateStarterCar();
+      d.cars = Array.from(new Set(d.cars.filter((car) => VEHICLES[car])));
+      if (!d.cars.length) d.cars = [STARTER_CAR];
+      if (!d.cars.includes(STARTER_CAR)) d.cars.unshift(STARTER_CAR);
+      if (!d.currentCar || !d.cars.includes(d.currentCar)) d.currentCar = d.cars[0];
+      if (!this.isStationUnlocked(d.settings.station)) d.settings.station = DEFAULTS.settings.station;
       this._migrateOldKeys();
       d.v = DEFAULTS.v;
       this.persist();
       return this;
+    },
+
+    _migrateStarterCar() {
+      const d = this.data;
+      if (d._migrated.minivanStarter) return;
+      d.cars = d.cars.map((car) => car === "wagon" ? STARTER_CAR : car);
+      if (d.currentCar === "wagon") d.currentCar = STARTER_CAR;
+      d._migrated.minivanStarter = true;
     },
 
     // Fold the pre-unified standalone keys in once each. We read them but never
@@ -128,6 +149,37 @@
     },
 
     persist() { try { localStorage.setItem(KEY, JSON.stringify(this.data)); } catch (e) {} },
+
+    // ---- vehicles / radio stations ----
+    vehicleName(id) { return (VEHICLES[id] && VEHICLES[id].name) || id; },
+    hasCar(id) { return !!VEHICLES[id] && this.data.cars.includes(id); },
+    unlockCar(id) {
+      if (!VEHICLES[id]) return false;
+      if (this.data.cars.includes(id)) return false;
+      this.data.cars.push(id);
+      this.persist();
+      return true;
+    },
+    setCurrentCar(id) {
+      if (!this.hasCar(id)) return false;
+      this.data.currentCar = id;
+      this.persist();
+      return true;
+    },
+    vehicleForStation(era) {
+      return Object.keys(VEHICLES).find((id) => VEHICLES[id].station === era) || null;
+    },
+    unlockedStationEras() {
+      const eras = (this.data.cars || []).map((car) => VEHICLES[car] && VEHICLES[car].station).filter(Boolean);
+      return new Set(eras.length ? eras : [VEHICLES[STARTER_CAR].station]);
+    },
+    isStationUnlocked(era) {
+      if (era === "off") return true;
+      return this.unlockedStationEras().has(era);
+    },
+    firstUnlockedStation() {
+      return ["90s", "00s", "80s", "70s"].find((era) => this.isStationUnlocked(era)) || VEHICLES[STARTER_CAR].station;
+    },
 
     // ---- Dad Mode difficulty ----
     has(diff) { return this.data.difficulties.includes(diff); },
