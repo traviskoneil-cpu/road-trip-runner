@@ -11,6 +11,7 @@
 (function (global) {
   const KEY = "rtr_save";
   const NAVIGATOR_BOARD_CELLS = 48;
+  const NAVIGATOR_DOG_SNACK_OFFSET = 100;
   const DEFAULTS = {
     v: 6,
     difficulties: ["easy"],   // legacy Dad Mode global difficulty unlocks
@@ -28,6 +29,7 @@
       snackBagUses: 0,
       mergeCount: 0,
       highestTier: 0,
+      highestDogTier: 0,
       board: Array(NAVIGATOR_BOARD_CELLS).fill(null),
       inventory: {},
       requests: [],
@@ -67,18 +69,27 @@
       if (typeof nav.snackBagUses !== "number" || !Number.isFinite(nav.snackBagUses)) nav.snackBagUses = 0;
       if (typeof nav.mergeCount !== "number" || !Number.isFinite(nav.mergeCount)) nav.mergeCount = 0;
       if (typeof nav.highestTier !== "number" || !Number.isFinite(nav.highestTier)) nav.highestTier = 0;
+      if (typeof nav.highestDogTier !== "number" || !Number.isFinite(nav.highestDogTier)) nav.highestDogTier = 0;
       nav.fedCount = Math.max(0, Math.floor(nav.fedCount));
       nav.snackBagUses = Math.max(0, Math.floor(nav.snackBagUses));
       nav.mergeCount = Math.max(0, Math.floor(nav.mergeCount));
       nav.highestTier = Math.max(0, Math.floor(nav.highestTier));
+      nav.highestDogTier = Math.max(0, Math.floor(nav.highestDogTier));
       if (!Array.isArray(nav.board)) nav.board = [];
       nav.board = nav.board.slice(0, NAVIGATOR_BOARD_CELLS).map((cell) => {
         if (cell === null || cell === undefined || cell === "") return null;
-        const tier = typeof cell === "object" ? Number(cell.tier) : Number(cell);
+        const tier = typeof cell === "object" && cell.branch === "dog"
+          ? NAVIGATOR_DOG_SNACK_OFFSET + Number(cell.tier ?? 0)
+          : Number(typeof cell === "object" ? cell.value ?? cell.tier : cell);
         if (!Number.isFinite(tier) || tier < 0) return null;
         return Math.floor(tier);
       });
       while (nav.board.length < NAVIGATOR_BOARD_CELLS) nav.board.push(null);
+      nav.board.forEach((cell) => {
+        if (cell === null) return;
+        if (cell >= NAVIGATOR_DOG_SNACK_OFFSET) nav.highestDogTier = Math.max(nav.highestDogTier, cell - NAVIGATOR_DOG_SNACK_OFFSET);
+        else nav.highestTier = Math.max(nav.highestTier, cell);
+      });
       if (!nav.inventory || typeof nav.inventory !== "object" || Array.isArray(nav.inventory)) nav.inventory = {};
       Object.keys(nav.inventory).forEach((key) => {
         const count = Math.max(0, Math.floor(Number(nav.inventory[key]) || 0));

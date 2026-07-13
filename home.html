@@ -819,10 +819,10 @@
   .navigator-game {
     height: 100%;
     min-height: 0;
-    padding: 46px 12px 9px;
+    padding: 42px 12px 6px;
     display: flex;
     flex-direction: column;
-    gap: 7px;
+    gap: 6px;
     background:
       linear-gradient(180deg, rgba(255, 248, 236, 0.7) 0 90px, transparent 90px),
       radial-gradient(230px 140px at 10% 17%, rgba(255, 210, 63, 0.22), transparent 72%),
@@ -903,59 +903,60 @@
 
   .kid-request-row {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 4px;
   }
 
   .kid-request {
     min-width: 0;
-    min-height: 48px;
-    border-radius: 15px;
+    min-height: 42px;
+    border-radius: 12px;
     background: rgba(255, 248, 236, 0.94);
     border: 2px solid rgba(255, 255, 255, 0.7);
     box-shadow: 0 4px 0 rgba(0, 0, 0, 0.11);
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 7px;
-    padding: 4px 6px;
+    gap: 2px;
+    padding: 3px;
+    cursor: pointer;
+  }
+
+  .kid-request:disabled {
+    cursor: not-allowed;
+    opacity: 0.66;
+  }
+
+  .kid-request.drop-target {
+    outline: 3px solid var(--gold);
+    outline-offset: -2px;
+    transform: translateY(-1px);
   }
 
   .kid-head {
     position: relative;
-    width: 40px;
-    height: 40px;
+    width: 31px;
+    height: 31px;
     border-radius: 50%;
     overflow: hidden;
     background: linear-gradient(180deg, #d7f0fb, #fff3c3);
-    border: 3px solid #fff;
+    border: 2px solid #fff;
     box-shadow: 0 2px 0 rgba(0, 0, 0, 0.1);
     flex: 0 0 auto;
   }
 
   .kid-head img {
-    position: absolute;
-    width: 118px;
-    height: auto;
-    max-width: none;
+    width: 100%;
+    height: 100%;
     object-fit: contain;
-  }
-
-  .kid-head.kid-son img {
-    left: -38px;
-    top: -8px;
-  }
-
-  .kid-head.kid-daughter img {
-    left: -35px;
-    top: -11px;
+    transform: scale(1.1);
   }
 
   .kid-wants {
     position: relative;
-    width: 40px;
-    height: 40px;
-    border-radius: 13px;
+    width: 30px;
+    height: 30px;
+    border-radius: 10px;
     background: #fff;
     display: grid;
     place-items: center;
@@ -964,20 +965,12 @@
   }
 
   .kid-wants::before {
-    content: "";
-    position: absolute;
-    left: -8px;
-    top: 15px;
-    width: 12px;
-    height: 12px;
-    background: #fff;
-    box-shadow: inset 2px -2px 0 rgba(31, 58, 95, 0.08);
-    transform: rotate(45deg);
+    display: none;
   }
 
   .kid-wants .snack-icon {
-    width: 30px;
-    height: 30px;
+    width: 24px;
+    height: 24px;
   }
 
   .hungry-stage {
@@ -1182,7 +1175,7 @@
   }
 
   .snack-bag-art::after {
-    content: "SNAX";
+    content: "";
     position: absolute;
     left: 7px;
     right: 7px;
@@ -1190,11 +1183,6 @@
     height: 10px;
     border-radius: 999px;
     background: rgba(31, 58, 95, 0.28);
-    color: rgba(255, 248, 236, 0.92);
-    font-size: 5px;
-    font-weight: 900;
-    line-height: 10px;
-    text-align: center;
   }
 
   .future-icon {
@@ -1378,19 +1366,7 @@
   }
 
   .merge-cell .snack-label {
-    position: absolute;
-    left: 2px;
-    right: 2px;
-    bottom: 1px;
-    color: rgba(31, 58, 95, 0.66);
-    font-size: 6.5px;
-    font-weight: 900;
-    line-height: 1;
-    text-align: center;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    pointer-events: none;
+    display: none;
   }
 
   .drag-snack-ghost,
@@ -1491,7 +1467,7 @@
   }
 
   .snack-chips::before {
-    content: "CR";
+    content: "";
     position: absolute;
     left: 8px;
     right: 8px;
@@ -1499,11 +1475,6 @@
     height: 8px;
     border-radius: 999px;
     background: rgba(31, 58, 95, 0.25);
-    color: rgba(255, 248, 236, 0.9);
-    font-size: 5px;
-    font-weight: 900;
-    line-height: 8px;
-    text-align: center;
   }
 
   .snack-chips::after {
@@ -1630,6 +1601,84 @@
     border-radius: 999px 999px 0 0;
     border: 3px solid #253957;
     border-bottom: 0;
+  }
+
+  .snack-biscuit {
+    border-radius: 12px;
+    background:
+      radial-gradient(circle at 31% 35%, rgba(94, 54, 22, 0.34) 0 5%, transparent 6%),
+      radial-gradient(circle at 67% 38%, rgba(94, 54, 22, 0.34) 0 5%, transparent 6%),
+      radial-gradient(circle at 49% 68%, rgba(94, 54, 22, 0.34) 0 5%, transparent 6%),
+      #d99a4b;
+    box-shadow: inset 0 0 0 3px rgba(255, 232, 176, 0.45), inset 5px -6px 0 rgba(102, 56, 22, 0.12);
+    transform: rotate(-6deg);
+  }
+
+  .snack-bone {
+    width: 40px;
+    height: 22px;
+    margin-top: 7px;
+    border-radius: 999px;
+    background: #fff3cf;
+    box-shadow: inset 0 0 0 3px rgba(183, 135, 80, 0.32), 0 2px 0 rgba(0, 0, 0, 0.08);
+    transform: rotate(-12deg);
+  }
+
+  .snack-bone::before,
+  .snack-bone::after {
+    content: "";
+    position: absolute;
+    top: -7px;
+    width: 21px;
+    height: 36px;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 50% 28%, #fff8ec 0 27%, transparent 28%),
+      #fff3cf;
+    box-shadow: inset 0 0 0 3px rgba(183, 135, 80, 0.26);
+  }
+
+  .snack-bone::before { left: -7px; }
+  .snack-bone::after { right: -7px; }
+
+  .snack-jerky {
+    height: 26px;
+    margin-top: 5px;
+    border-radius: 10px 5px 11px 6px;
+    background:
+      linear-gradient(90deg, rgba(255,255,255,0.24), transparent 18%),
+      linear-gradient(135deg, #7d3b24 0%, #b85d2f 54%, #6b2b1d 100%);
+    box-shadow: inset 0 0 0 3px rgba(255, 205, 130, 0.22), 0 2px 0 rgba(0,0,0,0.08);
+    transform: rotate(8deg);
+  }
+
+  .snack-pupcookie {
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 50% 42%, #5a321c 0 7%, transparent 8%),
+      radial-gradient(circle at 33% 62%, #5a321c 0 5%, transparent 6%),
+      radial-gradient(circle at 67% 62%, #5a321c 0 5%, transparent 6%),
+      #d79a57;
+    box-shadow: inset 0 0 0 3px rgba(255, 232, 176, 0.42), inset 4px -5px 0 rgba(85, 48, 24, 0.13);
+  }
+
+  .snack-treatbag {
+    border-radius: 8px 8px 12px 12px;
+    background:
+      radial-gradient(circle at 50% 67%, #fff8ec 0 13%, transparent 14%),
+      linear-gradient(160deg, #7fb069 0%, #3fb6c7 58%, #1f3a5f 100%);
+    box-shadow: inset 0 0 0 3px rgba(255, 248, 236, 0.34);
+    transform: rotate(4deg);
+  }
+
+  .snack-dogfeast {
+    border-radius: 50% 50% 44% 44%;
+    background:
+      radial-gradient(circle at 50% 39%, #8b5d34 0 18%, transparent 19%),
+      radial-gradient(circle at 33% 55%, #d99a4b 0 10%, transparent 11%),
+      radial-gradient(circle at 67% 56%, #d99a4b 0 10%, transparent 11%),
+      #dfe8ef;
+    box-shadow: inset 0 -7px 0 rgba(31, 58, 95, 0.18), inset 0 0 0 3px rgba(255, 255, 255, 0.56);
   }
 
   .wipe {
@@ -1924,10 +1973,15 @@ const NAV_GRID_COLS = 6;
 const NAV_GRID_ROWS = 8;
 const NAV_GRID_CELLS = NAV_GRID_COLS * NAV_GRID_ROWS;
 const NAVIGATOR_TEST_UNLOCK = true;
+const NAV_DOG_SNACK_OFFSET = 100;
+const NAV_DOG_SNACK_CHANCE = 0.2;
 
-const NAV_KIDS = [
-  { id: "son", name: "Son", img: "assets/characters/son.png" },
-  { id: "daughter", name: "Daughter", img: "assets/characters/daughter.png" },
+const NAV_REQUESTERS = [
+  { id: "son", name: "Son", img: "assets/characters/son-face.png", branch: "human" },
+  { id: "daughter", name: "Daughter", img: "assets/characters/daughter-face.png", branch: "human" },
+  { id: "mom", name: "Mom", img: "assets/characters/mom-face.png", branch: "human" },
+  { id: "dad", name: "Dad", img: "assets/characters/dad-face.png", branch: "human" },
+  { id: "dog", name: "Dog", img: "assets/characters/dog-face.png", branch: "dog" },
 ];
 
 const NAV_SNACK_TIERS = [
@@ -1940,6 +1994,20 @@ const NAV_SNACK_TIERS = [
   { id: "trail", name: "Trail Mix", short: "Trail" },
   { id: "box", name: "Snack Box", short: "Box" },
 ];
+
+const NAV_DOG_SNACK_TIERS = [
+  { id: "biscuit", name: "Dog Biscuit", short: "Biscuit" },
+  { id: "bone", name: "Chew Bone", short: "Bone" },
+  { id: "jerky", name: "Jerky Strip", short: "Jerky" },
+  { id: "pupcookie", name: "Pup Cookie", short: "Pup Cookie" },
+  { id: "treatbag", name: "Treat Bag", short: "Treat Bag" },
+  { id: "dogfeast", name: "Dog Feast", short: "Dog Feast" },
+];
+
+const NAV_SNACK_BRANCHES = {
+  human: { offset: 0, tiers: NAV_SNACK_TIERS },
+  dog: { offset: NAV_DOG_SNACK_OFFSET, tiers: NAV_DOG_SNACK_TIERS },
+};
 
 const FUTURE_GENERATORS = {
   drinks: { name: "Drinks", cost: 500 },
@@ -2012,6 +2080,57 @@ function shake(node) {
   setTimeout(() => node.classList.remove("shake"), 320);
 }
 
+function snackBranchForValue(value) {
+  return Number(value) >= NAV_DOG_SNACK_OFFSET ? "dog" : "human";
+}
+
+function snackBranchConfig(branch) {
+  return NAV_SNACK_BRANCHES[branch] || NAV_SNACK_BRANCHES.human;
+}
+
+function boundedSnackTier(branch, tier) {
+  const config = snackBranchConfig(branch);
+  const raw = Math.floor(Number(tier) || 0);
+  return Math.max(0, Math.min(config.tiers.length - 1, raw));
+}
+
+function encodeSnack(branch, tier) {
+  const config = snackBranchConfig(branch);
+  return config.offset + boundedSnackTier(branch, tier);
+}
+
+function snackItem(value) {
+  const branch = snackBranchForValue(value);
+  const config = snackBranchConfig(branch);
+  const tier = boundedSnackTier(branch, Number(value) - config.offset);
+  return {
+    branch,
+    tier,
+    value: encodeSnack(branch, tier),
+    def: config.tiers[tier],
+    maxTier: config.tiers.length - 1,
+  };
+}
+
+function nextSnackValue(value) {
+  const item = snackItem(value);
+  return encodeSnack(item.branch, Math.min(item.maxTier, item.tier + 1));
+}
+
+function recordSnackDiscovery(nav, value) {
+  if (value === null) return;
+  const item = snackItem(value);
+  if (item.branch === "dog") nav.highestDogTier = Math.max(nav.highestDogTier || 0, item.tier);
+  else nav.highestTier = Math.max(nav.highestTier || 0, item.tier);
+}
+
+function bestSnackShort(nav) {
+  const human = boundedSnackTier("human", nav.highestTier || 0);
+  const dog = boundedSnackTier("dog", nav.highestDogTier || 0);
+  if (dog > human) return NAV_DOG_SNACK_TIERS[dog].short;
+  return NAV_SNACK_TIERS[human].short;
+}
+
 function navigatorProfile() {
   if (!Save.data.navigator || typeof Save.data.navigator !== "object") {
     Save.data.navigator = {
@@ -2021,6 +2140,7 @@ function navigatorProfile() {
       snackBagUses: 0,
       mergeCount: 0,
       highestTier: 0,
+      highestDogTier: 0,
       board: Array(NAV_GRID_CELLS).fill(null),
       generators: ["snackBag"],
     };
@@ -2032,6 +2152,7 @@ function navigatorProfile() {
   if (typeof nav.snackBagUses !== "number" || !Number.isFinite(nav.snackBagUses)) nav.snackBagUses = 0;
   if (typeof nav.mergeCount !== "number" || !Number.isFinite(nav.mergeCount)) nav.mergeCount = 0;
   if (typeof nav.highestTier !== "number" || !Number.isFinite(nav.highestTier)) nav.highestTier = 0;
+  if (typeof nav.highestDogTier !== "number" || !Number.isFinite(nav.highestDogTier)) nav.highestDogTier = 0;
   normalizeMergeBoard(nav);
   return nav;
 }
@@ -2040,17 +2161,22 @@ function normalizeMergeBoard(nav) {
   if (!Array.isArray(nav.board)) nav.board = [];
   nav.board = nav.board.slice(0, NAV_GRID_CELLS).map(normalizeSnackTier);
   while (nav.board.length < NAV_GRID_CELLS) nav.board.push(null);
-  const savedHighest = Math.max(0, Math.min(NAV_SNACK_TIERS.length - 1, Math.floor(Number(nav.highestTier) || 0)));
-  const boardHighest = nav.board.reduce((best, tier) => tier === null ? best : Math.max(best, tier), 0);
-  nav.highestTier = Math.max(savedHighest, boardHighest);
+  nav.highestTier = boundedSnackTier("human", nav.highestTier || 0);
+  nav.highestDogTier = boundedSnackTier("dog", nav.highestDogTier || 0);
+  nav.board.forEach((value) => recordSnackDiscovery(nav, value));
 }
 
 function normalizeSnackTier(value) {
   if (value === null || value === undefined || value === "") return null;
-  const raw = typeof value === "object" ? value.tier : value;
-  const tier = Math.floor(Number(raw));
-  if (!Number.isFinite(tier) || tier < 0) return null;
-  return Math.min(tier, NAV_SNACK_TIERS.length - 1);
+  if (typeof value === "object") {
+    if (value.branch === "dog") return encodeSnack("dog", value.tier ?? 0);
+    return normalizeSnackTier(value.value ?? value.tier ?? 0);
+  }
+  const raw = Math.floor(Number(value));
+  if (!Number.isFinite(raw) || raw < 0) return null;
+  const branch = snackBranchForValue(raw);
+  const offset = snackBranchConfig(branch).offset;
+  return encodeSnack(branch, raw - offset);
 }
 
 function syncNavigatorEnergy() {
@@ -2088,30 +2214,37 @@ function navEnergyTimerText(nav) {
 }
 
 function snackTier(tier) {
-  return NAV_SNACK_TIERS[Math.max(0, Math.min(NAV_SNACK_TIERS.length - 1, tier | 0))];
+  return snackItem(tier).def;
 }
 
 function snackIcon(tier) {
-  const snack = snackTier(tier);
-  return '<span class="snack-icon snack-' + snack.id + '" aria-hidden="true"></span>';
+  const item = snackItem(tier);
+  return '<span class="snack-icon snack-' + item.def.id + ' snack-branch-' + item.branch + '" aria-hidden="true"></span>';
 }
 
-function kidRequestTier(nav, index) {
-  const highest = Math.max(0, Math.min(NAV_SNACK_TIERS.length - 1, Math.floor(Number(nav.highestTier) || 0)));
-  return Math.min(NAV_SNACK_TIERS.length - 1, Math.max(0, highest - (NAV_KIDS.length - 1 - index)));
+function requesterRequestValue(nav, requester, index) {
+  if (requester.branch === "dog") return encodeSnack("dog", nav.highestDogTier || 0);
+  const humanRequesters = NAV_REQUESTERS.filter((item) => item.branch === "human");
+  const humanIndex = Math.max(0, humanRequesters.findIndex((item) => item.id === requester.id));
+  const highest = boundedSnackTier("human", nav.highestTier || 0);
+  return encodeSnack("human", highest - (humanRequesters.length - 1 - humanIndex));
+}
+
+function requesterById(id) {
+  return NAV_REQUESTERS.find((requester) => requester.id === id) || null;
 }
 
 function renderKidRequests(nav, unlocked) {
   const row = $("navKidRequests");
   if (!row) return;
-  row.innerHTML = NAV_KIDS.map((kid, index) => {
-    const tier = unlocked ? kidRequestTier(nav, index) : 0;
-    const snack = snackTier(tier);
+  row.innerHTML = NAV_REQUESTERS.map((kid, index) => {
+    const value = unlocked ? requesterRequestValue(nav, kid, index) : encodeSnack(kid.branch, 0);
+    const snack = snackTier(value);
     return (
-      '<div class="kid-request" aria-label="' + kid.name + ' wants ' + snack.name + '">' +
+      '<button class="kid-request request-' + kid.id + '" type="button" data-feed-target data-requester="' + kid.id + '"' + (unlocked ? "" : " disabled") + ' aria-label="' + kid.name + ' wants ' + snack.name + '">' +
         '<span class="kid-head kid-' + kid.id + '"><img src="' + kid.img + '" alt="' + kid.name + '"></span>' +
-        '<span class="kid-wants">' + snackIcon(tier) + '</span>' +
-      '</div>'
+        '<span class="kid-wants">' + snackIcon(value) + '</span>' +
+      '</button>'
     );
   }).join("");
 }
@@ -2150,20 +2283,34 @@ function launchSnackFromBag(cellIndex, tier) {
 }
 
 function clearDragTarget() {
-  if (!dragState || dragState.targetIndex === null) return;
-  const previous = document.querySelector?.('[data-merge-cell="' + dragState.targetIndex + '"]');
+  if (!dragState || !dragState.target) return;
+  const previous = dragState.target.type === "request"
+    ? document.querySelector?.('[data-requester="' + dragState.target.requesterId + '"]')
+    : document.querySelector?.('[data-merge-cell="' + dragState.target.index + '"]');
   previous?.classList.remove("drop-target");
-  dragState.targetIndex = null;
+  dragState.target = null;
+}
+
+function dragTargetFromNode(node) {
+  if (!node) return null;
+  if (node.dataset.feedTarget !== undefined) return { type: "request", requesterId: node.dataset.requester };
+  if (node.dataset.mergeCell !== undefined) return { type: "cell", index: Number(node.dataset.mergeCell) };
+  return null;
+}
+
+function sameDragTarget(a, b) {
+  if (!a || !b || a.type !== b.type) return false;
+  return a.type === "request" ? a.requesterId === b.requesterId : a.index === b.index;
 }
 
 function updateDragTarget(x, y) {
   if (!dragState || !document.elementFromPoint) return;
-  const node = document.elementFromPoint(x, y)?.closest?.("[data-merge-cell]");
-  const nextIndex = node ? Number(node.dataset.mergeCell) : null;
-  if (nextIndex === dragState.targetIndex) return;
+  const node = document.elementFromPoint(x, y)?.closest?.("[data-feed-target], [data-merge-cell]");
+  const nextTarget = dragTargetFromNode(node);
+  if (sameDragTarget(nextTarget, dragState.target)) return;
   clearDragTarget();
-  if (Number.isInteger(nextIndex)) {
-    dragState.targetIndex = nextIndex;
+  if (nextTarget) {
+    dragState.target = nextTarget;
     node.classList.add("drop-target");
   }
 }
@@ -2177,7 +2324,7 @@ function updateDragGhost(event) {
 }
 
 function completeDraggedSnack(sourceIndex, targetIndex) {
-  if (sourceIndex === targetIndex || targetIndex === null) return false;
+  if (sourceIndex === targetIndex || targetIndex === null || !Number.isInteger(targetIndex)) return false;
   const nav = syncNavigatorEnergy();
   const sourceTier = nav.board[sourceIndex];
   const targetTier = nav.board[targetIndex];
@@ -2203,11 +2350,11 @@ function completeDraggedSnack(sourceIndex, targetIndex) {
     return false;
   }
 
-  const nextTier = Math.min(sourceTier + 1, NAV_SNACK_TIERS.length - 1);
+  const nextTier = nextSnackValue(sourceTier);
   nav.board[targetIndex] = nextTier;
   nav.board[sourceIndex] = null;
   nav.mergeCount = (nav.mergeCount || 0) + 1;
-  nav.highestTier = Math.max(nav.highestTier || 0, nextTier);
+  recordSnackDiscovery(nav, nextTier);
   bornMergeCell = targetIndex;
   selectedMergeCell = null;
   nav.lastMessage = snackTier(nextTier).name + " came to life.";
@@ -2215,6 +2362,41 @@ function completeDraggedSnack(sourceIndex, targetIndex) {
   renderAll();
   showToast(nav.lastMessage);
   return true;
+}
+
+function feedRequesterFromCell(sourceIndex, requesterId) {
+  if (!isNavigatorUnlocked()) {
+    showToast("Unlock D.C. to open Navigator mode.");
+    renderNavigator();
+    return false;
+  }
+  const requester = requesterById(requesterId);
+  const nav = syncNavigatorEnergy();
+  const value = nav.board[sourceIndex];
+  if (!requester || value === null) return false;
+  const wanted = requesterRequestValue(nav, requester, 0);
+  if (value !== wanted) {
+    selectedMergeCell = sourceIndex;
+    nav.lastMessage = requester.name + " wants " + snackTier(wanted).name + ".";
+    Save.persist();
+    renderNavigator();
+    showToast(nav.lastMessage);
+    return false;
+  }
+  nav.board[sourceIndex] = null;
+  nav.fedCount = (nav.fedCount || 0) + 1;
+  selectedMergeCell = null;
+  nav.lastMessage = requester.name + " got " + snackTier(value).name + ".";
+  Save.persist();
+  renderAll();
+  showToast(nav.lastMessage);
+  return true;
+}
+
+function completeSnackDrop(sourceIndex, target) {
+  if (!target) return false;
+  if (target.type === "request") return feedRequesterFromCell(sourceIndex, target.requesterId);
+  return completeDraggedSnack(sourceIndex, target.index);
 }
 
 function startSnackDrag(event, cell) {
@@ -2234,7 +2416,7 @@ function startSnackDrag(event, cell) {
     sourceIndex: index,
     sourceEl: cell,
     ghost,
-    targetIndex: null,
+    target: null,
     startX: point.x,
     startY: point.y,
     moved: false,
@@ -2251,7 +2433,7 @@ function finishSnackDrag(event, canceled) {
   if (!dragState) return;
   updateDragGhost(event);
   const state = dragState;
-  const targetIndex = state.targetIndex;
+  const target = state.target;
   clearDragTarget();
   state.sourceEl?.classList.remove("drag-source");
   state.ghost?.remove?.();
@@ -2261,7 +2443,7 @@ function finishSnackDrag(event, canceled) {
   dragState = null;
   if (!canceled && state.moved) {
     suppressNextGridClick = true;
-    completeDraggedSnack(state.sourceIndex, targetIndex);
+    completeSnackDrop(state.sourceIndex, target);
     setTimeout(() => { suppressNextGridClick = false; }, 120);
   }
 }
@@ -2305,7 +2487,7 @@ function renderMergeBoard(nav, unlocked) {
     ].filter(Boolean).join(" ");
     return (
       '<button class="' + classes + '" type="button" role="gridcell" data-merge-cell="' + index + '"' + (unlocked ? "" : " disabled") + ' aria-label="' + (filled ? snack.name : "Empty") + '">' +
-        (filled ? snackIcon(tier) + '<span class="snack-label">' + snack.short + '</span>' : "") +
+        (filled ? snackIcon(tier) : "") +
       '</button>'
     );
   }).join("");
@@ -2331,7 +2513,7 @@ function renderNavigator() {
   const filled = filledBoardCount(nav);
   $("navBoardCount").textContent = filled + "/" + NAV_GRID_CELLS;
   $("navMergeCount").textContent = nav.mergeCount || 0;
-  $("navBestSnack").textContent = snackTier(nav.highestTier || 0).short;
+  $("navBestSnack").textContent = bestSnackShort(nav);
   $("navBagUses").textContent = nav.snackBagUses || 0;
   renderKidRequests(nav, unlocked);
   if (!dragState) renderMergeBoard(nav, unlocked);
@@ -2367,14 +2549,15 @@ function rummageSnackBag() {
   nav.lastEnergyAt = Date.now();
   nav.snackBagUses += 1;
   const cell = empty[0];
-  nav.board[cell] = 0;
-  nav.highestTier = Math.max(nav.highestTier || 0, 0);
+  const snackValue = Math.random() < NAV_DOG_SNACK_CHANCE ? encodeSnack("dog", 0) : encodeSnack("human", 0);
+  nav.board[cell] = snackValue;
+  recordSnackDiscovery(nav, snackValue);
   bornMergeCell = cell;
-  nav.lastMessage = snackTier(0).name + " came to life.";
+  nav.lastMessage = snackTier(snackValue).name + " came to life.";
   selectedMergeCell = cell;
   Save.persist();
   renderAll();
-  launchSnackFromBag(cell, 0);
+  launchSnackFromBag(cell, snackValue);
   showToast(nav.lastMessage);
 }
 
@@ -2421,11 +2604,11 @@ function handleMergeCell(index) {
     return;
   }
 
-  const nextTier = Math.min(tier + 1, NAV_SNACK_TIERS.length - 1);
+  const nextTier = nextSnackValue(tier);
   nav.board[index] = nextTier;
   nav.board[selectedMergeCell] = null;
   nav.mergeCount = (nav.mergeCount || 0) + 1;
-  nav.highestTier = Math.max(nav.highestTier || 0, nextTier);
+  recordSnackDiscovery(nav, nextTier);
   bornMergeCell = index;
   nav.lastMessage = snackTier(nextTier).name + " came to life.";
   selectedMergeCell = null;
@@ -2587,6 +2770,16 @@ $("navMergeGrid").addEventListener("pointerdown", (event) => {
   const button = event.target.closest("[data-merge-cell]");
   if (!button || !button.classList.contains("filled")) return;
   startSnackDrag(event, button);
+});
+
+$("navKidRequests").addEventListener("click", (event) => {
+  const request = event.target.closest("[data-requester]");
+  if (!request) return;
+  if (selectedMergeCell === null) {
+    showToast("Drag the matching snack here.");
+    return;
+  }
+  feedRequesterFromCell(selectedMergeCell, request.dataset.requester);
 });
 
 document.querySelectorAll("[data-future-generator]").forEach((button) => {
