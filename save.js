@@ -10,6 +10,7 @@
 // ============================================================
 (function (global) {
   const KEY = "rtr_save";
+  const NATIVE_BACKUP_KEY = "rtr_save_native_backup";
   const NAVIGATOR_BOARD_CELLS = 48;
   const NAVIGATOR_DOG_SNACK_OFFSET = 100;
   const STARTER_CAR = "minivan";
@@ -52,10 +53,16 @@
   const Save = {
     RANK_ORDER, UNLOCK_RULE, VEHICLES, STARTER_CAR,
     data: clone(DEFAULTS),
+    hadLocalSaveOnBoot: false,
 
     load() {
       let raw = null;
-      try { raw = JSON.parse(localStorage.getItem(KEY) || "null"); } catch (e) {}
+      let rawText = "";
+      try {
+        rawText = localStorage.getItem(KEY) || "";
+        raw = JSON.parse(rawText || "null");
+      } catch (e) {}
+      this.hadLocalSaveOnBoot = !!rawText;
       if (raw && typeof raw === "object") this.data = Object.assign(clone(DEFAULTS), raw);
       const d = this.data;
       // normalize shape (guards against hand-edited / partial / old blobs)
@@ -118,7 +125,7 @@
       if (!this.isStationUnlocked(d.settings.station)) d.settings.station = DEFAULTS.settings.station;
       this._migrateOldKeys();
       d.v = DEFAULTS.v;
-      this.persist();
+      this.persist({ skipNative: !this.hadLocalSaveOnBoot });
       return this;
     },
 
@@ -148,7 +155,39 @@
       }
     },
 
-    persist() { try { localStorage.setItem(KEY, JSON.stringify(this.data)); } catch (e) {} },
+    persist(options) {
+      try { localStorage.setItem(KEY, JSON.stringify(this.data)); } catch (e) {}
+      if (options && options.skipNative) return;
+      this.backupNative();
+    },
+
+    nativePreferences() {
+      return global.Capacitor
+        && global.Capacitor.Plugins
+        && global.Capacitor.Plugins.Preferences;
+    },
+    backupNative() {
+      const prefs = this.nativePreferences();
+      if (!prefs || typeof prefs.set !== "function") return;
+      try {
+        prefs.set({ key: NATIVE_BACKUP_KEY, value: JSON.stringify(this.data) });
+      } catch (e) {}
+    },
+    restoreNativeBackup() {
+      const prefs = this.nativePreferences();
+      if (!prefs || typeof prefs.get !== "function") return;
+      if (this.hadLocalSaveOnBoot) return;
+      prefs.get({ key: NATIVE_BACKUP_KEY }).then((result) => {
+        if (!result || !result.value) return;
+        try {
+          const restored = JSON.parse(result.value);
+          if (!restored || typeof restored !== "object") return;
+          localStorage.setItem(KEY, result.value);
+          this.load();
+          global.dispatchEvent?.(new CustomEvent("rtr-save-restored"));
+        } catch (e) {}
+      }).catch(() => {});
+    },
 
     // ---- vehicles / radio stations ----
     vehicleName(id) { return (VEHICLES[id] && VEHICLES[id].name) || id; },
@@ -253,4 +292,5 @@
 
   Save.load();
   global.Save = Save;
+  Save.restoreNativeBackup();
 })(window);

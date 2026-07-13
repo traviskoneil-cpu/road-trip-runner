@@ -1,0 +1,19 @@
+{
+  "name": "road-trip-runner",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Road Trip Runner mobile app shell.",
+  "scripts": {
+    "app:prepare": "node scripts/prepare-capacitor-web.js",
+    "app:sync": "npm run app:prepare && cap sync android",
+    "app:android": "npm run app:prepare && cap open android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^7.4.3",
+    "@capacitor/core": "^7.4.3",
+    "@capacitor/preferences": "^7.0.2"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7.4.3"
+  }
+}

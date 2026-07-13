@@ -1422,6 +1422,10 @@ $("quit").addEventListener("click", quitToSelect);
 $("loadBack").addEventListener("click", quitToSelect);
 $("rBack").addEventListener("click", () => { renderGrid(); show("select"); });
 $("rRetry").addEventListener("click", () => startSong(songMeta, DIFFICULTY));
+window.addEventListener("rtr-save-restored", () => {
+  COLLECTED = Save.collectedSet();
+  renderGrid();
+});
 </script>
 </body>
 </html>

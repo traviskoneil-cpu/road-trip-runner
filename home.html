@@ -2818,6 +2818,7 @@ $("radioDock").addEventListener("click", () => {
 });
 
 renderAll();
+window.addEventListener("rtr-save-restored", renderAll);
 setScreen("hub");
 setInterval(renderNavigator, 1000);
 </script>

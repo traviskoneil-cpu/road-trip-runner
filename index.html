@@ -2689,6 +2689,11 @@ document.querySelectorAll(".decade").forEach((btn) => {
     if (S.running) Radio.start();
   });
 });
+window.addEventListener("rtr-save-restored", () => {
+  Library.collected = Save.collectedSet();
+  Library.updateButton();
+  setRadioEra(unlockedRadioEra((Save.data.settings && Save.data.settings.station) || "90s"), false);
+});
 </script>
 </body>
 </html>

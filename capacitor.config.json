@@ -1,0 +1,13 @@
+{
+  "appId": "com.roadtriprunner.app",
+  "appName": "Road Trip Runner",
+  "webDir": "app/www",
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 0
+    }
+  },
+  "android": {
+    "allowMixedContent": false
+  }
+}

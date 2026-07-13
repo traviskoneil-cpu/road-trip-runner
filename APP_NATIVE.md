@@ -1,0 +1,40 @@
+# Road Trip Runner Native App Shell
+
+This repo now has a Capacitor Android shell so the existing HTML/JS game can live inside a native app while the web build remains the source of truth.
+
+## Structure
+
+- `capacitor.config.json` defines the native app id, name, and generated web directory.
+- `scripts/prepare-capacitor-web.js` builds `app/www` from the current static game files.
+- `android/` is the generated Android project.
+- `app/www/` and `android/app/src/main/assets/public/` are generated and ignored.
+
+The app opens on Home. Inside the generated app bundle:
+
+- `home.html` is copied to `index.html` and `home.html`.
+- the runner `index.html` is copied to `runner.html`.
+- Dad Mode stays at `tap/index.html`.
+
+## Commands
+
+```sh
+npm install
+npm run app:sync
+npm run app:android
+```
+
+Run `npm run app:sync` after changing game files so Capacitor copies the latest web bundle into Android.
+
+## Android Build Note
+
+Capacitor 7's Android project requires JDK 21. This machine currently has JDK 17 installed, so `./gradlew assembleDebug` will fail with:
+
+```txt
+error: invalid source release: 21
+```
+
+Install or select a JDK 21 runtime in Android Studio before building an APK.
+
+## Save State
+
+The web game still uses `localStorage` as its normal save path. In a Capacitor app, `save.js` also mirrors the save blob into native Preferences. If WebView storage is empty on app boot, it restores from the native backup and dispatches `rtr-save-restored` so screens can redraw.
