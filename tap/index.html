@@ -327,6 +327,10 @@ const W_MISS    = IS_TOUCH ? 0.180 : 0.130;
 const ACC_GOOD_WEIGHT = 0.75;
 const COUNT_IN_SECONDS = 1.6;
 const MAX_REASONABLE_OUTPUT_LATENCY = 0.75;
+const DRIVER_MILE_SCORE_UNIT = 7000;
+const DRIVER_MILE_DIFF_MULT = { easy: 0.7, medium: 1, hard: 1.25 };
+const DRIVER_MILE_RANK_MULT = { D: 0, C: 0.35, B: 0.65, A: 0.9, S: 1.1 };
+const DRIVER_MILE_CAP = { easy: 18, medium: 36, hard: 60 };
 
 let audioCtx = null, songBuffer = null, source = null;
 let songMeta = null, chart = [], startAt = 0, running = false, rafId = 0;
@@ -1372,6 +1376,15 @@ canvas.addEventListener("pointercancel", (e) => { const L = pointerLane[e.pointe
 // ---------- end / result ----------
 function stopSource() { if (source) { try { source.onended = null; source.stop(); } catch (e) {} source = null; } }
 function quitToSelect() { cancelLoad(); running = false; cancelAnimationFrame(rafId); stopSource(); show("select"); }
+function milesForDriverResult(score, diff, rank) {
+  const scoreMiles = Math.floor(Math.max(0, score) / DRIVER_MILE_SCORE_UNIT);
+  const diffMult = DRIVER_MILE_DIFF_MULT[diff] || 0;
+  const rankMult = DRIVER_MILE_RANK_MULT[rank] || 0;
+  const cap = DRIVER_MILE_CAP[diff] || 0;
+  const earned = Math.floor(scoreMiles * diffMult * rankMult);
+  if (!Number.isFinite(earned) || earned <= 0) return 0;
+  return Math.min(cap, earned);
+}
 function endSong() {
   if (!running) return;
   running = false; cancelAnimationFrame(rafId); stopSource();
@@ -1385,10 +1398,13 @@ function endSong() {
   $("rSong").textContent = songMeta.song;
   $("rBand").textContent = songMeta.band + " · " + DIFF_LABEL[DIFFICULTY];
   $("rFC").classList.toggle("hidden", !fc);
+  const earnedMiles = milesForDriverResult(stats.score, DIFFICULTY, rank);
+  const totalMiles = earnedMiles > 0 ? Save.addMiles(earnedMiles) : Save.miles;
   $("rStats").innerHTML =
     "Score <b>" + Math.round(stats.score).toLocaleString() + "</b><br>" +
     "Accuracy <b>" + Math.round(acc * 100) + "%</b><br>" +
     "Max combo <b>" + stats.maxCombo + "</b><br>" +
+    "+<b>" + earnedMiles + " mi</b> earned · <b>" + totalMiles + " mi</b> banked<br>" +
     "<span style='color:#4ec3c7'>Perfect " + stats.perfect + "</span> · " +
     "<span style='color:#ffd166'>Good " + stats.good + "</span> · " +
     "<span style='color:#e94560'>Miss " + stats.miss + "</span>";
