@@ -734,6 +734,8 @@ const Radio = {
     "90s": ["90s_id_3.mp3", "90s_id_1.mp3", "90s_id_2.mp3"],
   },
   battleTracks: ["Text Me Back (Or Else).mp3", "Text Me Back (Or Else) 2000s.mp3"],
+  collectedRotationWeight: 1,
+  uncollectedRotationWeight: 3,
   libraryKey(era, file) { return era + "|" + file; },
   pickOpeningClip() {
     const files = this.openingClipsByEra[this.era] || [];
@@ -741,13 +743,26 @@ const Radio = {
     if (present.length) return present[Math.floor(Math.random() * present.length)];
     return DJ.pick("id");
   },
+  rotationWeight(file) {
+    return Save.isCollected(this.libraryKey(this.era, file))
+      ? this.collectedRotationWeight
+      : this.uncollectedRotationWeight;
+  },
   shuffledQueue(tracks, prevFile) {
-    const queue = tracks.slice().sort(() => Math.random() - 0.5);
+    const queue = [];
+    tracks.forEach((file) => {
+      for (let i = 0; i < this.rotationWeight(file); i++) queue.push(file);
+    });
+    queue.sort(() => Math.random() - 0.5);
     const opener = this.openerByEra[this.era];
     if (!prevFile && opener && tracks.includes(opener) && !Save.isCollected(this.libraryKey(this.era, opener))) {
       const i = queue.indexOf(opener);
       if (i >= 0) queue.splice(i, 1);
       queue.unshift(opener);
+    }
+    if (prevFile && queue[0] === prevFile) {
+      const i = queue.findIndex((file) => file !== prevFile);
+      if (i > 0) queue.unshift(queue.splice(i, 1)[0]);
     }
     return queue;
   },
@@ -793,7 +808,12 @@ const Radio = {
     this.nowFile = file;
     this.audio = new Audio("radio/music/" + this.era + "/" + encodeURIComponent(file));
     this.audio.volume = 0.65;
-    this.audio.onended = () => { Library.collect(this.era, file); this.playBreak(file, tracks); };
+    const wasCollected = Save.isCollected(this.libraryKey(this.era, file));
+    this.audio.onended = () => {
+      Library.collect(this.era, file);
+      if (!wasCollected) this.queue = this.queue.filter((queuedFile) => queuedFile !== file);
+      this.playBreak(file, tracks);
+    };
     this.audio.onerror = () => {
       // bad/missing file: skip ahead instead of going silent, but give up
       // after one full pass so a missing folder can't loop forever
