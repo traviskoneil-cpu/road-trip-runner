@@ -6,7 +6,9 @@
   "scripts": {
     "app:prepare": "node scripts/prepare-capacitor-web.js",
     "app:sync": "npm run app:prepare && cap sync android",
-    "app:android": "npm run app:prepare && cap open android"
+    "app:android": "npm run app:prepare && cap open android",
+    "app:build:android": "npm run app:sync && cd android && JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ./gradlew assembleDebug",
+    "app:install:android": "npm run app:sync && cd android && JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ./gradlew installDebug"
   },
   "dependencies": {
     "@capacitor/android": "^7.4.3",

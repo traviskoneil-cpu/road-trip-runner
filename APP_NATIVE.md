@@ -20,6 +20,8 @@ The app opens on Home. Inside the generated app bundle:
 ```sh
 npm install
 npm run app:sync
+npm run app:build:android
+npm run app:install:android
 npm run app:android
 ```
 
@@ -27,13 +29,19 @@ Run `npm run app:sync` after changing game files so Capacitor copies the latest 
 
 ## Android Build Note
 
-Capacitor 7's Android project requires JDK 21. This machine currently has JDK 17 installed, so `./gradlew assembleDebug` will fail with:
+Capacitor 7's Android project requires JDK 21. This machine has Homebrew `openjdk@21` installed at:
 
 ```txt
-error: invalid source release: 21
+/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home
 ```
 
-Install or select a JDK 21 runtime in Android Studio before building an APK.
+The `app:build:android` and `app:install:android` scripts point Gradle at that JDK explicitly, so the global terminal Java can stay on JDK 17.
+
+The debug APK is generated at:
+
+```txt
+android/app/build/outputs/apk/debug/app-debug.apk
+```
 
 ## Save State
 
