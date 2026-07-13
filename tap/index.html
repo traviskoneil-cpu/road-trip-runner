@@ -325,6 +325,8 @@ const W_PERFECT = IS_TOUCH ? 0.070 : 0.045;
 const W_GOOD    = IS_TOUCH ? 0.140 : 0.095;
 const W_MISS    = IS_TOUCH ? 0.180 : 0.130;
 const ACC_GOOD_WEIGHT = 0.75;
+const COUNT_IN_SECONDS = 1.6;
+const MAX_REASONABLE_OUTPUT_LATENCY = 0.75;
 
 let audioCtx = null, songBuffer = null, source = null;
 let songMeta = null, chart = [], startAt = 0, running = false, rafId = 0;
@@ -1152,14 +1154,23 @@ function beginPlay() {
   source.buffer = songBuffer;
   const gain = audioCtx.createGain(); gain.gain.value = 0.92;
   source.connect(gain).connect(audioCtx.destination);
-  startAt = audioCtx.currentTime + 1.6;
+  startAt = audioCtx.currentTime + COUNT_IN_SECONDS;
   source.start(startAt);
   source.onended = () => { if (running) endSong(); };
   running = true;
   loop();
 }
 // song clock, compensated for how late the sound actually leaves the speakers
-function songTime() { return (audioCtx.currentTime - startAt) - (audioCtx.outputLatency || 0); }
+function audioOutputLatency() {
+  const rawLatency = Number(audioCtx && audioCtx.outputLatency);
+  if (!Number.isFinite(rawLatency) || rawLatency <= 0) return 0;
+
+  // Some Android Chrome builds report this value in milliseconds. Bound it
+  // before using it as seconds so the count-in cannot jump into the hundreds.
+  const seconds = rawLatency > 1 ? rawLatency / 1000 : rawLatency;
+  return seconds <= MAX_REASONABLE_OUTPUT_LATENCY ? seconds : 0;
+}
+function songTime() { return (audioCtx.currentTime - startAt) - audioOutputLatency(); }
 
 let lastLoopMs = 0;
 function loop() {
@@ -1264,7 +1275,7 @@ function draw(t) {
 
   // count-in
   if (t < 0) {
-    const n = Math.ceil(-t);
+    const n = Math.min(Math.ceil(COUNT_IN_SECONDS), Math.max(1, Math.ceil(-t)));
     ctx.fillStyle = "#fff"; ctx.font = "bold 64px sans-serif"; ctx.textAlign = "center";
     ctx.fillText(n, CW / 2, CH * 0.42);
     ctx.font = "16px sans-serif"; ctx.fillText("GET READY", CW / 2, CH * 0.5);
