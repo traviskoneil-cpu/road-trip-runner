@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LA Obstacles QA</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: #141823;
+    color: #f4f0e8;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    padding: 18px;
+  }
+  main {
+    display: grid;
+    gap: 18px;
+    max-width: 980px;
+    margin: 0 auto;
+  }
+  h1 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+  }
+  p {
+    margin: 4px 0 0;
+    color: #b9c0cb;
+    font-size: 13px;
+  }
+  canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+    background: #000;
+    border: 1px solid rgba(255,255,255,0.16);
+  }
+</style>
+</head>
+<body>
+<main>
+  <section>
+    <h1>Los Angeles - Core Obstacles</h1>
+    <p>palm tree, convertible, lifeguard tower, taco truck</p>
+    <canvas id="core" width="960" height="540"></canvas>
+  </section>
+  <section>
+    <h1>Los Angeles - Later Unlocks</h1>
+    <p>surfboard rack, movie camera, traffic cones, studio trailer, wave</p>
+    <canvas id="late" width="960" height="540"></canvas>
+  </section>
+</main>
+<script>
+const GROUND_Y = 460;
+const defs = {
+  palmTree: { src: "../../assets/obstacles/palm-tree.png", w: 76, h: 130 },
+  convertible: { src: "../../assets/obstacles/convertible.png", w: 158, h: 58 },
+  lifeguardTower: { src: "../../assets/obstacles/lifeguard-tower.png", w: 146, h: 112 },
+  tacoTruck: { src: "../../assets/obstacles/taco-truck.png", w: 150, h: 98 },
+  surfboardRack: { src: "../../assets/obstacles/surfboard-rack.png", w: 156, h: 76 },
+  movieCamera: { src: "../../assets/obstacles/movie-camera.png", w: 108, h: 118 },
+  trafficCones: { src: "../../assets/obstacles/traffic-cones.png", w: 136, h: 56 },
+  studioTrailer: { src: "../../assets/obstacles/studio-trailer.png", w: 184, h: 96 },
+  wave: { src: "../../assets/obstacles/wave.png", w: 138, h: 82 },
+};
+
+function drawBackground(ctx) {
+  const sky = ctx.createLinearGradient(0, 0, 0, GROUND_Y);
+  sky.addColorStop(0, "#4a5899");
+  sky.addColorStop(1, "#f2957d");
+  ctx.fillStyle = sky;
+  ctx.fillRect(0, 0, 960, GROUND_Y);
+
+  ctx.fillStyle = "rgba(90,84,140,0.58)";
+  ctx.beginPath();
+  ctx.moveTo(0, GROUND_Y - 102);
+  ctx.lineTo(120, GROUND_Y - 136);
+  ctx.lineTo(260, GROUND_Y - 88);
+  ctx.lineTo(410, GROUND_Y - 158);
+  ctx.lineTo(560, GROUND_Y - 112);
+  ctx.lineTo(760, GROUND_Y - 148);
+  ctx.lineTo(960, GROUND_Y - 95);
+  ctx.lineTo(960, GROUND_Y);
+  ctx.lineTo(0, GROUND_Y);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.fillStyle = "rgba(107,100,153,0.62)";
+  for (let i = -1; i < 5; i++) {
+    const x = i * 250 + 30;
+    ctx.fillRect(x, GROUND_Y - 76, 92, 76);
+    ctx.fillRect(x + 118, GROUND_Y - 112, 132, 112);
+  }
+
+  ctx.fillStyle = "rgba(65,146,172,0.35)";
+  ctx.fillRect(0, GROUND_Y - 26, 960, 26);
+  ctx.fillStyle = "#303137";
+  ctx.fillRect(0, GROUND_Y, 960, 80);
+  ctx.strokeStyle = "#696a6d";
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(0, GROUND_Y + 0.5);
+  ctx.lineTo(960, GROUND_Y + 0.5);
+  ctx.stroke();
+}
+
+function loadImage(def) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+    img.src = def.src;
+  });
+}
+
+async function drawStage(canvasId, entries) {
+  const canvas = document.getElementById(canvasId);
+  const ctx = canvas.getContext("2d");
+  drawBackground(ctx);
+  for (const entry of entries) {
+    const def = defs[entry.key];
+    const img = await loadImage(def);
+    ctx.drawImage(img, entry.x, GROUND_Y - def.h, def.w, def.h);
+  }
+}
+
+Promise.all([
+  drawStage("core", [
+    { key: "palmTree", x: 96 },
+    { key: "convertible", x: 252 },
+    { key: "lifeguardTower", x: 494 },
+    { key: "tacoTruck", x: 736 },
+  ]),
+  drawStage("late", [
+    { key: "surfboardRack", x: 78 },
+    { key: "movieCamera", x: 280 },
+    { key: "trafficCones", x: 448 },
+    { key: "studioTrailer", x: 610 },
+    { key: "wave", x: 812 },
+  ]),
+]).then(() => document.body.dataset.ready = "true");
+</script>
+</body>
+</html>

@@ -3,230 +3,2620 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#12172b">
-<title>Road Trip — Home</title>
+<meta name="theme-color" content="#111832">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon.png">
+<title>Road Trip - Home</title>
 <style>
-  :root{
-    --bg:#12172b; --panel:#1a2138; --panel2:#212a45; --accent:#e94560;
-    --gold:#ffd166; --teal:#4ec3c7; --text:#f0f0f0; --muted:#8b93ad;
-    --line:#2c3557; --road:#39415f;
+  :root {
+    --sky: #72c6e8;
+    --cream: #fff8ec;
+    --ink: #1f3a5f;
+    --muted: #5c7893;
+    --orange: #ff6b4a;
+    --teal: #3fb6c7;
+    --gold: #ffd23f;
+    --gold-dark: #e8a200;
+    --green: #2e9e4f;
+    --purple: #7b61ff;
+    --deep: #0a0d1a;
   }
-  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-  html,body{min-height:100%;}
-  body{
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html,
+  body {
+    min-height: 100%;
+  }
+
+  body {
+    min-height: 100vh;
     background:
-      radial-gradient(1200px 500px at 50% -10%, #23305a 0%, rgba(35,48,90,0) 60%),
-      linear-gradient(180deg,#12172b 0%,#0d1120 100%);
-    color:var(--text); font-family:"Trebuchet MS","Segoe UI",sans-serif;
-    -webkit-user-select:none; user-select:none; padding:0 0 40px; min-height:100vh;
+      radial-gradient(900px 420px at 50% -10%, rgba(70, 123, 190, 0.36), transparent 58%),
+      linear-gradient(180deg, #111832 0%, #090d18 100%);
+    color: var(--cream);
+    font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 28px 12px;
+    user-select: none;
+    -webkit-user-select: none;
   }
-  .wrap{max-width:760px; margin:0 auto; padding:16px;}
 
-  /* top bar */
-  .top{display:flex; align-items:center; justify-content:space-between; gap:10px; margin:6px 2px 16px;}
-  .brand{font-size:22px; font-weight:bold; letter-spacing:2px; text-transform:uppercase; line-height:1;}
-  .brand span{color:var(--accent);}
-  .brand small{display:block; font-size:10px; letter-spacing:3px; color:var(--muted); font-weight:normal; margin-top:3px;}
-  .pills{display:flex; gap:8px;}
-  .pill{background:var(--panel); border:1px solid #2c3557; border-radius:20px; padding:6px 12px; font-size:13px; font-weight:bold; display:flex; align-items:center; gap:6px;}
-  .pill .k{color:var(--muted); font-weight:normal; font-size:11px;}
-  .pill.miles{color:var(--gold);}
-  .pill.tape{color:var(--teal);}
+  button {
+    font: inherit;
+  }
 
-  .card{background:var(--panel); border:1px solid #29314f; border-radius:16px; padding:16px; margin-bottom:14px;}
-  .card h2{font-size:12px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); margin-bottom:12px; font-weight:bold;}
+  .phone {
+    width: min(100%, 430px);
+    height: min(860px, calc(100vh - 56px));
+    min-height: 680px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 32px;
+    background: var(--ink);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5), 0 0 0 8px #05070d;
+  }
 
-  /* MAP (placeholder) */
-  .mapcard{position:relative; overflow:hidden;}
-  .mapnote{position:absolute; top:14px; right:14px; font-size:10px; letter-spacing:1px; color:var(--muted); border:1px dashed #3a446b; border-radius:8px; padding:3px 7px;}
-  .route{position:relative; height:132px; margin:2px 0 14px;}
-  .route svg{position:absolute; inset:0; width:100%; height:100%;}
-  .stop{position:absolute; transform:translate(-50%,-50%); text-align:center; width:78px;}
-  .dot{width:22px; height:22px; border-radius:50%; margin:0 auto 5px; border:3px solid #0d1120; box-shadow:0 0 0 2px #39415f;}
-  .stop.on .dot{background:var(--accent); box-shadow:0 0 0 2px var(--accent),0 0 18px 3px rgba(233,69,96,.6);}
-  .stop.locked .dot{background:#2a3350;}
-  .stop .lbl{font-size:10.5px; line-height:1.15; color:var(--muted);}
-  .stop.on .lbl{color:var(--text); font-weight:bold;}
-  .stop .lock{font-size:9px;}
-  .here{margin:4px 2px 14px; font-size:13px; color:var(--muted);}
-  .here b{color:var(--gold);}
-  .cta{width:100%; background:var(--accent); color:#fff; border:none; font-size:17px; font-weight:bold; letter-spacing:1px; padding:14px; border-radius:12px; cursor:pointer; text-transform:uppercase;}
-  .cta:active{transform:translateY(1px);}
+  .screen {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    background: linear-gradient(180deg, #bdebf8 0%, #eaf7ee 100%);
+  }
 
-  /* RADIO */
-  .stations{display:grid; grid-template-columns:repeat(4,1fr); gap:8px;}
-  .st{background:var(--panel2); border:1px solid #313b5e; border-radius:11px; padding:10px 6px; text-align:center; cursor:pointer; transition:transform .1s;}
-  .st:hover{transform:translateY(-2px);}
-  .st.tuned{border-color:var(--gold); box-shadow:0 0 0 1px var(--gold);}
-  .st.locked{opacity:.4; cursor:not-allowed;}
-  .st .era{font-size:16px; font-weight:bold; letter-spacing:1px;}
-  .st.tuned .era{color:var(--gold);}
-  .st .nm{font-size:9.5px; color:var(--muted); margin-top:2px; letter-spacing:.5px;}
-  .dial{display:flex; align-items:center; gap:10px; margin-top:12px; font-size:12px; color:var(--muted);}
-  .dial .bar{flex:1; height:6px; border-radius:3px; background:linear-gradient(90deg,#39415f, #39415f); position:relative;}
-  .dial .needle{position:absolute; top:-4px; width:3px; height:14px; background:var(--gold); border-radius:2px; transition:left .25s;}
-  .nowtuned{color:var(--text);}
+  .hidden {
+    display: none !important;
+  }
 
-  /* MODES */
-  .modes{display:grid; grid-template-columns:repeat(2,1fr); gap:10px;}
-  .mode{background:var(--panel2); border:1px solid #313b5e; border-radius:14px; padding:14px; cursor:pointer; display:flex; gap:12px; align-items:center; transition:transform .1s; position:relative;}
-  .mode:hover{transform:translateY(-2px);}
-  .mode .ic{font-size:26px; width:30px; text-align:center;}
-  .mode .tt{font-size:15px; font-weight:bold;}
-  .mode .ds{font-size:11px; color:var(--muted); margin-top:2px;}
-  .mode.locked{opacity:.55; cursor:not-allowed;}
-  .mode.locked .badge{position:absolute; top:8px; right:10px; font-size:9px; letter-spacing:1px; color:var(--muted); border:1px solid #3a446b; border-radius:6px; padding:1px 5px;}
-  .mode.shake{animation:shake .3s;}
-  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+  .map-scroll {
+    position: absolute;
+    inset: 0;
+    overflow-y: auto;
+    scrollbar-width: none;
+  }
 
-  .foot{text-align:center; font-size:11px; color:#586084; margin-top:18px; line-height:1.7;}
-  .foot a{color:var(--muted);}
+  .map-scroll::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
+
+  .world {
+    position: relative;
+    width: 100%;
+    min-height: 1200px;
+    aspect-ratio: 735 / 2138;
+    overflow: hidden;
+    background: #7fc9ec;
+  }
+
+  .world-map {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    animation: mapBreath 10s ease-in-out infinite;
+    transform-origin: 50% 46%;
+  }
+
+  .world::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.16), transparent 18%, transparent 78%, rgba(31, 58, 95, 0.08)),
+      radial-gradient(220px 170px at 24% 18%, rgba(255, 255, 255, 0.18), transparent 68%),
+      radial-gradient(260px 190px at 78% 47%, rgba(255, 244, 186, 0.12), transparent 70%);
+    mix-blend-mode: soft-light;
+  }
+
+  .road-sheen {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.18;
+    background: linear-gradient(115deg, transparent 0%, transparent 38%, rgba(255, 255, 255, 0.42) 46%, transparent 54%, transparent 100%);
+    transform: translateX(-55%);
+    animation: sheen 8s ease-in-out infinite;
+  }
+
+  .start-pin {
+    position: absolute;
+    top: 3.5%;
+    left: 36%;
+    z-index: 4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    filter: drop-shadow(0 8px 8px rgba(24, 44, 72, 0.22));
+  }
+
+  .start-trip {
+    border: 0;
+    color: var(--ink);
+    background: var(--gold);
+    border-radius: 999px;
+    padding: 7px 13px 6px;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.4px;
+    box-shadow: 0 4px 0 rgba(124, 88, 0, 0.24);
+    cursor: pointer;
+    text-transform: uppercase;
+  }
+
+  .start-trip:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 rgba(124, 88, 0, 0.24);
+  }
+
+  .start-ring {
+    width: 78px;
+    height: 78px;
+    border-radius: 50%;
+    background: rgba(255, 248, 236, 0.9);
+    border: 4px solid var(--gold);
+    display: grid;
+    place-items: center;
+    box-shadow: 0 6px 0 rgba(0, 0, 0, 0.18), inset 0 0 0 2px rgba(255, 255, 255, 0.65);
+    animation: bob 1.8s ease-in-out infinite;
+  }
+
+  .start-ring img {
+    width: 92px;
+    transform: translateX(-1px);
+  }
+
+  .pin-shadow {
+    width: 44px;
+    height: 10px;
+    margin-top: -2px;
+    border-radius: 50%;
+    background: rgba(18, 25, 42, 0.18);
+    filter: blur(1px);
+  }
+
+  .city {
+    position: absolute;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    opacity: 0.76;
+  }
+
+  .city:focus-visible,
+  .dock-btn:focus-visible,
+  .radio-dock:focus-visible,
+  .start-trip:focus-visible {
+    outline: 3px solid rgba(255, 210, 63, 0.86);
+    outline-offset: 5px;
+    border-radius: 18px;
+  }
+
+  .city.unlocked,
+  .city.next {
+    opacity: 1;
+  }
+
+  .city.shake,
+  .dock-btn.shake {
+    animation: shake 0.3s;
+  }
+
+  .landmark-city {
+    filter: drop-shadow(0 8px 8px rgba(24, 44, 72, 0.18));
+  }
+
+  .city-dot {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(255, 248, 236, 0.78);
+    border: 3px dashed rgba(73, 92, 111, 0.7);
+    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.14);
+  }
+
+  .city.locked .city-dot {
+    opacity: 0.68;
+    filter: saturate(0.65);
+  }
+
+  .city.unlocked .city-dot {
+    background: var(--green);
+    border: 4px solid var(--cream);
+    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.14), 0 0 0 4px rgba(46, 158, 79, 0.24);
+  }
+
+  .city.next .city-dot {
+    background: var(--gold);
+    border: 4px solid var(--cream);
+    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.14), 0 0 0 5px rgba(255, 210, 63, 0.25);
+  }
+
+  .landmark-art {
+    display: block;
+    width: 138px;
+    height: auto;
+    margin-bottom: -10px;
+    pointer-events: none;
+  }
+
+  .city.la .landmark-art {
+    width: 124px;
+    transform: rotate(-3deg);
+  }
+
+  .city.sf .landmark-art {
+    width: 178px;
+    transform: rotate(-7deg);
+    transform-origin: 44% 68%;
+  }
+
+  .city-label {
+    margin-top: 5px;
+    color: #fff;
+    background: rgba(31, 58, 95, 0.74);
+    border-radius: 999px;
+    padding: 4px 9px 3px;
+    max-width: 132px;
+    font-size: 10.5px;
+    font-weight: 900;
+    letter-spacing: 0.2px;
+    line-height: 1.15;
+    text-align: center;
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.14);
+  }
+
+  .city.locked .city-label {
+    color: rgba(245, 248, 250, 0.96);
+    background: rgba(31, 58, 95, 0.74);
+  }
+
+  .landmark-city.locked,
+  .landmark-city.locked .landmark-art {
+    opacity: 1;
+    filter: none;
+  }
+
+  .city.unlocked .city-label {
+    background: rgba(46, 158, 79, 0.92);
+  }
+
+  .city.next .city-label {
+    color: var(--ink);
+    background: var(--gold);
+  }
+
+  .city.dc { top: 18.7%; left: 69.4%; }
+  .city.farm { top: 38.7%; left: 26.2%; }
+  .city.desert { top: 57.3%; left: 69.4%; }
+  .city.la { top: 71.8%; left: 38.5%; }
+  .city.sf { top: 85.6%; left: 43.5%; }
+
+  .scroll-note {
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    bottom: 14px;
+    z-index: 3;
+    text-align: center;
+    color: rgba(31, 58, 95, 0.62);
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .hud {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    right: 14px;
+    z-index: 8;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    pointer-events: none;
+  }
+
+  .logo-pill,
+  .stat-pill {
+    background: var(--cream);
+    color: var(--ink);
+    border-radius: 20px;
+    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.14);
+  }
+
+  .logo-pill {
+    padding: 8px 14px;
+  }
+
+  .logo {
+    color: var(--ink);
+    font-size: 17px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    line-height: 1;
+  }
+
+  .logo span {
+    color: var(--orange);
+  }
+
+  .stats {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+  }
+
+  .stat-pill {
+    padding: 6px 12px 5px;
+    min-width: 76px;
+    text-align: right;
+    font-size: 12.5px;
+    font-weight: 900;
+    white-space: nowrap;
+  }
+
+  .right-dock {
+    position: absolute;
+    top: 92px;
+    right: 0;
+    z-index: 8;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 11px;
+  }
+
+  .dock-btn {
+    --accent: var(--orange);
+    border: 0;
+    background: transparent;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+  }
+
+  .dock-btn.disabled {
+    cursor: not-allowed;
+    opacity: 0.66;
+  }
+
+  .dock-bubble {
+    width: 66px;
+    height: 66px;
+    border-radius: 50%;
+    background: var(--cream);
+    border: 4px solid var(--accent);
+    box-shadow: 0 5px 0 rgba(0, 0, 0, 0.2);
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    position: relative;
+    transition: transform 0.16s ease, box-shadow 0.16s ease;
+  }
+
+  .dock-btn:not(.disabled):hover .dock-bubble {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 7px 0 rgba(0, 0, 0, 0.18);
+  }
+
+  .dock-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .vehicle-img {
+    width: 88px;
+    max-width: none;
+    transform: translateX(-1px);
+  }
+
+  .dock-label {
+    margin-top: 2px;
+    color: #fff;
+    background: var(--accent);
+    border-radius: 9px;
+    padding: 3px 9px 2px;
+    min-width: 54px;
+    text-align: center;
+    font-size: 10.5px;
+    font-weight: 900;
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.18);
+    transform: translateX(-3px);
+  }
+
+  .dock-driver { --accent: var(--orange); }
+  .dock-nav { --accent: var(--teal); }
+  .dock-dealer { --accent: var(--gold); }
+  .dock-tape { --accent: var(--purple); }
+
+  .dock-dealer .dock-label {
+    color: var(--ink);
+    background: var(--gold);
+  }
+
+  .dock-lock {
+    position: absolute;
+    right: 2px;
+    bottom: 1px;
+    width: 21px;
+    height: 21px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: var(--ink);
+    color: var(--cream);
+    border: 2px solid var(--cream);
+    font-size: 11px;
+    font-weight: 900;
+  }
+
+  .radio-dock {
+    position: absolute;
+    left: 14px;
+    right: 96px;
+    bottom: 14px;
+    z-index: 8;
+    min-height: 62px;
+    border: 0;
+    border-radius: 18px;
+    background: var(--cream);
+    color: var(--ink);
+    box-shadow: 0 6px 0 rgba(0, 0, 0, 0.16);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .radio-face {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #243554;
+    display: grid;
+    place-items: center;
+    color: var(--gold);
+    font-size: 15px;
+    font-weight: 900;
+    flex: 0 0 auto;
+  }
+
+  .radio-copy {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .radio-title {
+    display: block;
+    color: var(--ink);
+    font-size: 12px;
+    font-weight: 900;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .radio-sub {
+    display: block;
+    color: var(--muted);
+    font-size: 10px;
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .radio-play {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--gold);
+    color: var(--ink);
+    display: grid;
+    place-items: center;
+    font-size: 12px;
+    font-weight: 900;
+    flex: 0 0 auto;
+  }
+
+  .mixtape-shape {
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+  }
+
+  .era-70s {
+    width: 34px;
+    height: 26px;
+    border-radius: 4px;
+    background: #4a3b2a;
+    border: 2px solid #2e2418;
+    display: grid;
+    place-items: center;
+  }
+
+  .era-70s::after {
+    content: "";
+    width: 20px;
+    height: 12px;
+    border-radius: 2px;
+    background: #c9a15a;
+  }
+
+  .era-80s {
+    width: 36px;
+    height: 24px;
+    border-radius: 4px;
+    background: #222;
+    border: 2px solid #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+  }
+
+  .era-80s::before,
+  .era-80s::after {
+    content: "";
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #eee;
+    border: 2px solid #888;
+  }
+
+  .era-90s {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, #c9f, #9cf, #cf9, #fc9, #f9c, #c9f);
+    box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.44);
+    display: grid;
+    place-items: center;
+  }
+
+  .era-90s::after {
+    content: "";
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--cream);
+    border: 2px solid #ccc;
+  }
+
+  .era-00s {
+    width: 24px;
+    height: 34px;
+    border-radius: 6px;
+    background: #f2f2f2;
+    border: 2px solid #c4c4c4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 3px;
+    gap: 3px;
+  }
+
+  .era-00s::before {
+    content: "";
+    width: 16px;
+    height: 11px;
+    border-radius: 2px;
+    background: #4ec3c7;
+  }
+
+  .era-00s::after {
+    content: "";
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid #c4c4c4;
+  }
+
+  .toast {
+    position: absolute;
+    left: 14px;
+    right: 14px;
+    top: 92px;
+    z-index: 30;
+    background: rgba(31, 58, 95, 0.94);
+    color: var(--cream);
+    border: 2px solid rgba(255, 248, 236, 0.26);
+    border-radius: 18px;
+    padding: 11px 14px;
+    font-size: 12.5px;
+    font-weight: 900;
+    line-height: 1.35;
+    text-align: center;
+    box-shadow: 0 8px 26px rgba(0, 0, 0, 0.22);
+    transform: translateY(-14px);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.18s ease, opacity 0.18s ease;
+  }
+
+  .toast.show {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  .map-back {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    z-index: 6;
+    padding: 8px 16px;
+    border: 0;
+    border-radius: 20px;
+    background: var(--cream);
+    color: var(--ink);
+    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.14);
+    font-size: 12.5px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+  }
+
+  .mode-screen {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, #bdebf8 0%, #eaf7ee 58%, #f9f1d7 100%);
+    color: var(--ink);
+    overflow-y: auto;
+  }
+
+  .mode-screen[data-screen="navigator"] {
+    overflow: hidden;
+  }
+
+  .placeholder-wrap {
+    min-height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 84px 26px 38px;
+    text-align: center;
+  }
+
+  .placeholder-panel {
+    width: 100%;
+    max-width: 292px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .hero-badge {
+    width: 86px;
+    height: 86px;
+    border-radius: 50%;
+    background: var(--cream);
+    border: 4px solid var(--teal);
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    box-shadow: 0 6px 0 rgba(0, 0, 0, 0.14);
+  }
+
+  .hero-badge img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .hero-badge.vehicle {
+    border-color: var(--gold);
+  }
+
+  .hero-badge.vehicle img {
+    width: 122px;
+    height: auto;
+    max-width: none;
+  }
+
+  .placeholder-title {
+    color: var(--ink);
+    font-size: 21px;
+    font-weight: 900;
+    letter-spacing: 1px;
+  }
+
+  .placeholder-art {
+    width: 100%;
+    min-height: 150px;
+    border: 3px dashed rgba(63, 182, 199, 0.88);
+    border-radius: 16px;
+    background:
+      linear-gradient(135deg, rgba(255, 248, 236, 0.62), rgba(219, 240, 225, 0.78)),
+      repeating-linear-gradient(135deg, rgba(63, 182, 199, 0.12), rgba(63, 182, 199, 0.12) 10px, transparent 10px, transparent 20px);
+    display: grid;
+    place-items: center;
+    padding: 18px;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.6px;
+    line-height: 1.35;
+    text-transform: uppercase;
+  }
+
+  .placeholder-desc {
+    color: #3c5570;
+    max-width: 260px;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .placeholder-lock {
+    background: var(--cream);
+    border-radius: 10px;
+    padding: 5px 12px 4px;
+    color: var(--muted);
+    font-size: 10.5px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    box-shadow: 0 3px 0 rgba(0, 0, 0, 0.1);
+    text-transform: uppercase;
+  }
+
+  .mode-actions {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+
+  .mode-action {
+    border: 0;
+    border-radius: 24px;
+    padding: 10px 18px;
+    color: #fff;
+    background: var(--orange);
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.14);
+    cursor: pointer;
+  }
+
+  .mode-action.secondary {
+    color: var(--ink);
+    background: var(--cream);
+  }
+
+  .navigator-game {
+    height: 100%;
+    min-height: 0;
+    padding: 46px 12px 9px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    background:
+      linear-gradient(180deg, rgba(255, 248, 236, 0.7) 0 90px, transparent 90px),
+      radial-gradient(230px 140px at 10% 17%, rgba(255, 210, 63, 0.22), transparent 72%),
+      radial-gradient(250px 160px at 92% 34%, rgba(63, 182, 199, 0.22), transparent 70%),
+      linear-gradient(180deg, #bdebf8 0%, #e9f7ed 52%, #fff4d2 100%);
+  }
+
+  .navigator-game.locked {
+    filter: saturate(0.78);
+  }
+
+  .nav-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .nav-kicker {
+    color: var(--teal);
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+  }
+
+  .nav-title {
+    color: var(--ink);
+    font-size: 20px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    line-height: 1;
+  }
+
+  .nav-sub {
+    color: #4a647d;
+    margin-top: 2px;
+    font-size: 10px;
+    font-weight: 900;
+  }
+
+  .nav-energy {
+    min-width: 92px;
+    color: var(--ink);
+    background: var(--cream);
+    border: 3px solid rgba(31, 58, 95, 0.14);
+    border-radius: 15px;
+    padding: 6px 8px 5px;
+    text-align: right;
+    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.12);
+  }
+
+  .nav-energy-main {
+    display: flex;
+    align-items: baseline;
+    justify-content: flex-end;
+    gap: 1px;
+    font-size: 18px;
+    font-weight: 900;
+    line-height: 1;
+  }
+
+  .nav-energy-main span:last-child {
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  .nav-energy-label,
+  .nav-energy-timer {
+    display: block;
+    color: var(--muted);
+    font-size: 8.5px;
+    font-weight: 900;
+    letter-spacing: 0.7px;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  .kid-request-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .kid-request {
+    min-width: 0;
+    min-height: 48px;
+    border-radius: 15px;
+    background: rgba(255, 248, 236, 0.94);
+    border: 2px solid rgba(255, 255, 255, 0.7);
+    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.11);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 4px 6px;
+  }
+
+  .kid-head {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: linear-gradient(180deg, #d7f0fb, #fff3c3);
+    border: 3px solid #fff;
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.1);
+    flex: 0 0 auto;
+  }
+
+  .kid-head img {
+    position: absolute;
+    width: 118px;
+    height: auto;
+    max-width: none;
+    object-fit: contain;
+  }
+
+  .kid-head.kid-son img {
+    left: -38px;
+    top: -8px;
+  }
+
+  .kid-head.kid-daughter img {
+    left: -35px;
+    top: -11px;
+  }
+
+  .kid-wants {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    border-radius: 13px;
+    background: #fff;
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    box-shadow: inset 0 0 0 2px rgba(31, 58, 95, 0.1), 0 2px 0 rgba(0, 0, 0, 0.08);
+  }
+
+  .kid-wants::before {
+    content: "";
+    position: absolute;
+    left: -8px;
+    top: 15px;
+    width: 12px;
+    height: 12px;
+    background: #fff;
+    box-shadow: inset 2px -2px 0 rgba(31, 58, 95, 0.08);
+    transform: rotate(45deg);
+  }
+
+  .kid-wants .snack-icon {
+    width: 30px;
+    height: 30px;
+  }
+
+  .hungry-stage {
+    position: relative;
+    min-height: 142px;
+    border-radius: 24px;
+    overflow: hidden;
+    background:
+      linear-gradient(180deg, rgba(11, 18, 34, 0.04), rgba(11, 18, 34, 0.18)),
+      linear-gradient(120deg, #d8f2ff 0%, #fff3c3 100%);
+    border: 3px solid rgba(255, 248, 236, 0.9);
+    box-shadow: 0 6px 0 rgba(0, 0, 0, 0.12);
+  }
+
+  .hungry-stage::before {
+    content: "";
+    position: absolute;
+    left: -10%;
+    right: -10%;
+    bottom: -44px;
+    height: 92px;
+    border-radius: 50% 50% 0 0;
+    background: #253957;
+    box-shadow: inset 0 14px 0 rgba(255, 255, 255, 0.08);
+  }
+
+  .hungry-road {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(90deg, transparent 0 43%, rgba(255, 255, 255, 0.5) 43% 46%, transparent 46% 54%, rgba(255, 255, 255, 0.5) 54% 57%, transparent 57%),
+      linear-gradient(180deg, transparent 0 58%, rgba(31, 58, 95, 0.16) 58% 100%);
+    opacity: 0.32;
+  }
+
+  .backseat-kids {
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    bottom: -6px;
+    z-index: 2;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 24px;
+  }
+
+  .backseat-kids img {
+    width: 94px;
+    max-height: 128px;
+    object-fit: contain;
+    filter: drop-shadow(0 7px 5px rgba(0, 0, 0, 0.2));
+  }
+
+  .hungry-bubble {
+    position: absolute;
+    top: 15px;
+    left: 50%;
+    z-index: 3;
+    transform: translateX(-50%);
+    color: var(--ink);
+    background: var(--cream);
+    border: 3px solid var(--gold);
+    border-radius: 22px;
+    padding: 8px 18px 7px;
+    font-size: 18px;
+    font-weight: 900;
+    letter-spacing: 0.3px;
+    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.12);
+    white-space: nowrap;
+    animation: bubblePulse 2.8s ease-in-out infinite;
+  }
+
+  .hungry-bubble::after {
+    content: "";
+    position: absolute;
+    left: 48%;
+    bottom: -11px;
+    width: 18px;
+    height: 18px;
+    background: var(--cream);
+    border-right: 3px solid var(--gold);
+    border-bottom: 3px solid var(--gold);
+    transform: rotate(45deg);
+  }
+
+  .nav-section-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #314c6a;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .generator-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) repeat(3, minmax(52px, 0.64fr));
+    gap: 6px;
+  }
+
+  .generator {
+    min-width: 0;
+    min-height: 51px;
+    border: 0;
+    border-radius: 14px;
+    padding: 6px;
+    color: var(--ink);
+    background: var(--cream);
+    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.13);
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    cursor: pointer;
+  }
+
+  .generator:disabled {
+    cursor: not-allowed;
+    opacity: 0.56;
+  }
+
+  .generator.active {
+    border: 3px solid var(--orange);
+  }
+
+  .generator.future {
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+    border: 2px dashed rgba(31, 58, 95, 0.22);
+    background: rgba(255, 248, 236, 0.72);
+  }
+
+  .generator-copy {
+    min-width: 0;
+    text-align: left;
+  }
+
+  .generator-name {
+    display: block;
+    color: var(--ink);
+    font-size: 12px;
+    font-weight: 900;
+    line-height: 1.1;
+  }
+
+  .generator-meta {
+    display: block;
+    color: var(--muted);
+    margin-top: 2px;
+    font-size: 9px;
+    font-weight: 900;
+    line-height: 1.15;
+  }
+
+  .generator.future .generator-name {
+    font-size: 9.5px;
+    text-align: center;
+  }
+
+  .generator.future .generator-meta {
+    margin: 0;
+    font-size: 8px;
+    text-align: center;
+  }
+
+  .generator-art {
+    position: relative;
+    width: 31px;
+    height: 32px;
+    flex: 0 0 auto;
+    filter: drop-shadow(0 3px 0 rgba(0, 0, 0, 0.12));
+  }
+
+  .snack-bag-art {
+    width: 34px;
+    height: 38px;
+    border-radius: 9px 9px 12px 12px;
+    background:
+      radial-gradient(circle at 26% 69%, #fff8ec 0 10%, transparent 11%),
+      radial-gradient(circle at 48% 66%, #8b5d34 0 5%, transparent 6%),
+      linear-gradient(90deg, rgba(255,248,236,0.46) 0 12%, transparent 13% 87%, rgba(118, 50, 43, 0.18) 88%),
+      linear-gradient(180deg, rgba(255,255,255,0.5), transparent 18%),
+      linear-gradient(160deg, #ffd23f 0%, #ff8a36 54%, #e94560 100%);
+    box-shadow: inset 0 0 0 3px rgba(255, 248, 236, 0.34), 0 3px 0 rgba(0, 0, 0, 0.12);
+    transform: rotate(-4deg);
+  }
+
+  .snack-bag-art::before {
+    content: "";
+    position: absolute;
+    left: 5px;
+    right: 5px;
+    top: -4px;
+    height: 9px;
+    border-radius: 4px 4px 2px 2px;
+    background:
+      linear-gradient(90deg, #ffd23f 0 24%, #fff8ec 24% 34%, #ff6b4a 34% 62%, #fff8ec 62% 72%, #3fb6c7 72% 100%);
+    box-shadow: 0 2px 0 rgba(31, 58, 95, 0.17);
+  }
+
+  .snack-bag-art::after {
+    content: "SNAX";
+    position: absolute;
+    left: 7px;
+    right: 7px;
+    top: 11px;
+    height: 10px;
+    border-radius: 999px;
+    background: rgba(31, 58, 95, 0.28);
+    color: rgba(255, 248, 236, 0.92);
+    font-size: 5px;
+    font-weight: 900;
+    line-height: 10px;
+    text-align: center;
+  }
+
+  .future-icon {
+    width: 29px;
+    height: 28px;
+  }
+
+  .drink-gen-art {
+    border-radius: 7px 7px 10px 10px;
+    background:
+      radial-gradient(circle at 71% 31%, rgba(255,248,236,0.55) 0 10%, transparent 11%),
+      linear-gradient(90deg, transparent 0 38%, #fff8ec 38% 56%, transparent 56%),
+      linear-gradient(180deg, #65d1e5 0 52%, #2799b0 52% 100%);
+    box-shadow: inset 0 0 0 3px rgba(255, 248, 236, 0.5);
+  }
+
+  .drink-gen-art::before {
+    content: "";
+    position: absolute;
+    left: 5px;
+    right: 5px;
+    top: -6px;
+    height: 8px;
+    border-radius: 5px 5px 2px 2px;
+    background: #253957;
+  }
+
+  .drink-gen-art::after {
+    content: "";
+    position: absolute;
+    right: -5px;
+    top: 7px;
+    width: 9px;
+    height: 13px;
+    border-radius: 0 7px 7px 0;
+    border: 3px solid #253957;
+    border-left: 0;
+  }
+
+  .meal-gen-art {
+    border-radius: 9px 9px 12px 12px;
+    background:
+      linear-gradient(90deg, transparent 0 42%, rgba(255,248,236,0.55) 42% 58%, transparent 58%),
+      linear-gradient(180deg, #ffd23f 0 38%, #ff6b4a 38% 100%);
+    box-shadow: inset 0 0 0 3px rgba(255, 248, 236, 0.45);
+  }
+
+  .meal-gen-art::before {
+    content: "";
+    position: absolute;
+    left: 7px;
+    right: 7px;
+    top: -6px;
+    height: 10px;
+    border-radius: 999px 999px 0 0;
+    border: 3px solid #253957;
+    border-bottom: 0;
+  }
+
+  .meal-gen-art::after {
+    content: "";
+    position: absolute;
+    left: 8px;
+    right: 8px;
+    top: 13px;
+    height: 5px;
+    border-radius: 999px;
+    background: rgba(31, 58, 95, 0.22);
+  }
+
+  .fun-gen-art {
+    border-radius: 8px;
+    background:
+      linear-gradient(145deg, rgba(255,248,236,0.38) 0 20%, transparent 21%),
+      linear-gradient(145deg, #7b61ff 0%, #3fb6c7 100%);
+    box-shadow: inset 0 0 0 3px rgba(255, 248, 236, 0.45);
+  }
+
+  .fun-gen-art::before,
+  .fun-gen-art::after {
+    content: "";
+    position: absolute;
+    top: 12px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #fff8ec;
+  }
+
+  .fun-gen-art::before { left: 7px; }
+  .fun-gen-art::after { right: 7px; }
+
+  .fun-gen-art span {
+    position: absolute;
+    left: 13px;
+    top: 9px;
+    width: 3px;
+    height: 13px;
+    border-radius: 999px;
+    background: rgba(31, 58, 95, 0.5);
+  }
+
+  .merge-board-panel {
+    flex: 1;
+    min-height: 0;
+    border-radius: 16px;
+    background: rgba(31, 58, 95, 0.14);
+    padding: 7px;
+    box-shadow: inset 0 0 0 2px rgba(255, 248, 236, 0.32);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .merge-board {
+    --cell-gap: 3px;
+    --merge-cell-size: clamp(27px, min(8.7vw, calc((100dvh - 296px) / 8)), 42px);
+    display: grid;
+    grid-template-columns: repeat(6, var(--merge-cell-size));
+    justify-content: center;
+    gap: var(--cell-gap);
+    margin-top: 5px;
+  }
+
+  .merge-cell {
+    position: relative;
+    min-width: 0;
+    aspect-ratio: 1 / 1;
+    border: 1px solid rgba(31, 58, 95, 0.13);
+    border-radius: 8px;
+    background:
+      linear-gradient(180deg, rgba(255, 248, 236, 0.72), rgba(235, 246, 240, 0.66));
+    display: grid;
+    place-items: center;
+    padding: 0;
+    cursor: pointer;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    touch-action: none;
+  }
+
+  .merge-cell:disabled {
+    cursor: not-allowed;
+    opacity: 0.62;
+  }
+
+  .merge-cell.filled {
+    background:
+      radial-gradient(circle at 36% 28%, rgba(255, 255, 255, 0.72), transparent 46%),
+      linear-gradient(180deg, #fff8ec 0%, #f0e3bc 100%);
+    border-color: rgba(31, 58, 95, 0.2);
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.52);
+  }
+
+  .merge-cell.selected {
+    outline: 3px solid var(--gold);
+    outline-offset: -2px;
+    z-index: 2;
+  }
+
+  .merge-cell.drag-source {
+    opacity: 0.46;
+  }
+
+  .merge-cell.drop-target {
+    outline: 3px solid var(--teal);
+    outline-offset: -2px;
+    z-index: 2;
+  }
+
+  .merge-cell.born .snack-icon {
+    animation: snackBorn 0.28s ease-out;
+  }
+
+  .merge-cell .snack-icon {
+    width: 74%;
+    height: 74%;
+  }
+
+  .merge-cell .snack-granola {
+    height: 44%;
+    margin-top: 0;
+  }
+
+  .merge-cell .snack-label {
+    position: absolute;
+    left: 2px;
+    right: 2px;
+    bottom: 1px;
+    color: rgba(31, 58, 95, 0.66);
+    font-size: 6.5px;
+    font-weight: 900;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    pointer-events: none;
+  }
+
+  .drag-snack-ghost,
+  .snack-flyer {
+    position: fixed;
+    z-index: 80;
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    filter: drop-shadow(0 7px 5px rgba(0, 0, 0, 0.24));
+  }
+
+  .drag-snack-ghost .snack-icon,
+  .snack-flyer .snack-icon {
+    width: 100%;
+    height: 100%;
+  }
+
+  .drag-snack-ghost {
+    opacity: 0.94;
+    transform: translate(-50%, -50%) scale(1.08);
+  }
+
+  .snack-flyer {
+    transition: left 0.38s cubic-bezier(0.2, 0.86, 0.24, 1.08), top 0.38s cubic-bezier(0.2, 0.86, 0.24, 1.08), transform 0.38s ease, opacity 0.14s ease 0.28s;
+  }
+
+  .snack-flyer.land {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.72) rotate(18deg);
+  }
+
+  .merge-meta-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+    margin-top: 7px;
+  }
+
+  .merge-stat {
+    min-width: 0;
+    border-radius: 10px;
+    background: rgba(255, 248, 236, 0.82);
+    padding: 4px 7px 3px;
+    color: var(--ink);
+    text-align: center;
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.08);
+  }
+
+  .merge-stat span {
+    display: block;
+    color: var(--muted);
+    font-size: 7.5px;
+    font-weight: 900;
+    letter-spacing: 0.7px;
+    text-transform: uppercase;
+  }
+
+  .merge-stat strong {
+    display: block;
+    margin-top: 2px;
+    font-size: 10.5px;
+    font-weight: 900;
+    line-height: 1.05;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .nav-feed-log {
+    color: #3f5872;
+    margin-top: 4px;
+    min-height: 13px;
+    font-size: 10px;
+    font-weight: 900;
+    text-align: center;
+  }
+
+  .snack-icon {
+    position: relative;
+    width: 36px;
+    height: 36px;
+    flex: 0 0 auto;
+    display: inline-block;
+    filter: drop-shadow(0 3px 0 rgba(0, 0, 0, 0.12));
+  }
+
+  .snack-chips {
+    border-radius: 8px 8px 11px 11px;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.5), transparent 19%),
+      linear-gradient(160deg, #ffd75d 0%, #f07839 58%, #d94a3a 100%);
+    box-shadow: inset 0 0 0 3px rgba(255, 248, 236, 0.38);
+    transform: rotate(-3deg);
+  }
+
+  .snack-chips::before {
+    content: "CR";
+    position: absolute;
+    left: 8px;
+    right: 8px;
+    top: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: rgba(31, 58, 95, 0.25);
+    color: rgba(255, 248, 236, 0.9);
+    font-size: 5px;
+    font-weight: 900;
+    line-height: 8px;
+    text-align: center;
+  }
+
+  .snack-chips::after {
+    content: "";
+    position: absolute;
+    left: 13px;
+    right: 13px;
+    bottom: 8px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 248, 236, 0.86);
+  }
+
+  .snack-cookies {
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 30% 34%, #4a2f1f 0 6%, transparent 7%),
+      radial-gradient(circle at 62% 28%, #4a2f1f 0 6%, transparent 7%),
+      radial-gradient(circle at 58% 66%, #4a2f1f 0 6%, transparent 7%),
+      radial-gradient(circle at 34% 70%, #4a2f1f 0 5%, transparent 6%),
+      #b87943;
+    box-shadow:
+      inset 0 0 0 3px rgba(255, 223, 170, 0.48),
+      inset 4px -5px 0 rgba(88, 54, 31, 0.16);
+  }
+
+  .snack-pretzels::before,
+  .snack-pretzels::after {
+    content: "";
+    position: absolute;
+    inset: 4px 7px 8px;
+    border: 7px solid #a9682e;
+    border-radius: 50% 50% 44% 44%;
+    box-shadow: inset 0 0 0 2px rgba(255, 223, 170, 0.18);
+  }
+
+  .snack-pretzels::after {
+    inset: 13px 4px 6px;
+    border-width: 5px;
+    transform: rotate(90deg);
+  }
+
+  .snack-granola {
+    height: 22px;
+    margin-top: 7px;
+    border-radius: 7px;
+    background:
+      linear-gradient(90deg, transparent 0 7%, rgba(255,255,255,0.7) 7% 11%, transparent 11% 89%, rgba(255,255,255,0.7) 89% 93%, transparent 93%),
+      linear-gradient(90deg, #8b5d34 0 28%, #d7a54a 28% 56%, #7fb069 56% 100%);
+    box-shadow: inset 0 0 0 3px rgba(255, 248, 236, 0.35), 0 2px 0 rgba(0,0,0,0.08);
+    transform: rotate(-6deg);
+  }
+
+  .snack-crackers {
+    border-radius: 9px;
+    background: #e5b75f;
+    box-shadow:
+      inset 0 0 0 3px rgba(255, 248, 236, 0.44),
+      inset 9px 9px 0 rgba(120, 80, 34, 0.08);
+  }
+
+  .snack-crackers::before {
+    content: "";
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    left: 11px;
+    top: 11px;
+    border-radius: 50%;
+    background: rgba(75, 47, 22, 0.35);
+    box-shadow: 11px 0 0 rgba(75, 47, 22, 0.35), 0 11px 0 rgba(75, 47, 22, 0.35), 11px 11px 0 rgba(75, 47, 22, 0.35);
+  }
+
+  .snack-fruit {
+    border-radius: 8px 8px 13px 13px;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.45), transparent 19%),
+      linear-gradient(160deg, #ff8fb7, #7b61ff);
+    box-shadow: inset 0 0 0 3px rgba(255, 248, 236, 0.34);
+    transform: rotate(4deg);
+  }
+
+  .snack-fruit::before {
+    content: "";
+    position: absolute;
+    left: 8px;
+    top: 10px;
+    width: 20px;
+    height: 16px;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 30% 48%, #ff6b4a 0 24%, transparent 25%),
+      radial-gradient(circle at 54% 43%, #ffd23f 0 22%, transparent 23%),
+      radial-gradient(circle at 72% 58%, #3fb6c7 0 22%, transparent 23%),
+      rgba(255, 248, 236, 0.78);
+  }
+
+  .snack-trail {
+    border-radius: 50%;
+    background: #f0bd59;
+    box-shadow:
+      inset 0 0 0 3px rgba(255, 248, 236, 0.34),
+      8px 2px 0 -3px #8b5d34,
+      -6px 5px 0 -3px #6f9f52,
+      3px -7px 0 -3px #b95b4f,
+      -7px -4px 0 -3px #8b5d34;
+  }
+
+  .snack-box {
+    border-radius: 9px;
+    background:
+      linear-gradient(145deg, rgba(255,255,255,0.75) 0 20%, transparent 21%),
+      linear-gradient(145deg, #fff8ec 0 34%, #ff6b4a 34% 67%, #3fb6c7 67% 100%);
+    box-shadow: inset 0 0 0 3px rgba(31, 58, 95, 0.18), 0 2px 0 rgba(0,0,0,0.08);
+  }
+
+  .snack-box::before {
+    content: "";
+    position: absolute;
+    left: 9px;
+    right: 9px;
+    top: -4px;
+    height: 9px;
+    border-radius: 999px 999px 0 0;
+    border: 3px solid #253957;
+    border-bottom: 0;
+  }
+
+  .wipe {
+    position: absolute;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--wipe-color, #bdebf8);
+    transform: translateY(100%);
+    transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .wipe.in {
+    transform: translateY(0);
+  }
+
+  .wipe.out {
+    transform: translateY(-100%);
+  }
+
+  .wipe.hidden {
+    display: none;
+  }
+
+  .wipe-label {
+    color: var(--ink);
+    font-size: 15px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .spinner {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid rgba(31, 58, 95, 0.25);
+    border-top-color: var(--ink);
+    animation: spin 0.7s linear infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+  }
+
+  @keyframes mapBreath {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.006); }
+  }
+
+  @keyframes sheen {
+    0%, 64%, 100% { transform: translateX(-58%); opacity: 0; }
+    74% { opacity: 0.16; }
+    86% { transform: translateX(58%); opacity: 0; }
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  @keyframes bubblePulse {
+    0%, 100% { transform: translateX(-50%) scale(1); }
+    50% { transform: translateX(-50%) scale(1.04); }
+  }
+
+  @keyframes snackBorn {
+    0% { transform: scale(0.3) rotate(-14deg); opacity: 0; }
+    72% { transform: scale(1.12) rotate(4deg); opacity: 1; }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
+  }
+
+  @media (max-width: 760px) {
+    body {
+      padding: 0;
+      background: var(--deep);
+    }
+
+    .phone {
+      width: 100vw;
+      max-width: 430px;
+      height: 100vh;
+      height: 100dvh;
+      min-height: 0;
+      border-radius: 0;
+      box-shadow: none;
+    }
+  }
 </style>
 </head>
 <body>
-<div class="wrap">
+  <main class="phone" aria-label="Road Trip map hub">
+    <section class="screen" data-screen="hub">
+      <div class="map-scroll" id="mapScroll" tabindex="-1">
+        <div class="world">
+          <img class="world-map" src="assets/maps/road-trip-map-v2.png" alt="">
+          <div class="road-sheen"></div>
 
-  <div class="top">
-    <div class="brand">ROAD<span>TRIP</span><small>THE FAMILY DRIVE</small></div>
-    <div class="pills">
-      <div class="pill miles">🛣️ <span id="miles">0</span> <span class="k">mi</span></div>
-      <div class="pill tape">🎵 <span id="tape">0</span> <span class="k">songs</span></div>
-    </div>
-  </div>
+          <div class="start-pin">
+            <button class="start-trip" type="button" id="startTrip">Start Trip</button>
+            <div class="start-ring">
+              <img id="mapCar" src="assets/vehicles/minivan-blue.png" alt="">
+            </div>
+            <div class="pin-shadow"></div>
+          </div>
 
-  <!-- MAP -->
-  <div class="card mapcard">
-    <h2>The Route</h2>
-    <div class="mapnote">placeholder map</div>
-    <div class="route" id="route"></div>
-    <div class="here">You're parked in <b id="hereCity">New York</b>. Next stop unlocks with miles.</div>
-    <button class="cta" id="startTrip">🚗 Start the Trip</button>
-  </div>
+          <button class="city dc" type="button" data-city="dc">
+            <span class="city-dot"></span>
+            <span class="city-label"></span>
+          </button>
+          <button class="city farm" type="button" data-city="farm">
+            <span class="city-dot"></span>
+            <span class="city-label"></span>
+          </button>
+          <button class="city desert" type="button" data-city="desert">
+            <span class="city-dot"></span>
+            <span class="city-label"></span>
+          </button>
+          <button class="city landmark-city la" type="button" data-city="la">
+            <img class="landmark-art" src="assets/landmarks/hollywood-map-cutout.png" alt="">
+            <span class="city-label"></span>
+          </button>
+          <button class="city landmark-city sf" type="button" data-city="sf">
+            <img class="landmark-art" src="assets/landmarks/golden-gate-map-cutout.png" alt="">
+            <span class="city-label"></span>
+          </button>
 
-  <!-- RADIO -->
-  <div class="card">
-    <h2>Radio</h2>
-    <div class="stations" id="stations"></div>
-    <div class="dial">
-      <span>📻</span>
-      <div class="bar"><div class="needle" id="needle" style="left:0%"></div></div>
-      <span class="nowtuned" id="nowTuned">—</span>
-    </div>
-  </div>
+          <div class="scroll-note" id="routeNote">More cities unlock as you drive</div>
+        </div>
+      </div>
 
-  <!-- MODES -->
-  <div class="card">
-    <h2>Games</h2>
-    <div class="modes" id="modes"></div>
-  </div>
+      <div class="hud">
+        <div class="logo-pill">
+          <div class="logo">ROAD<span>TRIP</span></div>
+        </div>
+        <div class="stats">
+          <div class="stat-pill"><span id="milesCount">0</span> mi</div>
+          <div class="stat-pill"><span id="songCount">0</span> songs</div>
+        </div>
+      </div>
 
-  <div class="foot">
-    Each game also opens on its own for testing.<br>
-    Runner → <a href="index.html">/</a> · Driver → <a href="tap/index.html">/tap/</a>
-  </div>
+      <nav class="right-dock" aria-label="Game modes">
+        <button class="dock-btn dock-driver disabled" type="button" id="dadDock" data-href="tap/index.html" data-label="TUNING IN..." data-color="#ffd23f">
+          <span class="dock-bubble"><img class="dock-img" src="assets/characters/dad-face.png" alt=""><span class="dock-lock" id="dadLock">!</span></span>
+          <span class="dock-label">Dad Mode</span>
+        </button>
+        <button class="dock-btn dock-nav" type="button" id="navigatorDock" data-screen-target="navigator">
+          <span class="dock-bubble"><img class="dock-img" src="assets/characters/mom-face.png" alt=""><span class="dock-lock">!</span></span>
+          <span class="dock-label">Navigator</span>
+        </button>
+        <button class="dock-btn dock-dealer disabled" type="button" data-screen-target="dealership">
+          <span class="dock-bubble"><img class="vehicle-img" src="assets/vehicles/minivan-blue.png" alt=""><span class="dock-lock">!</span></span>
+          <span class="dock-label">Dealer</span>
+        </button>
+        <button class="dock-btn dock-tape" type="button" data-href="index.html#mixtape" data-label="FLIPPING THE TAPE..." data-color="#7b61ff">
+          <span class="dock-bubble"><span class="mixtape-shape" id="dockMixtape"></span></span>
+          <span class="dock-label">Mixtape</span>
+        </button>
+      </nav>
 
-</div>
+      <button class="radio-dock" type="button" id="radioDock">
+        <span class="radio-face">FM</span>
+        <span class="radio-copy">
+          <span class="radio-title" id="stationLine">KDRT - The Dirt</span>
+          <span class="radio-sub" id="stationSub">Tap station</span>
+        </span>
+        <span class="radio-play">ON</span>
+      </button>
+
+      <div class="toast" id="toast" role="status" aria-live="polite"></div>
+      <div class="wipe hidden" id="wipe">
+        <div class="wipe-label"><span class="spinner"></span><span id="wipeText">LOADING</span></div>
+      </div>
+    </section>
+
+    <section class="mode-screen hidden" data-screen="navigator">
+      <button class="map-back" type="button" data-screen-target="hub">MAP</button>
+      <div class="navigator-game" id="navigatorGame">
+        <header class="nav-top">
+          <div>
+            <div class="nav-kicker">Back Seat</div>
+            <div class="nav-title">NAVIGATOR</div>
+            <div class="nav-sub" id="navigatorStatus">Snack duty live</div>
+          </div>
+          <div class="nav-energy" aria-live="polite">
+            <span class="nav-energy-label">Energy</span>
+            <span class="nav-energy-main"><span id="navEnergyCount">100</span><span>/100</span></span>
+            <span class="nav-energy-timer" id="navEnergyTimer">FULL</span>
+          </div>
+        </header>
+
+        <div class="kid-request-row" id="navKidRequests" aria-label="Back seat snack requests"></div>
+
+        <div class="nav-section-title">
+          <span>Generators</span>
+          <span id="navGeneratorStatus">Snack bag online</span>
+        </div>
+        <div class="generator-row">
+          <button class="generator active" type="button" id="snackBagGenerator">
+            <span class="generator-art snack-bag-art" aria-hidden="true"></span>
+            <span class="generator-copy">
+              <span class="generator-name">Snack Bag</span>
+              <span class="generator-meta" id="snackBagMeta">8 energy</span>
+            </span>
+          </button>
+          <button class="generator future" type="button" data-future-generator="drinks">
+            <span class="generator-art future-icon drink-gen-art" aria-hidden="true"></span>
+            <span class="generator-name">Drinks</span>
+            <span class="generator-meta">500 mi</span>
+          </button>
+          <button class="generator future" type="button" data-future-generator="meals">
+            <span class="generator-art future-icon meal-gen-art" aria-hidden="true"></span>
+            <span class="generator-name">Meals</span>
+            <span class="generator-meta">1200 mi</span>
+          </button>
+          <button class="generator future" type="button" data-future-generator="fun">
+            <span class="generator-art future-icon fun-gen-art" aria-hidden="true"><span></span></span>
+            <span class="generator-name">Fun</span>
+            <span class="generator-meta">2400 mi</span>
+          </button>
+        </div>
+
+        <div class="merge-board-panel">
+          <div class="nav-section-title">
+            <span>Snack Grid</span>
+            <span id="navBoardCount">0/48</span>
+          </div>
+          <div class="merge-board" id="navMergeGrid" role="grid" aria-label="Navigator snack merge grid"></div>
+          <div class="merge-meta-row">
+            <div class="merge-stat"><span>Merges</span><strong id="navMergeCount">0</strong></div>
+            <div class="merge-stat"><span>Best</span><strong id="navBestSnack">Chips</strong></div>
+            <div class="merge-stat"><span>Bag</span><strong id="navBagUses">0</strong></div>
+          </div>
+          <div class="nav-feed-log" id="navMergeLog"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="mode-screen hidden" data-screen="dealership">
+      <button class="map-back" type="button" data-screen-target="hub">MAP</button>
+      <div class="placeholder-wrap">
+        <div class="placeholder-panel">
+          <div class="hero-badge vehicle"><img id="dealerCar" src="assets/vehicles/minivan-blue.png" alt=""></div>
+          <div class="placeholder-title">DEALERSHIP</div>
+          <div class="placeholder-art" id="dealerArt">Vehicle shop coming soon</div>
+          <div class="placeholder-desc" id="dealerDesc">Spend miles on rides here. Each unlock changes your vehicle on the map.</div>
+          <div class="placeholder-lock" id="dealerStatus">Not built yet</div>
+          <div class="mode-actions">
+            <button class="mode-action secondary" type="button" data-screen-target="hub">Back to Map</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
 
 <script src="save.js"></script>
 <script>
 "use strict";
-const $ = (id)=>document.getElementById(id);
 
-// ---- profile-driven header ----
-$("miles").textContent = Save.miles;
-$("tape").textContent = Save.data.collected.length;
+const $ = (id) => document.getElementById(id);
 
-// ---- the route (mock) ----
-// city id, label, and the era its radio unlocks — only the ones in Save.data.cities are lit.
 const ROUTE = [
-  {id:"nyc",     name:"New York",     era:"90s"},
-  {id:"dc",      name:"Washington",   era:"00s"},
-  {id:"farm",    name:"The Heartland",era:"80s"},
-  {id:"desert",  name:"The Desert",   era:"70s"},
-  {id:"la",      name:"Los Angeles",  era:"80s"},
-  {id:"sf",      name:"San Francisco",era:"90s"},
+  { id: "nyc", name: "New York", label: "NYC", era: "90s", cost: 0 },
+  { id: "dc", name: "D.C.", label: "D.C.", era: "00s", cost: 250 },
+  { id: "farm", name: "Farmlands", label: "Farmlands", era: "80s", cost: 1000 },
+  { id: "desert", name: "Desert", label: "Desert", era: "70s", cost: 2000 },
+  { id: "la", name: "Los Angeles", label: "L.A.", era: "80s", cost: 3000 },
+  { id: "sf", name: "San Francisco", label: "S.F.", era: "90s", cost: 5000 },
 ];
-const unlockedCities = new Set(Save.data.cities);
-(function drawRoute(){
-  const host = $("route");
-  const n = ROUTE.length;
-  // gentle zig-zag positions across the strip
-  const pts = ROUTE.map((c,i)=>({ x: 8 + (i*(84/(n-1))), y: (i%2? 66:34) }));
-  const svg = document.createElementNS("http://www.w3.org/2000/svg","svg");
-  svg.setAttribute("viewBox","0 0 100 100"); svg.setAttribute("preserveAspectRatio","none");
-  let d = "M "+pts[0].x+" "+pts[0].y;
-  for(let i=1;i<n;i++){ const a=pts[i-1],b=pts[i]; d+=` C ${(a.x+b.x)/2} ${a.y}, ${(a.x+b.x)/2} ${b.y}, ${b.x} ${b.y}`; }
-  const road = document.createElementNS("http://www.w3.org/2000/svg","path");
-  road.setAttribute("d",d); road.setAttribute("fill","none");
-  road.setAttribute("stroke","#39415f"); road.setAttribute("stroke-width","3"); road.setAttribute("stroke-linecap","round");
-  const dash = document.createElementNS("http://www.w3.org/2000/svg","path");
-  dash.setAttribute("d",d); dash.setAttribute("fill","none");
-  dash.setAttribute("stroke","#54608c");
-  dash.setAttribute("stroke-width","1"); dash.setAttribute("stroke-dasharray","2 3");
-  svg.appendChild(road); svg.appendChild(dash); host.appendChild(svg);
-  const firstLocked = ROUTE.findIndex(c=>!unlockedCities.has(c.id));
-  ROUTE.forEach((c,i)=>{
-    const on = unlockedCities.has(c.id);
-    const el = document.createElement("div");
-    el.className = "stop"+(on?" on":" locked");
-    el.style.left = pts[i].x+"%"; el.style.top = pts[i].y+"%";
-    el.innerHTML = '<div class="dot"></div><div class="lbl">'+c.name+
-      (on? '' : ' <span class="lock">🔒</span>')+'</div>';
-    host.appendChild(el);
-  });
-})();
-$("hereCity").textContent = (ROUTE.find(c=>unlockedCities.has(c.id))||ROUTE[0]).name;
-$("startTrip").addEventListener("click", ()=>{ location.href = "index.html"; });
 
-// ---- radio tuner ----
 const STATIONS = [
-  {era:"90s", call:"KDRT", name:"The Dirt"},
-  {era:"00s", call:"HITZ", name:"The Blender"},
-  {era:"80s", call:"KRZR", name:"The Razor"},
-  {era:"70s", call:"KWAX", name:"Wax Museum"},
+  { era: "90s", call: "KDRT", name: "The Dirt" },
+  { era: "00s", call: "HITZ", name: "The Blender" },
+  { era: "80s", call: "KRZR", name: "The Razor" },
+  { era: "70s", call: "KWAX", name: "Wax Museum" },
 ];
-// which eras are reachable = eras of the cities you've unlocked
-const unlockedEras = new Set(ROUTE.filter(c=>unlockedCities.has(c.id)).map(c=>c.era));
-let tuned = Save.data.settings.station;
-if(!tuned || !unlockedEras.has(tuned)) tuned = STATIONS.find(s=>unlockedEras.has(s.era))?.era || "90s";
-function renderStations(){
-  const host = $("stations"); host.innerHTML = "";
-  STATIONS.forEach((s,i)=>{
-    const open = unlockedEras.has(s.era);
-    const el = document.createElement("div");
-    el.className = "st"+(s.era===tuned?" tuned":"")+(open?"":" locked");
-    el.innerHTML = '<div class="era">'+s.era.toUpperCase()+'</div><div class="nm">'+s.call+' · '+s.name+'</div>';
-    if(open) el.addEventListener("click", ()=>{ tuned=s.era; Save.data.settings.station=tuned; Save.persist(); renderStations(); });
-    host.appendChild(el);
-  });
-  const idx = STATIONS.findIndex(s=>s.era===tuned);
-  $("needle").style.left = (idx/(STATIONS.length-1))*100+"%";
-  const s = STATIONS[idx];
-  $("nowTuned").textContent = s ? (s.call+" — "+s.name) : "—";
-}
-renderStations();
 
-// ---- games ----
-const MODES = [
-  {ic:"🥁", tt:"Driver",     ds:"Rhythm — drum the wheel",   href:"tap/index.html"},
-  {ic:"🧭", tt:"Navigator",  ds:"Keep the kids happy",        locked:!unlockedCities.has("dc"), badge:"AT D.C."},
-  {ic:"🎧", tt:"Mixtape",    ds:"Songs you've collected",     href:"index.html#mixtape"},
-  {ic:"🏁", tt:"Dealership", ds:"New rides to unlock",        locked:true, badge:"SOON"},
+const NAV_ENERGY_CAP = 100;
+const NAV_ENERGY_REGEN_MS = 60000;
+const NAV_SNACK_COST = 8;
+const NAV_GRID_COLS = 6;
+const NAV_GRID_ROWS = 8;
+const NAV_GRID_CELLS = NAV_GRID_COLS * NAV_GRID_ROWS;
+const NAVIGATOR_TEST_UNLOCK = true;
+
+const NAV_KIDS = [
+  { id: "son", name: "Son", img: "assets/characters/son.png" },
+  { id: "daughter", name: "Daughter", img: "assets/characters/daughter.png" },
 ];
-(function renderModes(){
-  const host = $("modes");
-  MODES.forEach(m=>{
-    const el = document.createElement("div");
-    el.className = "mode"+(m.locked?" locked":"");
-    el.innerHTML = '<div class="ic">'+m.ic+'</div><div><div class="tt">'+m.tt+'</div>'+
-      '<div class="ds">'+m.ds+'</div></div>'+(m.locked?'<div class="badge">'+(m.badge||"LOCKED")+'</div>':'');
-    el.addEventListener("click", ()=>{
-      if(m.locked){ el.classList.add("shake"); setTimeout(()=>el.classList.remove("shake"),320); return; }
-      location.href = m.href;
-    });
-    host.appendChild(el);
+
+const NAV_SNACK_TIERS = [
+  { id: "chips", name: "Chips", short: "Chips" },
+  { id: "cookies", name: "Cookies", short: "Cookies" },
+  { id: "pretzels", name: "Pretzels", short: "Pretzel" },
+  { id: "granola", name: "Granola Bar", short: "Granola" },
+  { id: "crackers", name: "Crackers", short: "Crackers" },
+  { id: "fruit", name: "Fruit Snacks", short: "Fruit" },
+  { id: "trail", name: "Trail Mix", short: "Trail" },
+  { id: "box", name: "Snack Box", short: "Box" },
+];
+
+const FUTURE_GENERATORS = {
+  drinks: { name: "Drinks", cost: 500 },
+  meals: { name: "Meals", cost: 1200 },
+  fun: { name: "Entertainment", cost: 2400 },
+};
+
+const CAR_ART = {
+  wagon: "assets/vehicles/minivan-blue.png",
+  minivan: "assets/vehicles/minivan-blue.png",
+};
+
+let toastTimer = 0;
+let selectedMergeCell = null;
+let bornMergeCell = null;
+let dragState = null;
+let suppressNextGridClick = false;
+
+function carName(id) {
+  return ({ wagon: "Blue Minivan", minivan: "Blue Minivan" })[id] || id;
+}
+
+function unlockedCities() {
+  const list = Array.isArray(Save.data.cities) && Save.data.cities.length ? Save.data.cities : ["nyc"];
+  return new Set(list);
+}
+
+function isNavigatorUnlocked() {
+  return NAVIGATOR_TEST_UNLOCK || unlockedCities().has("dc");
+}
+
+function nextLockedCity() {
+  const open = unlockedCities();
+  return ROUTE.find((city) => !open.has(city.id)) || null;
+}
+
+function unlockedEras() {
+  const open = unlockedCities();
+  return new Set(ROUTE.filter((city) => open.has(city.id)).map((city) => city.era));
+}
+
+function currentStation() {
+  const eras = unlockedEras();
+  let era = Save.data.settings && Save.data.settings.station;
+  if (!era || !eras.has(era)) era = STATIONS.find((station) => eras.has(station.era))?.era || "90s";
+  return STATIONS.find((station) => station.era === era) || STATIONS[0];
+}
+
+function persistStation(era) {
+  if (!Save.data.settings || typeof Save.data.settings !== "object") Save.data.settings = {};
+  Save.data.settings.station = era;
+  Save.persist();
+}
+
+function showToast(message) {
+  const toast = $("toast");
+  toast.textContent = message;
+  toast.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove("show"), 2400);
+}
+
+function terminalPunctuation(text) {
+  return /[.!?]$/.test(text) ? "" : ".";
+}
+
+function shake(node) {
+  if (!node) return;
+  node.classList.add("shake");
+  setTimeout(() => node.classList.remove("shake"), 320);
+}
+
+function navigatorProfile() {
+  if (!Save.data.navigator || typeof Save.data.navigator !== "object") {
+    Save.data.navigator = {
+      energy: NAV_ENERGY_CAP,
+      lastEnergyAt: Date.now(),
+      fedCount: 0,
+      snackBagUses: 0,
+      mergeCount: 0,
+      highestTier: 0,
+      board: Array(NAV_GRID_CELLS).fill(null),
+      generators: ["snackBag"],
+    };
+  }
+  const nav = Save.data.navigator;
+  if (typeof nav.energy !== "number" || !Number.isFinite(nav.energy)) nav.energy = NAV_ENERGY_CAP;
+  if (typeof nav.lastEnergyAt !== "number" || !Number.isFinite(nav.lastEnergyAt)) nav.lastEnergyAt = Date.now();
+  if (typeof nav.fedCount !== "number" || !Number.isFinite(nav.fedCount)) nav.fedCount = 0;
+  if (typeof nav.snackBagUses !== "number" || !Number.isFinite(nav.snackBagUses)) nav.snackBagUses = 0;
+  if (typeof nav.mergeCount !== "number" || !Number.isFinite(nav.mergeCount)) nav.mergeCount = 0;
+  if (typeof nav.highestTier !== "number" || !Number.isFinite(nav.highestTier)) nav.highestTier = 0;
+  normalizeMergeBoard(nav);
+  return nav;
+}
+
+function normalizeMergeBoard(nav) {
+  if (!Array.isArray(nav.board)) nav.board = [];
+  nav.board = nav.board.slice(0, NAV_GRID_CELLS).map(normalizeSnackTier);
+  while (nav.board.length < NAV_GRID_CELLS) nav.board.push(null);
+  const savedHighest = Math.max(0, Math.min(NAV_SNACK_TIERS.length - 1, Math.floor(Number(nav.highestTier) || 0)));
+  const boardHighest = nav.board.reduce((best, tier) => tier === null ? best : Math.max(best, tier), 0);
+  nav.highestTier = Math.max(savedHighest, boardHighest);
+}
+
+function normalizeSnackTier(value) {
+  if (value === null || value === undefined || value === "") return null;
+  const raw = typeof value === "object" ? value.tier : value;
+  const tier = Math.floor(Number(raw));
+  if (!Number.isFinite(tier) || tier < 0) return null;
+  return Math.min(tier, NAV_SNACK_TIERS.length - 1);
+}
+
+function syncNavigatorEnergy() {
+  const nav = navigatorProfile();
+  const now = Date.now();
+  let changed = false;
+  nav.energy = Math.max(0, Math.floor(nav.energy));
+  if (nav.energy < NAV_ENERGY_CAP) {
+    const elapsed = Math.max(0, now - nav.lastEnergyAt);
+    const gained = Math.floor(elapsed / NAV_ENERGY_REGEN_MS);
+    if (gained > 0) {
+      nav.energy = Math.min(NAV_ENERGY_CAP, nav.energy + gained);
+      nav.lastEnergyAt = nav.energy >= NAV_ENERGY_CAP
+        ? now
+        : nav.lastEnergyAt + gained * NAV_ENERGY_REGEN_MS;
+      changed = true;
+    }
+  }
+  if (changed) Save.persist();
+  return nav;
+}
+
+function formatNavClock(ms) {
+  const total = Math.max(1, Math.ceil(ms / 1000));
+  const mins = Math.floor(total / 60);
+  const secs = String(total % 60).padStart(2, "0");
+  return mins + ":" + secs;
+}
+
+function navEnergyTimerText(nav) {
+  if (nav.energy >= NAV_ENERGY_CAP) return "FULL";
+  const elapsed = Math.max(0, Date.now() - nav.lastEnergyAt);
+  const remaining = NAV_ENERGY_REGEN_MS - (elapsed % NAV_ENERGY_REGEN_MS);
+  return "+1 in " + formatNavClock(remaining);
+}
+
+function snackTier(tier) {
+  return NAV_SNACK_TIERS[Math.max(0, Math.min(NAV_SNACK_TIERS.length - 1, tier | 0))];
+}
+
+function snackIcon(tier) {
+  const snack = snackTier(tier);
+  return '<span class="snack-icon snack-' + snack.id + '" aria-hidden="true"></span>';
+}
+
+function kidRequestTier(nav, index) {
+  const highest = Math.max(0, Math.min(NAV_SNACK_TIERS.length - 1, Math.floor(Number(nav.highestTier) || 0)));
+  return Math.min(NAV_SNACK_TIERS.length - 1, Math.max(0, highest - (NAV_KIDS.length - 1 - index)));
+}
+
+function renderKidRequests(nav, unlocked) {
+  const row = $("navKidRequests");
+  if (!row) return;
+  row.innerHTML = NAV_KIDS.map((kid, index) => {
+    const tier = unlocked ? kidRequestTier(nav, index) : 0;
+    const snack = snackTier(tier);
+    return (
+      '<div class="kid-request" aria-label="' + kid.name + ' wants ' + snack.name + '">' +
+        '<span class="kid-head kid-' + kid.id + '"><img src="' + kid.img + '" alt="' + kid.name + '"></span>' +
+        '<span class="kid-wants">' + snackIcon(tier) + '</span>' +
+      '</div>'
+    );
+  }).join("");
+}
+
+function pointFromEvent(event) {
+  return { x: event.clientX || 0, y: event.clientY || 0 };
+}
+
+function setSnackElementPosition(node, x, y) {
+  node.style.left = x + "px";
+  node.style.top = y + "px";
+}
+
+function launchSnackFromBag(cellIndex, tier) {
+  if (!document.createElement || !document.body) return;
+  const bag = $("snackBagGenerator");
+  const target = document.querySelector('[data-merge-cell="' + cellIndex + '"]');
+  if (!bag || !target || !bag.getBoundingClientRect || !target.getBoundingClientRect) return;
+  const bagRect = bag.getBoundingClientRect();
+  const targetRect = target.getBoundingClientRect();
+  const flyer = document.createElement("div");
+  flyer.className = "snack-flyer";
+  flyer.innerHTML = snackIcon(tier);
+  const startX = bagRect.left + bagRect.width * 0.34;
+  const startY = bagRect.top + bagRect.height * 0.42;
+  const endX = targetRect.left + targetRect.width / 2;
+  const endY = targetRect.top + targetRect.height / 2;
+  setSnackElementPosition(flyer, startX, startY);
+  document.body.appendChild(flyer);
+  const raf = typeof requestAnimationFrame === "function" ? requestAnimationFrame : (fn) => setTimeout(fn, 0);
+  raf(() => {
+    setSnackElementPosition(flyer, endX, endY);
+    flyer.classList.add("land");
   });
-})();
+  setTimeout(() => flyer.remove?.(), 460);
+}
+
+function clearDragTarget() {
+  if (!dragState || dragState.targetIndex === null) return;
+  const previous = document.querySelector?.('[data-merge-cell="' + dragState.targetIndex + '"]');
+  previous?.classList.remove("drop-target");
+  dragState.targetIndex = null;
+}
+
+function updateDragTarget(x, y) {
+  if (!dragState || !document.elementFromPoint) return;
+  const node = document.elementFromPoint(x, y)?.closest?.("[data-merge-cell]");
+  const nextIndex = node ? Number(node.dataset.mergeCell) : null;
+  if (nextIndex === dragState.targetIndex) return;
+  clearDragTarget();
+  if (Number.isInteger(nextIndex)) {
+    dragState.targetIndex = nextIndex;
+    node.classList.add("drop-target");
+  }
+}
+
+function updateDragGhost(event) {
+  if (!dragState) return;
+  const point = pointFromEvent(event);
+  dragState.moved = dragState.moved || Math.hypot(point.x - dragState.startX, point.y - dragState.startY) > 5;
+  setSnackElementPosition(dragState.ghost, point.x, point.y);
+  updateDragTarget(point.x, point.y);
+}
+
+function completeDraggedSnack(sourceIndex, targetIndex) {
+  if (sourceIndex === targetIndex || targetIndex === null) return false;
+  const nav = syncNavigatorEnergy();
+  const sourceTier = nav.board[sourceIndex];
+  const targetTier = nav.board[targetIndex];
+  if (sourceTier === null) return false;
+
+  if (targetTier === null) {
+    nav.board[targetIndex] = sourceTier;
+    nav.board[sourceIndex] = null;
+    bornMergeCell = targetIndex;
+    selectedMergeCell = targetIndex;
+    nav.lastMessage = snackTier(sourceTier).name + " moved.";
+    Save.persist();
+    renderNavigator();
+    return true;
+  }
+
+  if (targetTier !== sourceTier) {
+    selectedMergeCell = sourceIndex;
+    nav.lastMessage = "Match two " + snackTier(sourceTier).name + " to merge.";
+    Save.persist();
+    renderNavigator();
+    showToast(nav.lastMessage);
+    return false;
+  }
+
+  const nextTier = Math.min(sourceTier + 1, NAV_SNACK_TIERS.length - 1);
+  nav.board[targetIndex] = nextTier;
+  nav.board[sourceIndex] = null;
+  nav.mergeCount = (nav.mergeCount || 0) + 1;
+  nav.highestTier = Math.max(nav.highestTier || 0, nextTier);
+  bornMergeCell = targetIndex;
+  selectedMergeCell = null;
+  nav.lastMessage = snackTier(nextTier).name + " came to life.";
+  Save.persist();
+  renderAll();
+  showToast(nav.lastMessage);
+  return true;
+}
+
+function startSnackDrag(event, cell) {
+  if (!isNavigatorUnlocked() || event.button > 0) return;
+  const index = Number(cell.dataset.mergeCell);
+  const nav = syncNavigatorEnergy();
+  const tier = nav.board[index];
+  if (!Number.isInteger(index) || tier === null) return;
+  const point = pointFromEvent(event);
+  const ghost = document.createElement("div");
+  ghost.className = "drag-snack-ghost";
+  ghost.innerHTML = snackIcon(tier);
+  setSnackElementPosition(ghost, point.x, point.y);
+  document.body.appendChild(ghost);
+  cell.classList.add("drag-source");
+  dragState = {
+    sourceIndex: index,
+    sourceEl: cell,
+    ghost,
+    targetIndex: null,
+    startX: point.x,
+    startY: point.y,
+    moved: false,
+  };
+  selectedMergeCell = index;
+  cell.setPointerCapture?.(event.pointerId);
+  document.addEventListener("pointermove", onSnackPointerMove);
+  document.addEventListener("pointerup", onSnackPointerUp);
+  document.addEventListener("pointercancel", onSnackPointerCancel);
+  event.preventDefault();
+}
+
+function finishSnackDrag(event, canceled) {
+  if (!dragState) return;
+  updateDragGhost(event);
+  const state = dragState;
+  const targetIndex = state.targetIndex;
+  clearDragTarget();
+  state.sourceEl?.classList.remove("drag-source");
+  state.ghost?.remove?.();
+  document.removeEventListener("pointermove", onSnackPointerMove);
+  document.removeEventListener("pointerup", onSnackPointerUp);
+  document.removeEventListener("pointercancel", onSnackPointerCancel);
+  dragState = null;
+  if (!canceled && state.moved) {
+    suppressNextGridClick = true;
+    completeDraggedSnack(state.sourceIndex, targetIndex);
+    setTimeout(() => { suppressNextGridClick = false; }, 120);
+  }
+}
+
+function onSnackPointerMove(event) {
+  updateDragGhost(event);
+  event.preventDefault();
+}
+
+function onSnackPointerUp(event) {
+  finishSnackDrag(event, false);
+}
+
+function onSnackPointerCancel(event) {
+  finishSnackDrag(event, true);
+}
+
+function filledBoardCount(nav) {
+  return nav.board.reduce((count, cell) => count + (cell === null ? 0 : 1), 0);
+}
+
+function emptyBoardCells(nav) {
+  const cells = [];
+  nav.board.forEach((cell, index) => {
+    if (cell === null) cells.push(index);
+  });
+  return cells;
+}
+
+function renderMergeBoard(nav, unlocked) {
+  const grid = $("navMergeGrid");
+  const bornCell = typeof bornMergeCell === "number" ? bornMergeCell : -1;
+  grid.innerHTML = nav.board.map((tier, index) => {
+    const filled = tier !== null;
+    const snack = filled ? snackTier(tier) : null;
+    const classes = [
+      "merge-cell",
+      filled ? "filled" : "empty",
+      selectedMergeCell === index ? "selected" : "",
+      bornCell === index ? "born" : "",
+    ].filter(Boolean).join(" ");
+    return (
+      '<button class="' + classes + '" type="button" role="gridcell" data-merge-cell="' + index + '"' + (unlocked ? "" : " disabled") + ' aria-label="' + (filled ? snack.name : "Empty") + '">' +
+        (filled ? snackIcon(tier) + '<span class="snack-label">' + snack.short + '</span>' : "") +
+      '</button>'
+    );
+  }).join("");
+  bornMergeCell = null;
+}
+
+function renderNavigator() {
+  const nav = syncNavigatorEnergy();
+  const unlocked = isNavigatorUnlocked();
+  const game = $("navigatorGame");
+  if (!game) return;
+  game.classList.toggle("locked", !unlocked);
+  $("navigatorStatus").textContent = unlocked
+    ? "Snack duty live"
+    : "Unlock D.C. to open Navigator mode.";
+  $("navGeneratorStatus").textContent = unlocked ? "Snack bag online" : "D.C. locked";
+  $("navEnergyCount").textContent = nav.energy;
+  $("navEnergyTimer").textContent = navEnergyTimerText(nav);
+  $("snackBagMeta").textContent = nav.energy >= NAV_SNACK_COST
+    ? NAV_SNACK_COST + " energy"
+    : "needs " + (NAV_SNACK_COST - nav.energy);
+  $("snackBagGenerator").disabled = !unlocked;
+  const filled = filledBoardCount(nav);
+  $("navBoardCount").textContent = filled + "/" + NAV_GRID_CELLS;
+  $("navMergeCount").textContent = nav.mergeCount || 0;
+  $("navBestSnack").textContent = snackTier(nav.highestTier || 0).short;
+  $("navBagUses").textContent = nav.snackBagUses || 0;
+  renderKidRequests(nav, unlocked);
+  if (!dragState) renderMergeBoard(nav, unlocked);
+
+  if (!unlocked) {
+    selectedMergeCell = null;
+    $("navMergeLog").textContent = "Locked at D.C.";
+    return;
+  }
+
+  $("navMergeLog").textContent = nav.lastMessage || (filled ? "I'm hungry." : "I'm hungry.");
+}
+
+function rummageSnackBag() {
+  if (!isNavigatorUnlocked()) {
+    showToast("Unlock D.C. to open Navigator mode.");
+    renderNavigator();
+    return;
+  }
+  const nav = syncNavigatorEnergy();
+  if (nav.energy < NAV_SNACK_COST) {
+    showToast("Snack bag needs " + (NAV_SNACK_COST - nav.energy) + " more energy.");
+    renderNavigator();
+    return;
+  }
+  const empty = emptyBoardCells(nav);
+  if (!empty.length) {
+    showToast("Snack grid is full.");
+    renderNavigator();
+    return;
+  }
+  nav.energy -= NAV_SNACK_COST;
+  nav.lastEnergyAt = Date.now();
+  nav.snackBagUses += 1;
+  const cell = empty[0];
+  nav.board[cell] = 0;
+  nav.highestTier = Math.max(nav.highestTier || 0, 0);
+  bornMergeCell = cell;
+  nav.lastMessage = snackTier(0).name + " came to life.";
+  selectedMergeCell = cell;
+  Save.persist();
+  renderAll();
+  launchSnackFromBag(cell, 0);
+  showToast(nav.lastMessage);
+}
+
+function handleMergeCell(index) {
+  if (!isNavigatorUnlocked()) {
+    showToast("Unlock D.C. to open Navigator mode.");
+    renderNavigator();
+    return;
+  }
+  const nav = syncNavigatorEnergy();
+  index = Number(index);
+  if (!Number.isInteger(index) || index < 0 || index >= NAV_GRID_CELLS) return;
+  const tier = nav.board[index];
+
+  if (selectedMergeCell === index) {
+    selectedMergeCell = null;
+    renderNavigator();
+    return;
+  }
+
+  if (selectedMergeCell === null || nav.board[selectedMergeCell] === null) {
+    selectedMergeCell = tier === null ? null : index;
+    renderNavigator();
+    return;
+  }
+
+  const selectedTier = nav.board[selectedMergeCell];
+  if (tier === null) {
+    nav.board[index] = selectedTier;
+    nav.board[selectedMergeCell] = null;
+    bornMergeCell = index;
+    nav.lastMessage = snackTier(selectedTier).name + " moved.";
+    selectedMergeCell = index;
+    Save.persist();
+    renderNavigator();
+    return;
+  }
+
+  if (tier !== selectedTier) {
+    selectedMergeCell = index;
+    nav.lastMessage = snackTier(tier).name + " selected.";
+    Save.persist();
+    renderNavigator();
+    return;
+  }
+
+  const nextTier = Math.min(tier + 1, NAV_SNACK_TIERS.length - 1);
+  nav.board[index] = nextTier;
+  nav.board[selectedMergeCell] = null;
+  nav.mergeCount = (nav.mergeCount || 0) + 1;
+  nav.highestTier = Math.max(nav.highestTier || 0, nextTier);
+  bornMergeCell = index;
+  nav.lastMessage = snackTier(nextTier).name + " came to life.";
+  selectedMergeCell = null;
+  Save.persist();
+  renderAll();
+  showToast(nav.lastMessage);
+}
+
+function goTo(href, label, color) {
+  const wipe = $("wipe");
+  $("wipeText").textContent = label || "LOADING";
+  wipe.style.setProperty("--wipe-color", color || "#bdebf8");
+  wipe.className = "wipe in";
+  setTimeout(() => { window.location.href = href; }, 220);
+}
+
+function setScreen(screen) {
+  document.querySelectorAll("[data-screen]").forEach((node) => {
+    node.classList.toggle("hidden", node.dataset.screen !== screen);
+  });
+  if (screen === "hub") $("mapScroll").focus?.();
+  if (screen === "navigator") renderNavigator();
+}
+
+function renderStats() {
+  $("milesCount").textContent = Save.miles;
+  $("songCount").textContent = Save.data.collected.length;
+  $("mapCar").src = CAR_ART[Save.data.currentCar] || CAR_ART.wagon;
+  $("dealerCar").src = CAR_ART[Save.data.currentCar] || CAR_ART.wagon;
+}
+
+function renderCities() {
+  const open = unlockedCities();
+  const next = nextLockedCity();
+  document.querySelectorAll("[data-city]").forEach((button) => {
+    const city = ROUTE.find((item) => item.id === button.dataset.city);
+    if (!city) return;
+    const unlocked = open.has(city.id);
+    const isNext = next && next.id === city.id;
+    button.classList.toggle("unlocked", unlocked);
+    button.classList.toggle("locked", !unlocked);
+    button.classList.toggle("next", !unlocked && isNext);
+    const label = button.querySelector(".city-label");
+    if (unlocked) label.textContent = city.label + " open";
+    else if (isNext) label.textContent = city.label + " " + city.cost + " mi";
+    else label.textContent = city.label + " locked";
+  });
+  $("routeNote").textContent = next
+    ? "Next: unlock " + next.name + " for " + next.cost + " miles"
+    : "Coast-to-coast route complete";
+}
+
+function renderRadio() {
+  const station = currentStation();
+  persistStation(station.era);
+  $("stationLine").textContent = station.call + " - " + station.name;
+  $("stationSub").textContent = unlockedEras().size > 1 ? "Tap station" : "Unlock cities for more stations";
+  $("dockMixtape").className = "mixtape-shape era-" + station.era;
+}
+
+function renderModeScreens() {
+  renderNavigator();
+
+  const cars = Array.isArray(Save.data.cars) ? Save.data.cars : ["wagon"];
+  $("dealerArt").textContent = Save.miles + " mi banked - " + cars.length + " ride" + (cars.length === 1 ? "" : "s") + " owned";
+  $("dealerDesc").textContent = "Current ride: " + carName(Save.data.currentCar) + ". Vehicle unlocks will spend miles here and update the map marker.";
+  $("dealerStatus").textContent = "Not built yet";
+}
+
+function renderModes() {
+  const dad = $("dadDock");
+  const hasSongs = Save.data.collected.length > 0;
+  dad.classList.toggle("disabled", !hasSongs);
+  const dadLock = $("dadLock");
+  if (dadLock) dadLock.textContent = hasSongs ? "..." : "!";
+  const navigator = $("navigatorDock");
+  const navUnlocked = isNavigatorUnlocked();
+  navigator.classList.toggle("disabled", !navUnlocked);
+  const lock = navigator.querySelector(".dock-lock");
+  if (lock) lock.textContent = navUnlocked ? "..." : "!";
+  const dealer = document.querySelector(".dock-dealer");
+  if (dealer) dealer.classList.add("disabled");
+}
+
+function renderAll() {
+  renderStats();
+  renderCities();
+  renderRadio();
+  renderModeScreens();
+  renderModes();
+}
+
+function tryUnlockCity(button) {
+  const city = ROUTE.find((item) => item.id === button.dataset.city);
+  if (!city) return;
+  const open = unlockedCities();
+  if (open.has(city.id)) {
+    showToast(city.name + " is already on the route.");
+    return;
+  }
+  const next = nextLockedCity();
+  if (!next || next.id !== city.id) {
+    shake(button);
+    showToast("Unlock " + next.name + " first.");
+    return;
+  }
+  if (Save.miles < city.cost) {
+    shake(button);
+    showToast("Need " + (city.cost - Save.miles) + " more miles for " + city.name + terminalPunctuation(city.name));
+    return;
+  }
+  if (!Save.spendMiles(city.cost)) return;
+  Save.data.cities.push(city.id);
+  Save.persist();
+  renderAll();
+  showToast(city.id === "dc" ? "D.C. unlocked. Navigator ready." : city.name + " unlocked.");
+}
+
+$("startTrip").addEventListener("click", () => goTo("index.html", "STARTING ENGINE...", "#ffd23f"));
+
+document.querySelectorAll("[data-city]").forEach((button) => {
+  button.addEventListener("click", () => tryUnlockCity(button));
+});
+
+document.querySelectorAll("[data-href]").forEach((button) => {
+  button.addEventListener("click", () => {
+    if (button.classList.contains("disabled")) {
+      shake(button);
+      if (button.id === "dadDock") showToast("Complete a radio song in Runner to unlock Dad Mode.");
+      else showToast("That stop is still locked.");
+      return;
+    }
+    goTo(button.dataset.href, button.dataset.label, button.dataset.color);
+  });
+});
+
+document.querySelectorAll("[data-screen-target]").forEach((button) => {
+  button.addEventListener("click", () => {
+    if (button.classList.contains("disabled")) {
+      shake(button);
+      showToast("That stop is still locked.");
+      return;
+    }
+    renderAll();
+    setScreen(button.dataset.screenTarget);
+  });
+});
+
+$("snackBagGenerator").addEventListener("click", rummageSnackBag);
+
+$("navMergeGrid").addEventListener("click", (event) => {
+  if (suppressNextGridClick) return;
+  const button = event.target.closest("[data-merge-cell]");
+  if (!button) return;
+  handleMergeCell(button.dataset.mergeCell);
+});
+
+$("navMergeGrid").addEventListener("pointerdown", (event) => {
+  const button = event.target.closest("[data-merge-cell]");
+  if (!button || !button.classList.contains("filled")) return;
+  startSnackDrag(event, button);
+});
+
+document.querySelectorAll("[data-future-generator]").forEach((button) => {
+  button.addEventListener("click", () => {
+    const generator = FUTURE_GENERATORS[button.dataset.futureGenerator];
+    if (!isNavigatorUnlocked()) {
+      showToast("Unlock D.C. to open Navigator mode.");
+      return;
+    }
+    showToast(generator.name + " generator will cost " + generator.cost + " miles.");
+  });
+});
+
+$("radioDock").addEventListener("click", () => {
+  const eras = Array.from(unlockedEras());
+  if (eras.length < 2) {
+    showToast("Unlock another city to tune more stations.");
+    return;
+  }
+  const current = currentStation().era;
+  const ordered = STATIONS.map((station) => station.era).filter((era) => eras.includes(era));
+  const index = ordered.indexOf(current);
+  const next = ordered[(index + 1) % ordered.length];
+  persistStation(next);
+  renderRadio();
+});
+
+renderAll();
+setScreen("hub");
+setInterval(renderNavigator, 1000);
 </script>
 </body>
 </html>

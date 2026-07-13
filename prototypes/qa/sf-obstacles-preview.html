@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SF Obstacles QA</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: #141823;
+    color: #f4f0e8;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    padding: 18px;
+  }
+  main {
+    display: grid;
+    gap: 18px;
+    max-width: 980px;
+    margin: 0 auto;
+  }
+  h1 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+  }
+  p {
+    margin: 4px 0 0;
+    color: #b9c0cb;
+    font-size: 13px;
+  }
+  canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+    background: #000;
+    border: 1px solid rgba(255,255,255,0.16);
+  }
+</style>
+</head>
+<body>
+<main>
+  <section>
+    <h1>San Francisco - Core Obstacles</h1>
+    <p>painted house, crab traps, sourdough cart, fog streetlamp</p>
+    <canvas id="core" width="960" height="540"></canvas>
+  </section>
+  <section>
+    <h1>San Francisco - Later Unlocks</h1>
+    <p>parklet planter, ferry bollards, Golden Gate barricade, cable car barrier, cable car</p>
+    <canvas id="late" width="960" height="540"></canvas>
+  </section>
+</main>
+<script>
+const GROUND_Y = 460;
+const defs = {
+  paintedHouse: { src: "../../assets/obstacles/painted-house.png", w: 102, h: 150 },
+  crabTraps: { src: "../../assets/obstacles/crab-traps.png", w: 146, h: 72 },
+  sourdoughCart: { src: "../../assets/obstacles/sourdough-cart.png", w: 140, h: 86 },
+  fogStreetlamp: { src: "../../assets/obstacles/fog-streetlamp.png", w: 62, h: 138 },
+  parkletPlanter: { src: "../../assets/obstacles/parklet-planter.png", w: 154, h: 82 },
+  ferryBollards: { src: "../../assets/obstacles/ferry-bollards.png", w: 164, h: 70 },
+  goldenGateBarricade: { src: "../../assets/obstacles/golden-gate-barricade.png", w: 176, h: 86 },
+  cableCarBarrier: { src: "../../assets/obstacles/cable-car-barrier.png", w: 174, h: 88 },
+  cableCar: { src: "../../assets/obstacles/cable-car.png", w: 150, h: 92 },
+};
+
+function drawBackground(ctx) {
+  const sky = ctx.createLinearGradient(0, 0, 0, GROUND_Y);
+  sky.addColorStop(0, "#1c3f60");
+  sky.addColorStop(1, "#f7b2a3");
+  ctx.fillStyle = sky;
+  ctx.fillRect(0, 0, 960, GROUND_Y);
+
+  ctx.fillStyle = "rgba(44,79,112,0.58)";
+  ctx.beginPath();
+  ctx.moveTo(0, GROUND_Y - 86);
+  ctx.lineTo(140, GROUND_Y - 124);
+  ctx.lineTo(280, GROUND_Y - 92);
+  ctx.lineTo(430, GROUND_Y - 146);
+  ctx.lineTo(570, GROUND_Y - 108);
+  ctx.lineTo(740, GROUND_Y - 132);
+  ctx.lineTo(960, GROUND_Y - 96);
+  ctx.lineTo(960, GROUND_Y);
+  ctx.lineTo(0, GROUND_Y);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.strokeStyle = "rgba(184,74,54,0.52)";
+  ctx.lineWidth = 7;
+  ctx.beginPath();
+  ctx.moveTo(24, GROUND_Y - 76);
+  ctx.lineTo(210, GROUND_Y - 126);
+  ctx.lineTo(398, GROUND_Y - 76);
+  ctx.stroke();
+  for (const x of [62, 210, 360]) {
+    ctx.beginPath();
+    ctx.moveTo(x, GROUND_Y - 76);
+    ctx.lineTo(x, GROUND_Y - 140);
+    ctx.stroke();
+  }
+
+  ctx.fillStyle = "rgba(222,232,236,0.28)";
+  for (let i = 0; i < 7; i++) {
+    ctx.beginPath();
+    ctx.ellipse(i * 170 + 40, GROUND_Y - 44 - (i % 2) * 18, 145, 28, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  ctx.fillStyle = "#303137";
+  ctx.fillRect(0, GROUND_Y, 960, 80);
+  ctx.strokeStyle = "#696a6d";
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(0, GROUND_Y + 0.5);
+  ctx.lineTo(960, GROUND_Y + 0.5);
+  ctx.stroke();
+}
+
+function loadImage(def) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+    img.src = def.src;
+  });
+}
+
+async function drawStage(canvasId, entries) {
+  const canvas = document.getElementById(canvasId);
+  const ctx = canvas.getContext("2d");
+  drawBackground(ctx);
+  for (const entry of entries) {
+    const def = defs[entry.key];
+    const img = await loadImage(def);
+    ctx.drawImage(img, entry.x, GROUND_Y - def.h, def.w, def.h);
+  }
+}
+
+Promise.all([
+  drawStage("core", [
+    { key: "paintedHouse", x: 96 },
+    { key: "crabTraps", x: 262 },
+    { key: "sourdoughCart", x: 460 },
+    { key: "fogStreetlamp", x: 704 },
+  ]),
+  drawStage("late", [
+    { key: "parkletPlanter", x: 44 },
+    { key: "ferryBollards", x: 238 },
+    { key: "goldenGateBarricade", x: 426 },
+    { key: "cableCarBarrier", x: 620 },
+    { key: "cableCar", x: 792 },
+  ]),
+]).then(() => document.body.dataset.ready = "true");
+</script>
+</body>
+</html>

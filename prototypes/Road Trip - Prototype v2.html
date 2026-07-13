@@ -1,0 +1,1473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Road Trip - Prototype v2</title>
+<style>
+  :root {
+    --sky: #72c6e8;
+    --cream: #fff8ec;
+    --ink: #1f3a5f;
+    --muted: #5c7893;
+    --orange: #ff6b4a;
+    --teal: #3fb6c7;
+    --gold: #ffd23f;
+    --gold-dark: #e8a200;
+    --green: #2e9e4f;
+    --purple: #7b61ff;
+    --shadow: rgba(18, 25, 42, 0.24);
+    --deep: #0a0d1a;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html,
+  body {
+    min-height: 100%;
+  }
+
+  body {
+    min-height: 100vh;
+    background:
+      radial-gradient(900px 420px at 50% -10%, rgba(70, 123, 190, 0.36), transparent 58%),
+      linear-gradient(180deg, #111832 0%, #090d18 100%);
+    color: var(--cream);
+    font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 22px;
+    flex-wrap: wrap;
+    padding: 28px 12px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  button {
+    font: inherit;
+  }
+
+  .phone {
+    width: 412px;
+    max-width: 100%;
+    height: 860px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 34px;
+    background: var(--ink);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5), 0 0 0 8px #05070d;
+  }
+
+  .screen {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    background: linear-gradient(180deg, #bdebf8 0%, #eaf7ee 100%);
+  }
+
+  .hidden {
+    display: none !important;
+  }
+
+  .map-scroll {
+    position: absolute;
+    inset: 0;
+    overflow-y: auto;
+    scrollbar-width: none;
+  }
+
+  .map-scroll::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
+
+  .world {
+    position: relative;
+    width: 100%;
+    min-height: 1200px;
+    aspect-ratio: 735 / 2138;
+    overflow: hidden;
+    background: #7fc9ec;
+  }
+
+  .world-map {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    animation: mapBreath 10s ease-in-out infinite;
+    transform-origin: 50% 46%;
+  }
+
+  .world::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.16), transparent 18%, transparent 78%, rgba(31, 58, 95, 0.08)),
+      radial-gradient(220px 170px at 24% 18%, rgba(255, 255, 255, 0.18), transparent 68%),
+      radial-gradient(260px 190px at 78% 47%, rgba(255, 244, 186, 0.12), transparent 70%);
+    mix-blend-mode: soft-light;
+  }
+
+  .road-sheen {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.18;
+    background: linear-gradient(115deg, transparent 0%, transparent 38%, rgba(255, 255, 255, 0.42) 46%, transparent 54%, transparent 100%);
+    transform: translateX(-55%);
+    animation: sheen 8s ease-in-out infinite;
+  }
+
+  .start-pin {
+    position: absolute;
+    top: 3.5%;
+    left: 36%;
+    z-index: 4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    filter: drop-shadow(0 8px 8px rgba(24, 44, 72, 0.22));
+  }
+
+  .start-trip {
+    border: 0;
+    color: var(--ink);
+    background: var(--gold);
+    border-radius: 999px;
+    padding: 7px 13px 6px;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.4px;
+    box-shadow: 0 4px 0 rgba(124, 88, 0, 0.24);
+    cursor: pointer;
+    text-transform: uppercase;
+  }
+
+  .start-trip:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 rgba(124, 88, 0, 0.24);
+  }
+
+  .start-ring {
+    width: 78px;
+    height: 78px;
+    border-radius: 50%;
+    background: rgba(255, 248, 236, 0.9);
+    border: 4px solid var(--gold);
+    display: grid;
+    place-items: center;
+    box-shadow: 0 6px 0 rgba(0, 0, 0, 0.18), inset 0 0 0 2px rgba(255, 255, 255, 0.65);
+    animation: bob 1.8s ease-in-out infinite;
+  }
+
+  .start-ring img {
+    width: 92px;
+    transform: translateX(-1px);
+  }
+
+  .pin-shadow {
+    width: 44px;
+    height: 10px;
+    margin-top: -2px;
+    border-radius: 50%;
+    background: rgba(18, 25, 42, 0.18);
+    filter: blur(1px);
+  }
+
+  .city {
+    position: absolute;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    opacity: 0.72;
+  }
+
+  .landmark-city {
+    opacity: 1;
+    filter: drop-shadow(0 8px 8px rgba(24, 44, 72, 0.18));
+  }
+
+  .landmark-city.locked .city-label {
+    color: rgba(198, 207, 214, 0.96);
+    background: rgba(31, 58, 95, 0.74);
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.12);
+  }
+
+  .city-dot {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(255, 248, 236, 0.78);
+    border: 3px dashed rgba(73, 92, 111, 0.7);
+    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.14);
+  }
+
+  .city-dot.has-art {
+    width: 58px;
+    height: 58px;
+    border: 3px solid rgba(255, 248, 236, 0.92);
+    overflow: hidden;
+    background: var(--cream);
+  }
+
+  .city-dot.has-art img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+  }
+
+  .landmark-art {
+    display: block;
+    width: 138px;
+    height: auto;
+    margin-bottom: -10px;
+    pointer-events: none;
+  }
+
+  .city.la .landmark-art {
+    width: 124px;
+    transform: rotate(-3deg);
+  }
+
+  .city.sf .landmark-art {
+    width: 178px;
+    transform: rotate(-7deg);
+    transform-origin: 44% 68%;
+  }
+
+  .city-label {
+    margin-top: 5px;
+    color: #fff;
+    background: rgba(31, 58, 95, 0.74);
+    border-radius: 999px;
+    padding: 4px 9px 3px;
+    font-size: 10.5px;
+    font-weight: 900;
+    letter-spacing: 0.2px;
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.14);
+    white-space: nowrap;
+  }
+
+  .city.dc { top: 18.7%; left: 69.4%; }
+  .city.farm { top: 38.7%; left: 26.2%; }
+  .city.desert { top: 57.3%; left: 69.4%; }
+  .city.la { top: 71.8%; left: 38.5%; }
+  .city.sf { top: 85.6%; left: 43.5%; }
+
+  .scroll-note {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 14px;
+    z-index: 3;
+    text-align: center;
+    color: rgba(31, 58, 95, 0.62);
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .hud {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    right: 14px;
+    z-index: 8;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    pointer-events: none;
+  }
+
+  .logo-pill,
+  .stat-pill,
+  .map-back {
+    background: var(--cream);
+    color: var(--ink);
+    border: 0;
+    border-radius: 20px;
+    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.14);
+  }
+
+  .logo-pill {
+    padding: 8px 14px;
+  }
+
+  .logo {
+    color: var(--ink);
+    font-size: 17px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    line-height: 1;
+  }
+
+  .logo span {
+    color: var(--orange);
+  }
+
+  .stats {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+  }
+
+  .stat-pill {
+    padding: 6px 12px 5px;
+    min-width: 74px;
+    text-align: right;
+    font-size: 12.5px;
+    font-weight: 900;
+  }
+
+  .right-dock {
+    position: absolute;
+    top: 92px;
+    right: 0;
+    z-index: 8;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 11px;
+  }
+
+  .dock-btn {
+    border: 0;
+    background: transparent;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+  }
+
+  .dock-btn:focus-visible {
+    outline: 3px solid rgba(255, 210, 63, 0.86);
+    outline-offset: 5px;
+    border-radius: 18px;
+  }
+
+  .dock-bubble {
+    width: 66px;
+    height: 66px;
+    border-radius: 50%;
+    background: var(--cream);
+    border: 4px solid var(--accent);
+    box-shadow: 0 5px 0 rgba(0, 0, 0, 0.2);
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    position: relative;
+    transition: transform 0.16s ease, box-shadow 0.16s ease;
+  }
+
+  .dock-btn:hover .dock-bubble {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 7px 0 rgba(0, 0, 0, 0.18);
+  }
+
+  .dock-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .vehicle-img {
+    width: 88px;
+    max-width: none;
+    transform: translateX(-1px);
+  }
+
+  .dock-label {
+    margin-top: 2px;
+    color: #fff;
+    background: var(--accent);
+    border-radius: 9px;
+    padding: 3px 9px 2px;
+    min-width: 54px;
+    text-align: center;
+    font-size: 10.5px;
+    font-weight: 900;
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.18);
+    transform: translateX(-3px);
+  }
+
+  .dock-driver { --accent: var(--orange); }
+  .dock-nav { --accent: var(--teal); }
+  .dock-dealer { --accent: var(--gold); }
+  .dock-tape { --accent: var(--purple); }
+
+  .dock-dealer .dock-label {
+    background: var(--gold-dark);
+  }
+
+  .radio-dock {
+    position: absolute;
+    left: 14px;
+    right: 96px;
+    bottom: 14px;
+    z-index: 8;
+    min-height: 62px;
+    border: 0;
+    border-radius: 18px;
+    background: var(--cream);
+    color: var(--ink);
+    box-shadow: 0 6px 0 rgba(0, 0, 0, 0.16);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .radio-face {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #243554;
+    display: grid;
+    place-items: center;
+    color: var(--gold);
+    font-size: 15px;
+    font-weight: 900;
+    flex: 0 0 auto;
+  }
+
+  .radio-copy {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .radio-title {
+    color: var(--ink);
+    font-size: 12px;
+    font-weight: 900;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .radio-sub {
+    color: var(--muted);
+    font-size: 10px;
+    margin-top: 2px;
+  }
+
+  .radio-play {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--gold);
+    color: var(--ink);
+    display: grid;
+    place-items: center;
+    font-size: 12px;
+    font-weight: 900;
+    flex: 0 0 auto;
+  }
+
+  .mixtape-shape {
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+  }
+
+  .era-70s {
+    width: 34px;
+    height: 26px;
+    border-radius: 4px;
+    background: #4a3b2a;
+    border: 2px solid #2e2418;
+    display: grid;
+    place-items: center;
+  }
+
+  .era-70s::after {
+    content: "";
+    width: 20px;
+    height: 12px;
+    border-radius: 2px;
+    background: #c9a15a;
+  }
+
+  .era-80s {
+    width: 36px;
+    height: 24px;
+    border-radius: 4px;
+    background: #222;
+    border: 2px solid #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+  }
+
+  .era-80s::before,
+  .era-80s::after {
+    content: "";
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #eee;
+    border: 2px solid #888;
+  }
+
+  .era-90s {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, #c9f, #9cf, #cf9, #fc9, #f9c, #c9f);
+    box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.44);
+    display: grid;
+    place-items: center;
+  }
+
+  .era-90s::after {
+    content: "";
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--cream);
+    border: 2px solid #ccc;
+  }
+
+  .era-00s {
+    width: 24px;
+    height: 34px;
+    border-radius: 6px;
+    background: #f2f2f2;
+    border: 2px solid #c4c4c4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 3px;
+    gap: 3px;
+  }
+
+  .era-00s::before {
+    content: "";
+    width: 16px;
+    height: 11px;
+    border-radius: 2px;
+    background: #4ec3c7;
+  }
+
+  .era-00s::after {
+    content: "";
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid #c4c4c4;
+  }
+
+  .map-back {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    z-index: 6;
+    padding: 8px 16px;
+    font-size: 12.5px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+  }
+
+  .mode-screen {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, #bdebf8 0%, #eaf7ee 58%, #f9f1d7 100%);
+    color: var(--ink);
+    overflow-y: auto;
+  }
+
+  .screen-heading {
+    padding: 58px 16px 6px;
+    text-align: center;
+  }
+
+  .screen-heading h1 {
+    color: var(--ink);
+    font-size: 21px;
+    font-weight: 900;
+    letter-spacing: 1px;
+  }
+
+  .screen-heading p {
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 3px;
+  }
+
+  .song-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px 12px 28px;
+  }
+
+  .song-card {
+    border: 0;
+    border-radius: 16px;
+    background: var(--cream);
+    overflow: hidden;
+    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.08);
+    color: var(--ink);
+  }
+
+  .song-main {
+    width: 100%;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 12px;
+    text-align: left;
+  }
+
+  .album {
+    width: 46px;
+    height: 46px;
+    border-radius: 10px;
+    flex: 0 0 auto;
+    background: linear-gradient(135deg, var(--gold), #ff8c42);
+    box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.32);
+  }
+
+  .song-copy {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .song-title {
+    font-size: 14.5px;
+    font-weight: 900;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .song-meta {
+    color: var(--muted);
+    font-size: 11px;
+    margin-top: 2px;
+  }
+
+  .chev {
+    color: var(--muted);
+    font-size: 16px;
+    transform: rotate(0deg);
+    transition: transform 0.16s ease;
+  }
+
+  .song-card.open .chev {
+    transform: rotate(180deg);
+  }
+
+  .diffs {
+    display: none;
+    gap: 8px;
+    padding: 0 12px 12px;
+  }
+
+  .song-card.open .diffs {
+    display: flex;
+  }
+
+  .diff {
+    flex: 1;
+    min-height: 58px;
+    border: 0;
+    border-radius: 12px;
+    padding: 9px 4px;
+    cursor: pointer;
+    color: #fff;
+    box-shadow: 0 3px 0 rgba(0, 0, 0, 0.15);
+  }
+
+  .diff.easy { background: var(--green); }
+  .diff.medium { background: var(--gold-dark); }
+  .diff.hard { background: var(--orange); }
+  .diff.locked {
+    background: #e4e9ee;
+    color: #8b93ad;
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+
+  .diff b {
+    display: block;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+  }
+
+  .diff span {
+    display: block;
+    margin-top: 4px;
+    font-size: 10px;
+    line-height: 1.2;
+  }
+
+  .placeholder-wrap {
+    min-height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 84px 26px 38px;
+    text-align: center;
+  }
+
+  .placeholder-panel {
+    width: 100%;
+    max-width: 292px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .hero-badge {
+    width: 86px;
+    height: 86px;
+    border-radius: 50%;
+    background: var(--cream);
+    border: 4px solid var(--teal);
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    box-shadow: 0 6px 0 rgba(0, 0, 0, 0.14);
+  }
+
+  .hero-badge img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .hero-badge.vehicle img {
+    width: 122px;
+    height: auto;
+    max-width: none;
+  }
+
+  .hero-badge.tape {
+    border-color: var(--purple);
+  }
+
+  .placeholder-title {
+    color: var(--ink);
+    font-size: 21px;
+    font-weight: 900;
+    letter-spacing: 1px;
+  }
+
+  .placeholder-art {
+    width: 100%;
+    height: 150px;
+    border: 3px dashed rgba(63, 182, 199, 0.88);
+    border-radius: 16px;
+    background:
+      linear-gradient(135deg, rgba(255, 248, 236, 0.62), rgba(219, 240, 225, 0.78)),
+      repeating-linear-gradient(135deg, rgba(63, 182, 199, 0.12), rgba(63, 182, 199, 0.12) 10px, transparent 10px, transparent 20px);
+    display: grid;
+    place-items: center;
+    color: var(--muted);
+    font-size: 11.5px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .placeholder-desc {
+    color: #3c5570;
+    max-width: 260px;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .placeholder-lock {
+    background: var(--cream);
+    border-radius: 10px;
+    padding: 5px 12px 4px;
+    color: var(--muted);
+    font-size: 10.5px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    box-shadow: 0 3px 0 rgba(0, 0, 0, 0.1);
+    text-transform: uppercase;
+  }
+
+  .play-screen {
+    position: absolute;
+    inset: 0;
+    color: var(--cream);
+    background: #1f3a5f;
+    overflow: hidden;
+  }
+
+  .quit {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    z-index: 3;
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--cream);
+    color: var(--ink);
+    font-size: 15px;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 0 3px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  .play-hud {
+    position: absolute;
+    top: 14px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: flex-end;
+    padding: 0 18px;
+    pointer-events: none;
+  }
+
+  .score {
+    text-align: right;
+    border-radius: 14px;
+    background: rgba(255, 248, 236, 0.12);
+    padding: 6px 14px;
+  }
+
+  .score b {
+    display: block;
+    font-size: 24px;
+  }
+
+  .score span {
+    color: var(--gold);
+    font-size: 11px;
+    font-weight: 900;
+  }
+
+  .lanes-wrap {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .lanes {
+    display: flex;
+    gap: 10px;
+  }
+
+  .lane {
+    width: 70px;
+    height: 280px;
+    border-radius: 14px;
+    position: relative;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--lane-color), transparent 84%);
+  }
+
+  .note {
+    position: absolute;
+    left: 50%;
+    top: var(--top);
+    transform: translateX(-50%);
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--lane-color);
+  }
+
+  .note.pulse {
+    animation: pulse 1s infinite;
+  }
+
+  .mock-label {
+    margin-top: 8px;
+    color: #8fa6c0;
+    font-size: 11.5px;
+    letter-spacing: 1px;
+  }
+
+  .end-song {
+    margin-top: 8px;
+    border: 0;
+    border-radius: 20px;
+    background: var(--gold);
+    color: var(--ink);
+    padding: 9px 18px;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    cursor: pointer;
+    box-shadow: 0 3px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  .result-screen {
+    position: absolute;
+    inset: 0;
+    color: var(--ink);
+    background: linear-gradient(180deg, #bdebf8 0%, #eaf7ee 100%);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .result-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+    gap: 6px;
+  }
+
+  .rank {
+    color: var(--gold-dark);
+    font-size: 92px;
+    font-weight: 900;
+    line-height: 1;
+    animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .result-song {
+    font-size: 20px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+  }
+
+  .result-diff {
+    color: var(--orange);
+    font-size: 11.5px;
+    font-weight: 900;
+    margin-bottom: 10px;
+  }
+
+  .result-stats {
+    font-size: 14px;
+    line-height: 1.9;
+  }
+
+  .unlock {
+    margin: 10px 0 2px;
+    color: var(--green);
+    font-size: 16px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+  }
+
+  .actions {
+    margin-top: 14px;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .action {
+    border: 0;
+    border-radius: 26px;
+    padding: 11px 24px;
+    font-size: 15px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.16);
+  }
+
+  .action.primary {
+    background: var(--orange);
+    color: #fff;
+  }
+
+  .action.secondary {
+    background: var(--cream);
+    color: var(--ink);
+  }
+
+  .wipe {
+    position: absolute;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--wipe-color, #bdebf8);
+    transform: translateY(100%);
+    transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .wipe.in {
+    transform: translateY(0);
+  }
+
+  .wipe.out {
+    transform: translateY(-100%);
+  }
+
+  .wipe-label {
+    color: var(--ink);
+    font-size: 15px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .spinner {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid rgba(31, 58, 95, 0.25);
+    border-top-color: var(--ink);
+    animation: spin 0.7s linear infinite;
+  }
+
+  .notes {
+    width: 300px;
+    max-width: 100%;
+    color: #f0f0f0;
+    font-size: 12.5px;
+    line-height: 1.7;
+  }
+
+  .notes h2 {
+    color: #8b93ad;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .notes-panel {
+    background: #1a2138;
+    border: 1px solid #29314f;
+    border-radius: 12px;
+    padding: 14px;
+  }
+
+  .notes ul {
+    padding-left: 18px;
+  }
+
+  .notes li {
+    margin-bottom: 7px;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+  }
+
+  @keyframes mapBreath {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.006); }
+  }
+
+  @keyframes sheen {
+    0%, 64%, 100% { transform: translateX(-58%); opacity: 0; }
+    74% { opacity: 0.16; }
+    86% { transform: translateX(58%); opacity: 0; }
+  }
+
+  @keyframes popIn {
+    0% { transform: scale(0.85); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.55; }
+    50% { opacity: 1; }
+  }
+
+  @media (max-width: 760px) {
+    body {
+      padding: 0;
+      background: var(--deep);
+    }
+
+    .phone {
+      width: min(100vw, 430px);
+      max-width: 430px;
+      height: 100vh;
+      height: 100dvh;
+      border-radius: 0;
+      box-shadow: none;
+    }
+
+    .notes {
+      display: none;
+    }
+  }
+</style>
+</head>
+<body>
+  <main class="phone" aria-label="Road Trip prototype">
+    <section class="screen" data-screen="hub">
+      <div class="map-scroll" id="mapScroll">
+        <div class="world">
+          <img class="world-map" src="../assets/maps/road-trip-map-v2.png" alt="">
+          <div class="road-sheen"></div>
+
+          <div class="start-pin">
+            <button class="start-trip" type="button" data-go="driverSelect" data-label="STARTING ENGINE..." data-color="#ffd23f">Start Trip</button>
+            <div class="start-ring">
+              <img src="../assets/vehicles/minivan-blue.png" alt="">
+            </div>
+            <div class="pin-shadow"></div>
+          </div>
+
+          <div class="city dc">
+            <div class="city-dot"></div>
+            <div class="city-label">D.C. locked</div>
+          </div>
+          <div class="city farm">
+            <div class="city-dot"></div>
+            <div class="city-label">Farmlands locked</div>
+          </div>
+          <div class="city desert">
+            <div class="city-dot"></div>
+            <div class="city-label">Desert locked</div>
+          </div>
+          <div class="city landmark-city locked la">
+            <img class="landmark-art" src="../assets/landmarks/hollywood-map-cutout.png" alt="">
+            <div class="city-label">L.A. locked</div>
+          </div>
+          <div class="city landmark-city locked sf">
+            <img class="landmark-art" src="../assets/landmarks/golden-gate-map-cutout-blended.png" alt="">
+            <div class="city-label">S.F. locked</div>
+          </div>
+
+          <div class="scroll-note">More cities unlock as you drive</div>
+        </div>
+      </div>
+
+      <div class="hud">
+        <div class="logo-pill">
+          <div class="logo">ROAD<span>TRIP</span></div>
+        </div>
+        <div class="stats">
+          <div class="stat-pill">128 mi</div>
+          <div class="stat-pill">6 songs</div>
+        </div>
+      </div>
+
+      <nav class="right-dock" aria-label="Game modes">
+        <button class="dock-btn dock-driver" type="button" data-go="driverSelect" data-label="TUNING IN..." data-color="#ffd23f">
+          <span class="dock-bubble"><img class="dock-img" src="../assets/characters/dad-face.png" alt=""></span>
+          <span class="dock-label">Driver</span>
+        </button>
+        <button class="dock-btn dock-nav" type="button" data-go="navigator" data-label="PLOTTING ROUTE..." data-color="#3fb6c7">
+          <span class="dock-bubble"><img class="dock-img" src="../assets/characters/mom-face.png" alt=""></span>
+          <span class="dock-label">Navigator</span>
+        </button>
+        <button class="dock-btn dock-dealer" type="button" data-go="dealership" data-label="ROLLING IN..." data-color="#ffd23f">
+          <span class="dock-bubble"><img class="vehicle-img" src="../assets/vehicles/minivan-blue.png" alt=""></span>
+          <span class="dock-label">Dealership</span>
+        </button>
+        <button class="dock-btn dock-tape" type="button" data-go="mixtape" data-label="FLIPPING THE TAPE..." data-color="#7b61ff">
+          <span class="dock-bubble"><span class="mixtape-shape" id="dockMixtape"></span></span>
+          <span class="dock-label">Mixtape</span>
+        </button>
+      </nav>
+
+      <button class="radio-dock" type="button" id="radioDock">
+        <span class="radio-face">FM</span>
+        <span class="radio-copy">
+          <span class="radio-title" id="stationLine">90s Hits - KDRT</span>
+          <span class="radio-sub">Tap station</span>
+        </span>
+        <span class="radio-play">ON</span>
+      </button>
+    </section>
+
+    <section class="mode-screen hidden" data-screen="driverSelect">
+      <button class="map-back" type="button" data-go="hub" data-label="BACK ON THE ROAD..." data-color="#6fd3f2">MAP</button>
+      <div class="screen-heading">
+        <h1>Tap Trip</h1>
+        <p>Pick a song and difficulty.</p>
+      </div>
+      <div class="song-list" id="songList"></div>
+    </section>
+
+    <section class="mode-screen hidden" data-screen="navigator">
+      <button class="map-back" type="button" data-go="hub" data-label="BACK ON THE ROAD..." data-color="#6fd3f2">MAP</button>
+      <div class="placeholder-wrap">
+        <div class="placeholder-panel">
+          <div class="hero-badge"><img src="../assets/characters/mom-face.png" alt=""></div>
+          <div class="placeholder-title">NAVIGATOR</div>
+          <div class="placeholder-art">placeholder</div>
+          <div class="placeholder-desc">Merge-map mini-game. Same entry and exit shell as Driver.</div>
+          <div class="placeholder-lock">Not built yet</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="mode-screen hidden" data-screen="dealership">
+      <button class="map-back" type="button" data-go="hub" data-label="BACK ON THE ROAD..." data-color="#6fd3f2">MAP</button>
+      <div class="placeholder-wrap">
+        <div class="placeholder-panel">
+          <div class="hero-badge vehicle"><img src="../assets/vehicles/minivan-blue.png" alt=""></div>
+          <div class="placeholder-title">DEALERSHIP</div>
+          <div class="placeholder-art">placeholder</div>
+          <div class="placeholder-desc">Spend miles on rides here. Each unlock changes your vehicle on the map.</div>
+          <div class="placeholder-lock">Not built yet</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="mode-screen hidden" data-screen="mixtape">
+      <button class="map-back" type="button" data-go="hub" data-label="BACK ON THE ROAD..." data-color="#6fd3f2">MAP</button>
+      <div class="placeholder-wrap">
+        <div class="placeholder-panel">
+          <div class="hero-badge tape"><span class="mixtape-shape" id="placeholderMixtape"></span></div>
+          <div class="placeholder-title">MIXTAPE</div>
+          <div class="placeholder-art">placeholder</div>
+          <div class="placeholder-desc">Collected songs grouped by era. The format follows the current station.</div>
+          <div class="placeholder-lock">Not built yet</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="play-screen hidden" data-screen="play">
+      <button class="quit" type="button" data-go="driverSelect" data-label="BACK TO GARAGE..." data-color="#ffd23f">X</button>
+      <div class="play-hud">
+        <div class="score">
+          <b>12,480</b>
+          <span>14x combo</span>
+        </div>
+      </div>
+      <div class="lanes-wrap">
+        <div class="lanes">
+          <div class="lane" style="--lane-color:#ff6b4a"><div class="note pulse" style="--top:70%"></div></div>
+          <div class="lane" style="--lane-color:#ffd23f"><div class="note" style="--top:40%"></div></div>
+          <div class="lane" style="--lane-color:#3fb6c7"><div class="note" style="--top:70%"></div></div>
+        </div>
+        <div class="mock-label" id="playLabel">MOCK GAMEPLAY</div>
+        <button class="end-song" type="button" data-go="result" data-label="PULLING OVER..." data-color="#bdebf8">END SONG</button>
+      </div>
+    </section>
+
+    <section class="result-screen hidden" data-screen="result">
+      <button class="map-back" type="button" data-go="hub" data-label="BACK ON THE ROAD..." data-color="#6fd3f2">MAP</button>
+      <div class="result-body">
+        <div class="rank">A</div>
+        <div class="result-song" id="resultSong">Static Bloom</div>
+        <div class="result-diff" id="resultDiff">EASY</div>
+        <div class="result-stats">
+          Score <b>12,480</b><br>
+          Accuracy <b>91%</b><br>
+          <span style="color:#3fb6c7;font-weight:900;">Perfect 44</span> -
+          <span style="color:#e8a200;font-weight:900;">Good 6</span> -
+          <span style="color:#ff6b4a;font-weight:900;">Miss 2</span>
+        </div>
+        <div class="unlock" id="unlockLine">MEDIUM UNLOCKED FOR THIS SONG</div>
+        <div class="actions">
+          <button class="action primary" type="button" data-go="play" data-label="RESTARTING..." data-color="#ff8c42">RETRY</button>
+          <button class="action secondary" type="button" data-go="driverSelect" data-label="BACK TO GARAGE..." data-color="#ffd23f">SONG LIST</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="wipe hidden" id="wipe">
+      <div class="wipe-label"><span class="spinner"></span><span id="wipeText">LOADING</span></div>
+    </div>
+  </main>
+
+  <aside class="notes" aria-label="Prototype notes">
+    <h2>Design Notes - v2</h2>
+    <div class="notes-panel">
+      <ul>
+        <li>The map is now a raster illustration with denser terrain, landmarks, shadows, and road detail so the hub feels more alive.</li>
+        <li>The start marker now says Start Trip, and uses the blue minivan as the active route marker.</li>
+        <li>The right dock uses Dad, Mom, and the blue minivan assets for Driver, Navigator, and Dealership.</li>
+        <li>L.A. and S.F. now get transparent landmark art worked into the map instead of circular UI badges.</li>
+        <li>Mixtape behavior is preserved: tap the radio to cycle eras and the format icon changes with the station.</li>
+      </ul>
+    </div>
+  </aside>
+
+<script>
+  const screens = Array.from(document.querySelectorAll("[data-screen]"));
+  const wipe = document.getElementById("wipe");
+  const wipeText = document.getElementById("wipeText");
+  const stationLine = document.getElementById("stationLine");
+  const dockMixtape = document.getElementById("dockMixtape");
+  const placeholderMixtape = document.getElementById("placeholderMixtape");
+  const songList = document.getElementById("songList");
+  const playLabel = document.getElementById("playLabel");
+  const resultSong = document.getElementById("resultSong");
+  const resultDiff = document.getElementById("resultDiff");
+  const unlockLine = document.getElementById("unlockLine");
+
+  const eras = ["70s", "80s", "90s", "00s"];
+  const station = {
+    "70s": { name: "Classic Rock", call: "KWAX" },
+    "80s": { name: "Synth Pop", call: "KRZR" },
+    "90s": { name: "90s Hits", call: "KDRT" },
+    "00s": { name: "2000s Pop", call: "HITZ" }
+  };
+
+  const songs = [
+    { id: "s1", title: "Neon Nights", band: "The Radicals", era: "80s", diffs: { easy: { grade: "A" }, medium: { grade: null }, hard: null } },
+    { id: "s2", title: "Static Bloom", band: "Vega Sound", era: "90s", diffs: { easy: { grade: "S" }, medium: { grade: "A" }, hard: { grade: null } } },
+    { id: "s3", title: "Dust & Chrome", band: "Highway Kids", era: "70s", diffs: { easy: { grade: null }, medium: null, hard: null } },
+    { id: "s4", title: "Overdrive", band: "Kilowatt", era: "80s", diffs: { easy: { grade: "D" }, medium: null, hard: null } },
+    { id: "s5", title: "Radio Ghost", band: "The Blender", era: "00s", diffs: { easy: { grade: null }, medium: null, hard: null } }
+  ];
+
+  const diffOrder = ["easy", "medium", "hard"];
+  const diffLabel = { easy: "EASY", medium: "MEDIUM", hard: "HARD" };
+  const diffNeed = { easy: "C", medium: "B" };
+  const rankOrder = { D: 0, C: 1, B: 2, A: 3, S: 4 };
+  const state = { screen: "hub", era: "90s", expanded: null, songId: "s2", diff: "easy" };
+
+  function setScreen(screen) {
+    state.screen = screen;
+    screens.forEach((node) => node.classList.toggle("hidden", node.dataset.screen !== screen));
+    if (screen === "hub") {
+      document.getElementById("mapScroll").focus?.();
+    }
+  }
+
+  function go(screen, label, color) {
+    wipeText.textContent = label || "LOADING";
+    wipe.style.setProperty("--wipe-color", color || "#bdebf8");
+    wipe.className = "wipe in";
+    setTimeout(() => {
+      setScreen(screen);
+      wipe.className = "wipe out";
+      setTimeout(() => wipe.className = "wipe hidden", 240);
+    }, 240);
+  }
+
+  function updateMixtape() {
+    const className = "era-" + state.era;
+    dockMixtape.className = "mixtape-shape " + className;
+    placeholderMixtape.className = "mixtape-shape " + className;
+    const tuned = station[state.era];
+    stationLine.textContent = tuned.name + " - " + tuned.call;
+  }
+
+  function unlockState(song, diff) {
+    if (diff === "easy") return { unlocked: true, grade: song.diffs.easy?.grade || null };
+    const previous = diff === "medium" ? "easy" : "medium";
+    const previousEntry = song.diffs[previous];
+    const previousGrade = previousEntry ? previousEntry.grade : null;
+    const needed = diffNeed[previous];
+    const unlocked = !!(previousGrade && rankOrder[previousGrade] >= rankOrder[needed]);
+    return {
+      unlocked,
+      grade: song.diffs[diff]?.grade || null,
+      reqText: "Get " + needed + " on " + diffLabel[previous]
+    };
+  }
+
+  function renderSongs() {
+    songList.innerHTML = "";
+    songs.forEach((song) => {
+      const card = document.createElement("article");
+      card.className = "song-card" + (state.expanded === song.id ? " open" : "");
+
+      const main = document.createElement("button");
+      main.type = "button";
+      main.className = "song-main";
+      main.innerHTML = [
+        '<span class="album"></span>',
+        '<span class="song-copy">',
+        '<span class="song-title">' + song.title + '</span>',
+        '<span class="song-meta">' + song.band + ' - ' + song.era + '</span>',
+        '</span>',
+        '<span class="chev">v</span>'
+      ].join("");
+      main.addEventListener("click", () => {
+        state.expanded = state.expanded === song.id ? null : song.id;
+        renderSongs();
+      });
+
+      const diffs = document.createElement("div");
+      diffs.className = "diffs";
+      diffOrder.forEach((diff) => {
+        const status = unlockState(song, diff);
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "diff " + diff + (status.unlocked ? "" : " locked");
+        button.innerHTML = "<b>" + diffLabel[diff] + "</b><span>" +
+          (status.grade ? "best " + status.grade : (status.unlocked ? "no grade yet" : status.reqText)) +
+          "</span>";
+        button.addEventListener("click", () => {
+          if (!status.unlocked) return;
+          state.songId = song.id;
+          state.diff = diff;
+          state.expanded = null;
+          updatePlayLabels();
+          go("play", "STARTING ENGINE...", "#ff8c42");
+        });
+        diffs.appendChild(button);
+      });
+
+      card.append(main, diffs);
+      songList.appendChild(card);
+    });
+  }
+
+  function updatePlayLabels() {
+    const song = songs.find((item) => item.id === state.songId) || songs[0];
+    const difficulty = diffLabel[state.diff] || "EASY";
+    playLabel.textContent = "MOCK GAMEPLAY - " + song.title + " - " + difficulty;
+    resultSong.textContent = song.title;
+    resultDiff.textContent = difficulty;
+    unlockLine.textContent = state.diff === "hard" ? "NEW BEST SAVED" : (state.diff === "easy" ? "MEDIUM UNLOCKED FOR THIS SONG" : "HARD UNLOCKED FOR THIS SONG");
+  }
+
+  document.addEventListener("click", (event) => {
+    const trigger = event.target.closest("[data-go]");
+    if (!trigger) return;
+    go(trigger.dataset.go, trigger.dataset.label, trigger.dataset.color);
+  });
+
+  document.getElementById("radioDock").addEventListener("click", () => {
+    const index = eras.indexOf(state.era);
+    state.era = eras[(index + 1) % eras.length];
+    updateMixtape();
+  });
+
+  renderSongs();
+  updateMixtape();
+  updatePlayLabels();
+  setScreen("hub");
+</script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Road Trip Prototype QA Comparison</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: #101626;
+    color: #eef4ff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  .wrap {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 20px;
+    padding: 20px;
+    align-items: start;
+    width: 100%;
+  }
+  section {
+    min-width: 0;
+  }
+  h1 {
+    margin: 0 0 10px;
+    color: #d9e4ff;
+    font-size: 16px;
+  }
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    background: #111;
+  }
+</style>
+</head>
+<body>
+  <main class="wrap">
+    <section>
+      <h1>Source: original standalone hub</h1>
+      <img src="source-standalone-hub.png" alt="Original standalone prototype hub screenshot">
+    </section>
+    <section>
+      <h1>Implementation: v2 hub</h1>
+      <img src="implementation-v2-hub-desktop.png" alt="Updated prototype v2 hub screenshot">
+    </section>
+  </main>
+</body>
+</html>

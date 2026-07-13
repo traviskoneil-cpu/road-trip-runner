@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Desert Obstacles QA</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: #141823;
+    color: #f4f0e8;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    padding: 18px;
+  }
+  main {
+    display: grid;
+    gap: 18px;
+    max-width: 980px;
+    margin: 0 auto;
+  }
+  h1 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+  }
+  p {
+    margin: 4px 0 0;
+    color: #b9c0cb;
+    font-size: 13px;
+  }
+  canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+    background: #000;
+    border: 1px solid rgba(255,255,255,0.16);
+  }
+</style>
+</head>
+<body>
+<main>
+  <section>
+    <h1>Desert Southwest - Core Obstacles</h1>
+    <p>cactus, rock, fence, road sign</p>
+    <canvas id="core" width="960" height="540"></canvas>
+  </section>
+  <section>
+    <h1>Desert Southwest - Later Unlocks</h1>
+    <p>prickly pear, desert skull, motel sign, desert arch, tumbleweed</p>
+    <canvas id="late" width="960" height="540"></canvas>
+  </section>
+</main>
+<script>
+const GROUND_Y = 460;
+const defs = {
+  cactus: { src: "../../assets/obstacles/cactus.png", w: 62, h: 118 },
+  rock: { src: "../../assets/obstacles/rock.png", w: 94, h: 42 },
+  fence: { src: "../../assets/obstacles/fence.png", w: 220, h: 70 },
+  roadSign: { src: "../../assets/obstacles/road-sign.png", w: 52, h: 112 },
+  pricklyPear: { src: "../../assets/obstacles/prickly-pear.png", w: 106, h: 96 },
+  desertSkull: { src: "../../assets/obstacles/desert-skull.png", w: 138, h: 64 },
+  motelSign: { src: "../../assets/obstacles/motel-sign.png", w: 64, h: 150 },
+  desertArch: { src: "../../assets/obstacles/desert-arch.png", w: 230, h: 98 },
+  tumbleweed: { src: "../../assets/obstacles/tumbleweed.png", w: 54, h: 54 },
+};
+
+function drawBackground(ctx) {
+  const sky = ctx.createLinearGradient(0, 0, 0, GROUND_Y);
+  sky.addColorStop(0, "#2b1055");
+  sky.addColorStop(1, "#f5af19");
+  ctx.fillStyle = sky;
+  ctx.fillRect(0, 0, 960, GROUND_Y);
+
+  ctx.fillStyle = "rgba(107,45,92,0.58)";
+  ctx.beginPath();
+  ctx.moveTo(0, GROUND_Y - 88);
+  ctx.lineTo(126, GROUND_Y - 152);
+  ctx.lineTo(246, GROUND_Y - 106);
+  ctx.lineTo(352, GROUND_Y - 184);
+  ctx.lineTo(516, GROUND_Y - 118);
+  ctx.lineTo(720, GROUND_Y - 170);
+  ctx.lineTo(960, GROUND_Y - 102);
+  ctx.lineTo(960, GROUND_Y);
+  ctx.lineTo(0, GROUND_Y);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.fillStyle = "rgba(160,76,60,0.7)";
+  for (let i = -1; i < 5; i++) {
+    const x = i * 260 + 40;
+    ctx.fillRect(x, GROUND_Y - 88, 118, 88);
+    ctx.fillRect(x + 138, GROUND_Y - 122, 92, 122);
+  }
+
+  ctx.fillStyle = "#303137";
+  ctx.fillRect(0, GROUND_Y, 960, 80);
+  ctx.strokeStyle = "#696a6d";
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(0, GROUND_Y + 0.5);
+  ctx.lineTo(960, GROUND_Y + 0.5);
+  ctx.stroke();
+}
+
+function loadImage(def) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+    img.src = def.src;
+  });
+}
+
+async function drawStage(canvasId, entries) {
+  const canvas = document.getElementById(canvasId);
+  const ctx = canvas.getContext("2d");
+  drawBackground(ctx);
+  for (const entry of entries) {
+    const def = defs[entry.key];
+    const img = await loadImage(def);
+    ctx.drawImage(img, entry.x, GROUND_Y - def.h, def.w, def.h);
+  }
+}
+
+Promise.all([
+  drawStage("core", [
+    { key: "cactus", x: 124 },
+    { key: "rock", x: 274 },
+    { key: "fence", x: 424 },
+    { key: "roadSign", x: 742 },
+  ]),
+  drawStage("late", [
+    { key: "pricklyPear", x: 90 },
+    { key: "desertSkull", x: 250 },
+    { key: "motelSign", x: 456 },
+    { key: "desertArch", x: 582 },
+    { key: "tumbleweed", x: 852 },
+  ]),
+]).then(() => document.body.dataset.ready = "true");
+</script>
+</body>
+</html>

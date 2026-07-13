@@ -36,6 +36,23 @@
   }
   h1 span { color: var(--accent); }
   .tagline { font-size: 13px; opacity: 0.7; margin-bottom: 10px; }
+  .map-link {
+    position: fixed;
+    top: max(12px, env(safe-area-inset-top));
+    left: max(12px, env(safe-area-inset-left));
+    z-index: 25;
+    color: var(--text);
+    text-decoration: none;
+    background: rgba(10, 12, 30, 0.68);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 999px;
+    padding: 8px 13px;
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    backdrop-filter: blur(8px);
+  }
+  .map-link:hover { border-color: var(--accent); }
   #gameWrap {
     position: relative;
     width: 960px;
@@ -239,6 +256,7 @@
 </style>
 </head>
 <body>
+  <a class="map-link" href="home.html">MAP</a>
   <h1>Road Trip <span>Runner</span></h1>
   <div class="tagline">Your fingers vs. the great American landscape. Just like the back seat of the station wagon.</div>
 
@@ -261,7 +279,7 @@
         Run your fingers along the horizon. Jump over landmarks and land on
         fences and rooftops.<br><br>
         <kbd>Space</kbd> / <kbd>&uarr;</kbd> / <kbd>click</kbd> to jump &nbsp;•&nbsp; hold to jump higher<br>
-        <kbd>1</kbd> fingers &nbsp; <kbd>2</kbd> skateboard (unlocks halfway across, 5400m) &nbsp; <kbd>3</kbd> motorcycle (unlocks coast-to-coast, 10800m)
+        <kbd>1</kbd> fingers &nbsp; <kbd>2</kbd> skateboard &nbsp; <kbd>3</kbd> motorcycle
       </p>
       <div class="radio">
         <label>&#128251; CAR RADIO</label>
@@ -317,24 +335,32 @@ const GROUND_Y = 460;
 // Ordered like a real cross-country trip: east coast to west coast.
 const THEMES = [
   {
+    id: "nyc",
+    citySlug: "newyork",
     name: "NEW YORK CITY",
     sky: "nyHarbor",
     skyTop: "#59c7ea", skyBottom: "#ffd89b",
     far: "#4f86a2", mid: "#b67a45", ground: "#303137", groundLine: "#696a6d",
     backgroundArt: "nyHarbor",
     landmarks: ["empireState", "statueOfLiberty", "skyline"],
-    obstacles: ["hydrant", "taxi", "fence", "waterTower", "mailbox"],
+    obstacles: ["hydrant", "taxi", "fence", "waterTower"],
+    extraObstacles: ["mailbox", "trashBags", "subwayEntrance", "hotDogCart", "newsstand", "messengerBike"],
   },
   {
+    id: "dc",
+    citySlug: "washingtondc",
     name: "WASHINGTON D.C.",
     sky: "dcNight",
     skyTop: "#20284e", skyBottom: "#d9a05e",
     far: "#2e3860", mid: "#3d4a75", ground: "#4a4a52", groundLine: "#66666e",
     backgroundArt: "dcMonuments",
     landmarks: ["washingtonMonument", "capitol", "lincolnMemorial"],
-    obstacles: ["cherryTree", "limo", "barricade", "foodCart", "hydrant", "fence"],
+    obstacles: ["cherryTree", "limo", "barricade", "foodCart"],
+    extraObstacles: ["marblePlanter", "securityCheckpoint", "souvenirKiosk", "scooterRider"],
   },
   {
+    id: "farm",
+    citySlug: "farmland",
     name: "HEARTLAND FARMS",
     sky: "farm",
     skyTop: "#3f7fb5", skyBottom: "#f5d76e",
@@ -342,38 +368,57 @@ const THEMES = [
     backgroundArt: "heartlandFarms",
     midStyle: "hills",
     landmarks: ["silo", "windmill", "treeline"],
-    obstacles: ["cow", "hayBale", "tractor", "scarecrow", "barn", "fence"],
+    obstacles: ["cow", "hayBale", "tractor", "scarecrow"],
+    extraObstacles: ["cornCrates", "milkCans", "produceStand", "hayWagon", "barn", "fence", "runawayChicken"],
   },
   {
+    id: "desert",
+    citySlug: "desert",
     name: "DESERT SOUTHWEST",
     sky: "desertSun",
     skyTop: "#2b1055", skyBottom: "#f5af19",
     far: "#6b2d5c", mid: "#a04c3c", ground: "#303137", groundLine: "#696a6d",
     backgroundArt: "desertSouthwest",
     landmarks: ["devilsTower", "mesa", "canyon"],
-    obstacles: ["cactus", "tumbleweed", "rock", "fence", "roadSign"],
+    obstacles: ["cactus", "rock", "fence", "roadSign"],
+    extraObstacles: ["pricklyPear", "desertSkull", "motelSign", "desertArch", "tumbleweed"],
   },
   {
+    id: "la",
+    citySlug: "losangeles",
     name: "LOS ANGELES",
     sky: "la",
     skyTop: "#4a5899", skyBottom: "#f2957d",
     far: "#5a548c", mid: "#6b6499", ground: "#303137", groundLine: "#696a6d",
     backgroundArt: "losAngeles",
     landmarks: ["hollywoodSign", "palmRow", "pier", "waves"],
-    obstacles: ["palmTree", "convertible", "wave", "lifeguardTower", "tacoTruck"],
+    obstacles: ["palmTree", "convertible", "lifeguardTower", "tacoTruck"],
+    extraObstacles: ["surfboardRack", "movieCamera", "trafficCones", "studioTrailer", "wave"],
   },
   {
+    id: "sf",
+    citySlug: "sanfrancisco",
     name: "SAN FRANCISCO",
     sky: "fog",
     skyTop: "#1c3f60", skyBottom: "#f7b2a3",
     far: "#2c4f70", mid: "#3d5f80", ground: "#303137", groundLine: "#696a6d",
     backgroundArt: "sanFrancisco",
     landmarks: ["goldenGate", "transamerica", "paintedLadies"],
-    obstacles: ["cableCar", "hydrant", "fence", "paintedHouse", "mailbox"],
+    obstacles: ["paintedHouse", "crabTraps", "sourdoughCart", "fogStreetlamp"],
+    extraObstacles: ["parkletPlanter", "ferryBollards", "goldenGateBarricade", "cableCarBarrier", "cableCar"],
   },
 ];
-const THEME_LENGTH = 1800; // meters per route before the next city
-const LOOP_LENGTH = THEME_LENGTH * THEMES.length; // one full coast-to-coast lap
+const THEME_LENGTH = 1800; // meters per unlocked route stop before the next city
+const FULL_ROUTE_LENGTH = THEME_LENGTH * THEMES.length;
+const STARTING_OBSTACLE_COUNT = 4;
+const STARTER_SECTION_SECONDS = 180;
+const BASE_ROUTE_METERS_PER_SECOND = THEME_LENGTH / STARTER_SECTION_SECONDS;
+const RUNNER_METERS_PER_BANKED_MILE = 30;
+const CITY_ORDER = ["nyc", "dc", "farm", "desert", "la", "sf"];
+const CAR_STATS = {
+  wagon: { routeMultiplier: 1, worldSpeedStart: 260, worldSpeedRamp: 3, worldSpeedMax: 520 },
+  minivan: { routeMultiplier: 1, worldSpeedStart: 260, worldSpeedRamp: 3, worldSpeedMax: 520 },
+};
 
 const BackgroundArt = {
   nyHarbor: { src: "assets/backgrounds/ny-harbor-runner.png", img: null, ready: false, failed: false },
@@ -384,42 +429,128 @@ const BackgroundArt = {
   sanFrancisco: { src: "assets/backgrounds/san-francisco-runner.png", img: null, ready: false, failed: false },
 };
 
-for (const art of Object.values(BackgroundArt)) {
-  const img = new Image();
-  img.onload = () => { art.ready = true; };
-  img.onerror = () => { art.failed = true; };
-  img.src = art.src;
-  art.img = img;
+const ObstacleArt = {
+  hydrant:    { src: "assets/obstacles/hydrant.png", img: null, ready: false, failed: false },
+  mailbox:    { src: "assets/obstacles/mailbox.png", img: null, ready: false, failed: false },
+  taxi:       { src: "assets/obstacles/taxi.png", img: null, ready: false, failed: false },
+  fence:      { src: "assets/obstacles/fence.png", img: null, ready: false, failed: false },
+  waterTower: { src: "assets/obstacles/water-tower.png", img: null, ready: false, failed: false },
+  trashBags:  { src: "assets/obstacles/trash-bags.png", img: null, ready: false, failed: false },
+  subwayEntrance: { src: "assets/obstacles/subway-entrance.png", img: null, ready: false, failed: false },
+  hotDogCart: { src: "assets/obstacles/hot-dog-cart.png", img: null, ready: false, failed: false },
+  newsstand:  { src: "assets/obstacles/newsstand.png", img: null, ready: false, failed: false },
+  messengerBike: { src: "assets/obstacles/messenger-bike.png", img: null, ready: false, failed: false },
+  cactus:     { src: "assets/obstacles/cactus.png", img: null, ready: false, failed: false },
+  tumbleweed: { src: "assets/obstacles/tumbleweed.png", img: null, ready: false, failed: false },
+  rock:       { src: "assets/obstacles/rock.png", img: null, ready: false, failed: false },
+  roadSign:   { src: "assets/obstacles/road-sign.png", img: null, ready: false, failed: false },
+  cherryTree: { src: "assets/obstacles/cherry-tree.png", img: null, ready: false, failed: false },
+  limo:       { src: "assets/obstacles/limo.png", img: null, ready: false, failed: false },
+  barricade:  { src: "assets/obstacles/barricade.png", img: null, ready: false, failed: false },
+  foodCart:   { src: "assets/obstacles/food-cart.png", img: null, ready: false, failed: false },
+  marblePlanter: { src: "assets/obstacles/marble-planter.png", img: null, ready: false, failed: false },
+  souvenirKiosk: { src: "assets/obstacles/souvenir-kiosk.png", img: null, ready: false, failed: false },
+  securityCheckpoint: { src: "assets/obstacles/security-checkpoint.png", img: null, ready: false, failed: false },
+  scooterRider: { src: "assets/obstacles/scooter-rider.png", img: null, ready: false, failed: false },
+  runawayChicken: { src: "assets/obstacles/runaway-chicken.png", img: null, ready: false, failed: false },
+  cornCrates: { src: "assets/obstacles/corn-crates.png", img: null, ready: false, failed: false },
+  milkCans:   { src: "assets/obstacles/milk-cans.png", img: null, ready: false, failed: false },
+  produceStand: { src: "assets/obstacles/produce-stand.png", img: null, ready: false, failed: false },
+  hayWagon:   { src: "assets/obstacles/hay-wagon.png", img: null, ready: false, failed: false },
+  pricklyPear: { src: "assets/obstacles/prickly-pear.png", img: null, ready: false, failed: false },
+  desertSkull: { src: "assets/obstacles/desert-skull.png", img: null, ready: false, failed: false },
+  motelSign:   { src: "assets/obstacles/motel-sign.png", img: null, ready: false, failed: false },
+  desertArch:  { src: "assets/obstacles/desert-arch.png", img: null, ready: false, failed: false },
+  palmTree:   { src: "assets/obstacles/palm-tree.png", img: null, ready: false, failed: false },
+  convertible: { src: "assets/obstacles/convertible.png", img: null, ready: false, failed: false },
+  lifeguardTower: { src: "assets/obstacles/lifeguard-tower.png", img: null, ready: false, failed: false },
+  tacoTruck:  { src: "assets/obstacles/taco-truck.png", img: null, ready: false, failed: false },
+  surfboardRack: { src: "assets/obstacles/surfboard-rack.png", img: null, ready: false, failed: false },
+  movieCamera: { src: "assets/obstacles/movie-camera.png", img: null, ready: false, failed: false },
+  trafficCones: { src: "assets/obstacles/traffic-cones.png", img: null, ready: false, failed: false },
+  studioTrailer: { src: "assets/obstacles/studio-trailer.png", img: null, ready: false, failed: false },
+  wave:       { src: "assets/obstacles/wave.png", img: null, ready: false, failed: false },
+  paintedHouse: { src: "assets/obstacles/painted-house.png", img: null, ready: false, failed: false },
+  crabTraps:  { src: "assets/obstacles/crab-traps.png", img: null, ready: false, failed: false },
+  sourdoughCart: { src: "assets/obstacles/sourdough-cart.png", img: null, ready: false, failed: false },
+  fogStreetlamp: { src: "assets/obstacles/fog-streetlamp.png", img: null, ready: false, failed: false },
+  parkletPlanter: { src: "assets/obstacles/parklet-planter.png", img: null, ready: false, failed: false },
+  ferryBollards: { src: "assets/obstacles/ferry-bollards.png", img: null, ready: false, failed: false },
+  goldenGateBarricade: { src: "assets/obstacles/golden-gate-barricade.png", img: null, ready: false, failed: false },
+  cableCarBarrier: { src: "assets/obstacles/cable-car-barrier.png", img: null, ready: false, failed: false },
+  cableCar:   { src: "assets/obstacles/cable-car.png", img: null, ready: false, failed: false },
+};
+
+function loadImageCatalog(catalog) {
+  for (const art of Object.values(catalog)) {
+    const img = new Image();
+    img.onload = () => { art.ready = true; };
+    img.onerror = () => { art.failed = true; };
+    img.src = art.src;
+    art.img = img;
+  }
 }
+
+loadImageCatalog(BackgroundArt);
+loadImageCatalog(ObstacleArt);
 
 // ---------- Obstacle catalog ----------
 // landable: true means you can run along the top (fences, rooftops)
 const OBSTACLE_DEFS = {
   hydrant:      { w: 34,  h: 46,  landable: false },
   mailbox:      { w: 36,  h: 58,  landable: false },
-  taxi:         { w: 120, h: 62,  landable: true  },
-  fence:        { w: 220, h: 70,  landable: true  },
-  waterTower:   { w: 70,  h: 110, landable: true  },
-  cactus:       { w: 44,  h: 88,  landable: false },
-  tumbleweed:   { w: 46,  h: 46,  landable: false, rolls: true },
-  rock:         { w: 70,  h: 44,  landable: true  },
-  roadSign:     { w: 40,  h: 96,  landable: false },
-  cableCar:     { w: 130, h: 88,  landable: true  },
-  paintedHouse: { w: 110, h: 120, landable: true  },
+  taxi:         { w: 150, h: 78,  landable: true, landOffset: 4 },
+  fence:        { w: 220, h: 70,  landable: true, landOffset: 4 },
+  waterTower:   { w: 110, h: 170, landable: true, landOffset: 5 },
+  trashBags:    { w: 92,  h: 58,  landable: false },
+  subwayEntrance: { w: 165, h: 94, landable: true, landOffset: 24 },
+  hotDogCart:   { w: 122, h: 136, landable: false },
+  newsstand:    { w: 158, h: 128, landable: true, landOffset: 5 },
+  messengerBike: { w: 118, h: 86, landable: false, moving: true, moveFactor: 1.52 },
+  cactus:       { w: 62,  h: 118, landable: false },
+  tumbleweed:   { w: 54,  h: 54,  landable: false, moving: true, moveFactor: 1.4, rolls: true, spinRate: 9 },
+  rock:         { w: 94,  h: 42,  landable: true, landOffset: 3 },
+  roadSign:     { w: 52,  h: 112, landable: false },
+  pricklyPear:  { w: 106, h: 96,  landable: false },
+  desertSkull:  { w: 138, h: 64,  landable: false },
+  motelSign:    { w: 64,  h: 150, landable: false },
+  desertArch:   { w: 230, h: 98,  landable: true, landOffset: 8 },
+  cableCar:     { w: 150, h: 92,  landable: true, landOffset: 4, moving: true, moveFactor: 1.25 },
+  paintedHouse: { w: 102, h: 150, landable: true, landOffset: 8 },
+  crabTraps:    { w: 146, h: 72,  landable: false },
+  sourdoughCart: { w: 140, h: 86, landable: false },
+  fogStreetlamp: { w: 62, h: 138, landable: false },
+  parkletPlanter: { w: 154, h: 82, landable: true, landOffset: 28 },
+  ferryBollards: { w: 164, h: 70, landable: false },
+  goldenGateBarricade: { w: 176, h: 86, landable: true, landOffset: 5 },
+  cableCarBarrier: { w: 174, h: 88, landable: false },
   cow:          { w: 92,  h: 62,  landable: false },
   hayBale:      { w: 64,  h: 56,  landable: true  },
   tractor:      { w: 120, h: 80,  landable: true  },
   scarecrow:    { w: 44,  h: 92,  landable: false },
   barn:         { w: 150, h: 110, landable: true  },
-  palmTree:     { w: 46,  h: 118, landable: false },
-  convertible:  { w: 130, h: 52,  landable: true  },
-  wave:         { w: 70,  h: 58,  landable: false, rolls: true },
-  lifeguardTower: { w: 80, h: 96, landable: true  },
-  tacoTruck:    { w: 140, h: 84,  landable: true  },
-  cherryTree:   { w: 70,  h: 84,  landable: false },
-  limo:         { w: 170, h: 54,  landable: true  },
-  barricade:    { w: 56,  h: 40,  landable: true  },
-  foodCart:     { w: 70,  h: 66,  landable: false },
+  runawayChicken: { w: 64, h: 56, landable: false, moving: true, moveFactor: 1.58 },
+  cornCrates:   { w: 120, h: 74,  landable: false },
+  milkCans:     { w: 82,  h: 82,  landable: false },
+  produceStand: { w: 154, h: 124, landable: true, landOffset: 26 },
+  hayWagon:     { w: 156, h: 92,  landable: true, landOffset: 6 },
+  palmTree:     { w: 76,  h: 130, landable: false },
+  convertible:  { w: 158, h: 58,  landable: true, landOffset: 4 },
+  wave:         { w: 138, h: 82,  landable: false, moving: true, moveFactor: 1.35 },
+  lifeguardTower: { w: 146, h: 112, landable: true, landOffset: 18 },
+  tacoTruck:    { w: 150, h: 98,  landable: true, landOffset: 6 },
+  surfboardRack: { w: 156, h: 76,  landable: false },
+  movieCamera:  { w: 108, h: 118, landable: false },
+  trafficCones: { w: 136, h: 56,  landable: false },
+  studioTrailer: { w: 184, h: 96, landable: true, landOffset: 6 },
+  cherryTree:   { w: 104, h: 132, landable: false },
+  limo:         { w: 204, h: 66,  landable: true, landOffset: 4 },
+  barricade:    { w: 106, h: 66,  landable: true, landOffset: 4 },
+  foodCart:     { w: 108, h: 112, landable: false },
+  marblePlanter: { w: 130, h: 78, landable: true, landOffset: 18 },
+  souvenirKiosk: { w: 154, h: 132, landable: true, landOffset: 6 },
+  securityCheckpoint: { w: 156, h: 122, landable: true, landOffset: 20 },
+  scooterRider: { w: 78, h: 104, landable: false, moving: true, moveFactor: 1.45 },
 };
 
 // ---------- Game state ----------
@@ -460,7 +591,41 @@ const FALL_GRAVITY = 3200; // falling is faster than rising = snappy landings
 const JUMP_V = 860;
 const JUMP_CUT_V = -320;   // releasing early caps upward speed: tap = short hop
 
-function currentTheme() { return THEMES[S.themeIndex % THEMES.length]; }
+function unlockedCityIds() {
+  const ids = Array.isArray(Save.data.cities) && Save.data.cities.length ? Save.data.cities : ["nyc"];
+  return new Set(ids);
+}
+
+function routeThemes() {
+  const open = unlockedCityIds();
+  const route = CITY_ORDER.map((id) => THEMES.find((theme) => theme.id === id)).filter((theme) => theme && open.has(theme.id));
+  return route.length ? route : [THEMES[0]];
+}
+
+function routeLength() {
+  return routeThemes().length * THEME_LENGTH;
+}
+
+function routeLoopIndex() {
+  return Math.floor(S.distance / Math.max(THEME_LENGTH, routeLength()));
+}
+
+function currentCarStats() {
+  return CAR_STATS[Save.data.currentCar] || CAR_STATS.wagon;
+}
+
+function routeMetersPerSecond() {
+  return BASE_ROUTE_METERS_PER_SECOND * currentCarStats().routeMultiplier;
+}
+
+function bankedMilesForDistance(distance) {
+  return Math.floor(distance / RUNNER_METERS_PER_BANKED_MILE);
+}
+
+function currentTheme() {
+  const route = routeThemes();
+  return route[S.themeIndex % route.length] || THEMES[0];
+}
 
 function resetGame() {
   S.running = true; S.gameOver = false;
@@ -472,7 +637,7 @@ function resetGame() {
   S.rainGate = THEME_LENGTH * (0.9 + Math.random() * 0.6);
   Glass.drops = [];
   S.ride = "run";
-  S.banner = { text: "NOW ENTERING: " + THEMES[0].name, timer: 2.5 };
+  S.banner = { text: "NOW ENTERING: " + currentTheme().name, timer: 2.5 };
   player.y = GROUND_Y; player.vy = 0; player.onGround = true;
   updateRideBar();
 }
@@ -538,7 +703,7 @@ document.querySelectorAll("#rideBar button").forEach((b) => {
 // changes. Swap these for AI-generated songs later.
 // ============================================================
 const Radio = {
-  era: "90s",
+  era: (Save.data.settings && Save.data.settings.station) || "90s",
   actx: null, nextNote: 0, step: 0, timer: null,
   playlist: {},        // era -> [filenames], loaded from radio/music/playlist.json
   audio: null, queue: [],
@@ -564,9 +729,30 @@ const Radio = {
   },
   // DJ break: outro for what just played, sometimes a station ID or ad,
   // then the intro for what's next — like actual radio
+  openerByEra: { "90s": "Falling Down The Road.mp3" },
+  openingClipsByEra: {
+    "90s": ["90s_id_3.mp3", "90s_id_1.mp3", "90s_id_2.mp3"],
+  },
   battleTracks: ["Text Me Back (Or Else).mp3", "Text Me Back (Or Else) 2000s.mp3"],
+  libraryKey(era, file) { return era + "|" + file; },
+  pickOpeningClip() {
+    const files = this.openingClipsByEra[this.era] || [];
+    const present = files.filter((f) => DJ.hasFile(f));
+    if (present.length) return present[Math.floor(Math.random() * present.length)];
+    return DJ.pick("id");
+  },
+  shuffledQueue(tracks, prevFile) {
+    const queue = tracks.slice().sort(() => Math.random() - 0.5);
+    const opener = this.openerByEra[this.era];
+    if (!prevFile && opener && tracks.includes(opener) && !Save.isCollected(this.libraryKey(this.era, opener))) {
+      const i = queue.indexOf(opener);
+      if (i >= 0) queue.splice(i, 1);
+      queue.unshift(opener);
+    }
+    return queue;
+  },
   playBreak(prevFile, tracks) {
-    if (!this.queue.length) this.queue = tracks.slice().sort(() => Math.random() - 0.5);
+    if (!this.queue.length) this.queue = this.shuffledQueue(tracks, prevFile);
     const nextFile = this.queue.shift();
     const seq = [];
     // "Text Me Back" chart battle: sometimes run the two rival versions
@@ -589,9 +775,9 @@ const Radio = {
       if (outro) seq.push(outro);
     }
     DJ.breaks++;
-    if (!prevFile) { // show open: always lead with the station ID
-      const id = DJ.pick("id");
-      if (id) seq.push(id);
+    if (!prevFile) { // cold open: station jingle/ID, then the song intro
+      const opening = this.pickOpeningClip();
+      if (opening) seq.push(opening);
     } else if (!battleToast && DJ.breaks % 2 === 1) { // every other break gets an ID or ad
       const spot = DJ.pick(Math.random() < 0.65 ? "id" : "ad") || DJ.pick("id");
       if (spot) seq.push(spot);
@@ -614,7 +800,7 @@ const Radio = {
       S.toast = { text: "RADIO: couldn't load " + file, timer: 3 };
       this._errs = (this._errs || 0) + 1;
       if (this._errs < tracks.length) {
-        if (!this.queue.length) this.queue = tracks.slice().sort(() => Math.random() - 0.5);
+        if (!this.queue.length) this.queue = this.shuffledQueue(tracks, file);
         this.playSong(this.queue.shift(), tracks);
       }
     };
@@ -687,9 +873,10 @@ const Radio = {
 // Missing clips are skipped gracefully, so partial recordings work.
 // ============================================================
 const DJ = {
-  reg: {}, voice: null, breaks: 0,
+  reg: {}, files: new Set(), voice: null, breaks: 0,
   setFiles(files) {
     this.reg = {};
+    this.files = new Set(files);
     for (const f of files) {
       const m = /^(\d0s)_(id|ad|rain|intro|outro|city|unlock|battle|toad)(?:_([a-z0-9]+))?_\d+\.mp3$/.exec(f);
       if (!m) continue;
@@ -699,6 +886,7 @@ const DJ = {
       (r[key] = r[key] || []).push(f);
     }
   },
+  hasFile(file) { return this.files.has(file); },
   pick(type, slug) {
     const r = this.reg[Radio.era];
     const pool = r && r[slug ? type + "_" + slug : type];
@@ -776,28 +964,32 @@ const Sfx = {
 // ============================================================
 function update(dt) {
   S.t += dt;
-  S.speed = Math.min(720, 320 + S.t * 7);
+  const car = currentCarStats();
+  S.speed = Math.min(car.worldSpeedMax, car.worldSpeedStart + S.t * car.worldSpeedRamp);
   const px = S.speed * dt;
-  S.distance += px / 12; // ~12px per "meter"
-  S.farX += px * 0.15; S.midX += px * 0.4; S.groundX += px;
+  S.distance += routeMetersPerSecond() * dt;
+  S.farX += px * 0.07; S.midX += px * 0.24; S.groundX += px;
 
   // route changes
-  const idx = Math.floor(S.distance / THEME_LENGTH) % THEMES.length;
+  const route = routeThemes();
+  const idx = Math.floor((S.distance % routeLength()) / THEME_LENGTH) % route.length;
   if (idx !== S.themeIndex) {
     S.themeIndex = idx;
-    S.banner = { text: "NOW ENTERING: " + currentTheme().name, timer: 2.5 };
-    DJ.event("city", ["newyork", "washingtondc", "farmland", "desert", "losangeles", "sanfrancisco"][idx]);
+    const theme = currentTheme();
+    S.banner = { text: "NOW ENTERING: " + theme.name, timer: 2.5 };
+    DJ.event("city", theme.citySlug);
   }
 
   // unlocks
-  if (!S.unlocked.skateboard && S.distance >= LOOP_LENGTH / 2) {
+  const rideLoop = FULL_ROUTE_LENGTH;
+  if (!S.unlocked.skateboard && S.distance >= rideLoop / 2) {
     S.unlocked.skateboard = true;
     S.toast = { text: "SKATEBOARD UNLOCKED! Press 2", timer: 3 };
     Sfx.unlock();
     DJ.event("unlock", "skateboard");
     updateRideBar();
   }
-  if (!S.unlocked.motorcycle && S.distance >= LOOP_LENGTH) {
+  if (!S.unlocked.motorcycle && S.distance >= rideLoop) {
     S.unlocked.motorcycle = true;
     S.toast = { text: "MOTORCYCLE UNLOCKED! Press 3", timer: 3 };
     Sfx.unlock();
@@ -806,6 +998,7 @@ function update(dt) {
   }
 
   // ---- player physics ----
+  const prevY = player.y;
   const grav = player.vy > 0 ? FALL_GRAVITY
              : (player.jumpHeld ? HOLD_GRAVITY : GRAVITY);
   player.vy += grav * dt;
@@ -816,10 +1009,12 @@ function update(dt) {
   let surface = GROUND_Y;
   for (const o of S.obstacles) {
     if (!o.def.landable) continue;
-    const top = GROUND_Y - o.def.h;
-    if (player.x + player.w * 0.35 > o.x && player.x - player.w * 0.35 < o.x + o.def.w) {
-      // only counts as a floor if we're above it (or barely into it)
-      if (player.y <= top + 18) surface = Math.min(surface, top);
+    const top = obstacleSurfaceY(o);
+    const feetOverlapTop = player.x + player.w * 0.35 > o.x + 4 && player.x - player.w * 0.35 < o.x + o.def.w - 4;
+    if (feetOverlapTop && player.vy >= 0) {
+      const crossedTop = prevY <= top + 12 && player.y >= top - 4;
+      const stillOnTop = player.y <= top + 18;
+      if (crossedTop || stillOnTop) surface = Math.min(surface, top);
     }
   }
   if (player.y >= surface) {
@@ -838,8 +1033,8 @@ function update(dt) {
     S.spawnTimer = (0.85 + Math.random() * 1.1) * (420 / S.speed);
   }
   for (const o of S.obstacles) {
-    o.x -= px * (o.def.rolls ? 1.35 : 1); // tumbleweeds roll toward you
-    if (o.def.rolls) o.spin = (o.spin || 0) + dt * 9;
+    o.x -= px * obstacleMoveFactor(o.def);
+    if (o.def.rolls || o.def.spinRate) o.spin = (o.spin || 0) + dt * (o.def.spinRate || 9);
   }
   S.obstacles = S.obstacles.filter((o) => o.x + o.def.w > -50);
 
@@ -847,7 +1042,7 @@ function update(dt) {
   if (S.invuln > 0) S.invuln -= dt;
   for (const o of S.obstacles) {
     if (S.invuln > 0) break;
-    const top = GROUND_Y - o.def.h;
+    const top = obstacleSurfaceY(o);
     const overlapX = player.x + player.w * 0.3 > o.x + 6 && player.x - player.w * 0.3 < o.x + o.def.w - 6;
     const belowTop = player.y > top + 20; // feet clearly below the top edge
     if (overlapX && belowTop) takeHit();
@@ -891,12 +1086,37 @@ function update(dt) {
 
 function spawnObstacle() {
   const theme = currentTheme();
-  const key = theme.obstacles[Math.floor(Math.random() * theme.obstacles.length)];
+  const pool = obstaclePoolForTheme(theme);
+  const key = pool[Math.floor(Math.random() * pool.length)];
   const def = OBSTACLE_DEFS[key];
   const last = S.obstacles[S.obstacles.length - 1];
-  const minGap = S.speed * 0.62 + 40; // always physically clearable, with landing room
+  const currentFactor = obstacleMoveFactor(def);
+  const lastFactor = last ? obstacleMoveFactor(last.def) : 1;
+  const movingGap = S.speed * Math.max(0, Math.max(currentFactor, lastFactor) - 1) * 0.35;
+  const minGap = S.speed * 0.62 + 40 + movingGap; // keep faster obstacles physically clearable
   const x = Math.max(W + 40, last ? last.x + last.def.w + minGap : 0);
   S.obstacles.push({ key, def, x });
+}
+
+function obstacleMoveFactor(def) {
+  return def.moveFactor || (def.moving ? 1.25 : 1);
+}
+
+function obstacleSurfaceY(o) {
+  return GROUND_Y - o.def.h + (o.def.landOffset || 0);
+}
+
+function obstaclePoolForTheme(theme) {
+  const roster = obstacleRosterForTheme(theme);
+  const count = Math.min(roster.length, STARTING_OBSTACLE_COUNT + routeLoopIndex());
+  return roster.slice(0, count);
+}
+
+function obstacleRosterForTheme(theme) {
+  const roster = theme.obstacles.concat(theme.extraObstacles || []);
+  const calm = roster.filter((key) => !OBSTACLE_DEFS[key]?.moving);
+  const moving = roster.filter((key) => OBSTACLE_DEFS[key]?.moving);
+  return calm.concat(moving);
 }
 
 function takeHit() {
@@ -911,13 +1131,13 @@ function endGame() {
   S.gameOver = true;
   Radio.finishSong(); // the last song plays out over the game-over screen
   if (Save.setRunnerBest(S.distance)) S.best = Save.runnerBest;
-  const earned = Math.floor(S.distance / 10); // 1 mile per 10m — the trip's payout
+  const earned = bankedMilesForDistance(S.distance);
   const totalMiles = Save.addMiles(earned);
   const ov = document.getElementById("overlay");
   document.getElementById("ovTitle").textContent = "OUT OF GAS!";
   document.getElementById("ovText").innerHTML =
     "You made it <b>" + Math.floor(S.distance) + "m</b> down the road." +
-    "<br>Best trip: <b>" + S.best + "m</b>" +
+    "<br>Best trip: <b>" + Math.floor(S.best) + "m</b>" +
     "<br>+<b>" + earned + " mi</b> earned · <b>" + totalMiles + " mi</b> banked";
   document.getElementById("startBtn").textContent = "TAKE ANOTHER TRIP";
   ov.classList.remove("hidden");
@@ -979,7 +1199,7 @@ function drawRasterBackground(theme) {
   const img = art.img;
   const tileW = W;
   const tileH = tileW * (img.naturalHeight / img.naturalWidth);
-  const scroll = S.farX * 0.28;
+  const scroll = S.farX * 0.12;
   const cycle = tileW * 2;
   const phase = ((scroll % cycle) + cycle) % cycle;
 
@@ -1417,9 +1637,56 @@ function drawMidSkyline(theme) {
 }
 
 // ---- obstacles in the play lane ----
+function drawObstacleAsset(o, img) {
+  const d = o.def;
+  if (d.rolls) {
+    ctx.save();
+    ctx.translate(o.x + d.w / 2, GROUND_Y - d.h / 2);
+    ctx.rotate(o.spin || 0);
+    ctx.drawImage(img, -d.w / 2, -d.h / 2, d.w, d.h);
+    ctx.restore();
+    return;
+  }
+  ctx.drawImage(img, o.x, GROUND_Y - d.h, d.w, d.h);
+}
+
+function drawObstacleMotionCue(o) {
+  const d = o.def;
+  if (!d.moving) return;
+
+  const tailX = o.x + d.w + 8;
+  const baseY = GROUND_Y - Math.max(8, Math.min(26, d.h * 0.28));
+  ctx.save();
+  ctx.lineCap = "round";
+  ctx.lineWidth = o.key === "wave" ? 3 : 2;
+  ctx.strokeStyle = o.key === "wave" ? "rgba(235,255,255,0.55)" : "rgba(255,255,255,0.22)";
+  for (let i = 0; i < 3; i++) {
+    ctx.beginPath();
+    ctx.moveTo(tailX + i * 12, baseY - i * 8);
+    ctx.lineTo(tailX + 28 + i * 14, baseY - 3 - i * 7);
+    ctx.stroke();
+  }
+  if (o.key === "runawayChicken" || o.key === "tumbleweed") {
+    ctx.fillStyle = "rgba(220,190,145,0.28)";
+    for (let i = 0; i < 3; i++) {
+      ctx.beginPath();
+      ctx.ellipse(tailX + 8 + i * 14, GROUND_Y - 5 - i * 2, 6, 3, -0.2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+  ctx.restore();
+}
+
 function drawObstacle(o, theme) {
   const x = o.x, g = GROUND_Y, d = o.def;
   ctx.save();
+  drawObstacleMotionCue(o);
+  const art = ObstacleArt[o.key];
+  if (art && art.ready && art.img) {
+    drawObstacleAsset(o, art.img);
+    ctx.restore();
+    return;
+  }
   switch (o.key) {
     case "hydrant":
       ctx.fillStyle = "#d93a3a";
@@ -1746,25 +2013,29 @@ function drawObstacle(o, theme) {
       ctx.arc(x + 35, g - 60, 26, Math.PI, 0);
       ctx.fill();
       break;
+    default:
+      ctx.fillStyle = "#7a5a44";
+      ctx.fillRect(x, g - d.h, d.w, d.h);
+      break;
   }
   ctx.restore();
 }
 
 // ---- the star of the show: running fingers ----
-// ---- optional hand sprite (assets/hand.png): a legless fist body that we
-// composite with code-drawn, animated finger-legs. Falls back to the fully
-// drawn hand if the file is missing. Attach points are measured from the art.
+// ---- optional hand sprite (assets/hand-v8.png): a folded hand body that we
+// composite with animated finger-leg assets. Falls back to the fully drawn
+// hand if the file is missing. Attach points are measured from the art.
 const HandSprite = {
   ready: false, cv: null,
-  ax: 820, ay: 711,   // attach midpoint (image px)
-  lax: 775, lay: 715, // left/back finger attaches here
-  rax: 865, ray: 707, // right/front finger attaches here
-  scale: 0.116,
+  ax: 735, ay: 735,    // body alignment point (image px)
+  lax: 1005, lay: 675, // back finger root sits just behind the front root
+  rax: 1065, ray: 660, // front finger root nudged right into the hand
+  scale: 0.086,
   load() {
     const img = new Image();
     img.onload = () => this.process(img);
     img.onerror = () => {}; // missing file -> drawn-hand fallback stays
-    img.src = "assets/hand.png";
+    img.src = "assets/hand-v8.png";
   },
   process(img) {
     const c = document.createElement("canvas");
@@ -1780,42 +2051,127 @@ const HandSprite = {
 };
 HandSprite.load();
 
-// body sprite + two animated finger-legs drawn to match the art's palette
+const FingerLegSprite = {
+  ready: false, cv: null,
+  ax: 193, ay: 40, // top-center of the trimmed finger art
+  scaleX: 0.041,
+  scaleY: 0.038,
+  topCrop: 150,
+  load() {
+    const img = new Image();
+    img.onload = () => this.process(img);
+    img.onerror = () => {}; // missing file -> vector finger fallback
+    img.src = "assets/finger-leg-v2.png";
+  },
+  process(img) {
+    const c = document.createElement("canvas");
+    c.width = img.naturalWidth; c.height = img.naturalHeight;
+    const g = c.getContext("2d");
+    g.drawImage(img, 0, 0);
+    const id = g.getImageData(0, 0, c.width, c.height), d = id.data;
+    for (let i = 3; i < d.length; i += 4) if (d[i] < 100) d[i] = 0;
+    g.putImageData(id, 0, 0);
+    this.cv = c; this.ready = true;
+  },
+};
+FingerLegSprite.load();
+
+// body sprite + two animated finger-leg sprites drawn to match the art's palette
 function drawSpriteHand(a1, a2) {
-  const s = HandSprite.scale, legLen = 36;
-  const legSkin = "#ffa54d", legShade = "#ef8a3a", legOutline = "#141414", legPad = "#ffd89f";
+  const s = HandSprite.scale, legLen = 50;
+  const legSkin = "#f7a35a", legShade = "#dc833b", legOutline = "#5a2e18", legPad = "#ffd9a8";
   const bob = -Math.abs(Math.sin(player.legPhase)) * 2; // subtle run bounce
-  const hipY = -33 + bob;
+  const hipY = -47 + bob;
   const lx = (HandSprite.lax - HandSprite.ax) * s;
   const rx = (HandSprite.rax - HandSprite.ax) * s;
+  const ly = hipY + (HandSprite.lay - HandSprite.ay) * s;
+  const ry = hipY + (HandSprite.ray - HandSprite.ay) * s;
   ctx.lineCap = "round"; ctx.lineJoin = "round";
 
-  function leg(hx, ang, fill) {
-    const kneeT = 0.5;
+  function vectorLeg(hx, hy, ang, fill) {
+    const kneeT = 0.48;
     const kx = hx + Math.sin(ang) * legLen * kneeT;
-    const ky = hipY + Math.cos(ang) * legLen * kneeT;
-    const ang2 = ang - 0.28; // lower joint tucks back under, like a curling finger
+    const ky = hy + Math.cos(ang) * legLen * kneeT;
+    const ang2 = ang - 0.18; // lower joint tucks back under, like a walking finger
     const fx = kx + Math.sin(ang2) * legLen * (1 - kneeT);
     const fy = ky + Math.cos(ang2) * legLen * (1 - kneeT);
-    ctx.strokeStyle = legOutline; ctx.lineWidth = 19;
-    ctx.beginPath(); ctx.moveTo(hx, hipY); ctx.lineTo(kx, ky); ctx.lineTo(fx, fy); ctx.stroke();
-    ctx.strokeStyle = fill; ctx.lineWidth = 14;
-    ctx.beginPath(); ctx.moveTo(hx, hipY); ctx.lineTo(kx, ky); ctx.stroke();
+
+    ctx.strokeStyle = legOutline; ctx.lineWidth = 18;
+    ctx.beginPath();
+    ctx.moveTo(hx, hy);
+    ctx.quadraticCurveTo((hx + kx) / 2, (hy + ky) / 2 + 2, kx, ky);
+    ctx.quadraticCurveTo((kx + fx) / 2, (ky + fy) / 2 + 2, fx, fy);
+    ctx.stroke();
+
+    ctx.strokeStyle = fill; ctx.lineWidth = 13.5;
+    ctx.beginPath();
+    ctx.moveTo(hx, hy);
+    ctx.quadraticCurveTo((hx + kx) / 2, (hy + ky) / 2 + 2, kx, ky);
+    ctx.stroke();
     ctx.lineWidth = 12;
-    ctx.beginPath(); ctx.moveTo(kx, ky); ctx.lineTo(fx, fy); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(kx, ky);
+    ctx.quadraticCurveTo((kx + fx) / 2, (ky + fy) / 2 + 2, fx, fy);
+    ctx.stroke();
+
+    ctx.strokeStyle = "rgba(255,220,170,0.35)";
+    ctx.lineWidth = 2.2;
+    ctx.beginPath();
+    ctx.moveTo(hx - 3, hy + 6);
+    ctx.quadraticCurveTo((hx + kx) / 2 - 3, (hy + ky) / 2 + 7, kx - 2, ky - 1);
+    ctx.stroke();
+
     ctx.fillStyle = fill; ctx.strokeStyle = legOutline; ctx.lineWidth = 3;
-    ctx.beginPath(); ctx.arc(fx, fy, 8, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-    ctx.fillStyle = legPad; // nail highlight
-    ctx.beginPath(); ctx.arc(fx - 2, fy - 2, 3.2, 0, Math.PI * 2); ctx.fill();
+    ctx.save();
+    ctx.translate(fx, fy);
+    ctx.rotate(Math.PI / 2 - ang2);
+    ctx.beginPath(); ctx.ellipse(0, 0, 7, 10, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = legPad; // fingertip/nail highlight
+    ctx.beginPath(); ctx.ellipse(-2, -2.5, 3.4, 2.5, 0.2, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+
+    ctx.strokeStyle = "rgba(90,46,24,0.5)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(kx - 5, ky + 1);
+    ctx.quadraticCurveTo(kx, ky + 4, kx + 5, ky + 1);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo((kx + fx) / 2 - 4, (ky + fy) / 2 + 2);
+    ctx.quadraticCurveTo((kx + fx) / 2, (ky + fy) / 2 + 5, (kx + fx) / 2 + 4, (ky + fy) / 2 + 2);
+    ctx.stroke();
   }
 
-  leg(lx, a2, legShade); // back leg (behind the body)
+  function assetLeg(hx, hy, ang, backLeg) {
+    const f = FingerLegSprite;
+    ctx.save();
+    ctx.translate(hx, hy);
+    ctx.rotate(-ang * 0.82);
+    ctx.scale(f.scaleX * (backLeg ? 0.94 : 0.98), f.scaleY * (backLeg ? 0.98 : 1));
+    ctx.globalAlpha = 1;
+    ctx.filter = "none";
+    ctx.drawImage(
+      f.cv,
+      0, f.topCrop, f.cv.width, f.cv.height - f.topCrop,
+      -f.ax, f.topCrop - f.ay, f.cv.width, f.cv.height - f.topCrop
+    );
+    ctx.restore();
+  }
+
+  if (!FingerLegSprite.ready) {
+    vectorLeg(lx, ly, a2, legShade); // back leg (behind the body)
+  }
   ctx.save();
   ctx.translate(0, hipY);
   ctx.scale(s, s);
   ctx.drawImage(HandSprite.cv, -HandSprite.ax, -HandSprite.ay);
   ctx.restore();
-  leg(rx, a1, legSkin);  // front leg (over the body)
+  if (FingerLegSprite.ready) {
+    assetLeg(lx, ly, a2, true);
+    assetLeg(rx, ry, a1, false);
+  } else {
+    vectorLeg(rx, ry, a1, legSkin);  // front leg fallback
+  }
 }
 
 function drawPlayer() {
@@ -1823,18 +2179,19 @@ function drawPlayer() {
   if (flash) return;
 
   const px = player.x, py = player.y; // py = feet level
+  const runContactOffset = S.ride === "run" && HandSprite.ready && FingerLegSprite.ready ? 8 : 0;
   ctx.save();
-  ctx.translate(px, py);
+  ctx.translate(px, py + runContactOffset);
 
   const skin = "#eeb892", skinShade = "#d99b73", outline = "#5b3a26", cuff = "#33405f";
 
   // finger legs: two fingers scissoring while grounded, tucked in air
   let a1, a2;
   if (player.onGround && S.ride === "run") {
-    a1 = Math.sin(player.legPhase) * 0.55;
-    a2 = Math.sin(player.legPhase + Math.PI) * 0.55;
+    a1 = Math.sin(player.legPhase) * 0.42;
+    a2 = Math.sin(player.legPhase + Math.PI) * 0.42;
   } else if (S.ride === "run") {
-    a1 = 0.35; a2 = -0.5; // mid-leap split
+    a1 = 0.28; a2 = -0.38; // mid-leap split
   } else {
     a1 = 0.18; a2 = -0.18; // standing on a board/bike
   }
@@ -1862,7 +2219,7 @@ function drawPlayer() {
     ctx.translate(0, -22);
   }
 
-  // real hand sprite (assets/hand.png) + animated legs, when it has loaded
+  // real hand sprite (assets/hand-v8.png) + animated finger assets, when loaded
   if (HandSprite.ready) { drawSpriteHand(a1, a2); ctx.restore(); return; }
 
   // Fallback: fully drawn hand, natively facing right. The pose is the real
@@ -1977,6 +2334,7 @@ function drawRain() {
 }
 
 function drawHUD(theme) {
+  const tripMiles = bankedMilesForDistance(S.distance);
   ctx.fillStyle = "rgba(0,0,0,0.4)";
   ctx.beginPath();
   ctx.roundRect(28, 26, W - 56, 36, 10);
@@ -1987,10 +2345,12 @@ function drawHUD(theme) {
   ctx.font = "13px 'Trebuchet MS', sans-serif";
   ctx.fillStyle = "#ffd166";
   ctx.fillText("BEST " + S.best + "m", 130, 50);
+  ctx.fillStyle = "#4ec3c7";
+  ctx.fillText("+" + tripMiles + " MI", 245, 50);
   ctx.fillStyle = "#aaa";
-  ctx.fillText(theme.name, 250, 50);
-  ctx.fillText("RADIO: " + (Radio.era === "off" ? "OFF" : "'" + Radio.era), 440, 50);
-  ctx.fillText("RIDE: " + S.ride.toUpperCase(), 580, 50);
+  ctx.fillText(theme.name, 330, 50);
+  ctx.fillText("RADIO: " + (Radio.era === "off" ? "OFF" : "'" + Radio.era), 540, 50);
+  ctx.fillText("RIDE: " + S.ride.toUpperCase(), 680, 50);
   // lives as little hearts
   for (let i = 0; i < 3; i++) {
     ctx.fillStyle = i < S.lives ? "#e94560" : "#444";
@@ -2059,7 +2419,9 @@ DJ.setFiles([
   "90s_ad_1.mp3", "90s_ad_2.mp3", "90s_city_desert_1.mp3",
   "90s_city_farmland_1.mp3", "90s_city_losangeles_1.mp3", "90s_city_newyork_1.mp3",
   "90s_city_sanfrancisco_1.mp3", "90s_city_washingtondc_1.mp3", "90s_id_1.mp3",
-  "90s_id_2.mp3", "90s_id_3.mp3", "90s_intro_birthdaycake_1.mp3",
+  "90s_id_2.mp3", "90s_id_3.mp3", "90s_intro_fallingdowntheroad_1.mp3",
+  "90s_intro_fallingdowntheroad_2.mp3", "90s_intro_fallingdowntheroad_3.mp3",
+  "90s_intro_fallingdowntheroad_4.mp3", "90s_intro_birthdaycake_1.mp3",
   "90s_intro_birthdaycake_2.mp3", "90s_intro_bluehairclip_1.mp3", "90s_intro_bluehairclip_2.mp3",
   "90s_intro_bluehairclip_3.mp3", "90s_intro_bluetapecorner_1.mp3", "90s_intro_bluetapecorner_2.mp3",
   "90s_intro_bluetapecorner_3.mp3", "90s_intro_burningbright_1.mp3", "90s_intro_burningbright_2.mp3",
@@ -2076,7 +2438,7 @@ DJ.setFiles([
   "90s_outro_birthdaycake_1.mp3", "90s_outro_bluehairclip_1.mp3", "90s_outro_bluehairclip_2.mp3",
   "90s_outro_bluetapecorner_1.mp3", "90s_outro_bluetapecorner_2.mp3", "90s_outro_burningbright_1.mp3",
   "90s_outro_chainlinkriot_1.mp3", "90s_outro_chainlinkriot_2.mp3", "90s_outro_duneline_1.mp3",
-  "90s_outro_greedyfly_1.mp3", "90s_outro_hammerofasgard_1.mp3", "90s_outro_hammerofasgard_2.mp3",
+  "90s_outro_fallingdowntheroad_1.mp3", "90s_outro_greedyfly_1.mp3", "90s_outro_hammerofasgard_1.mp3", "90s_outro_hammerofasgard_2.mp3",
   "90s_outro_intotherain_1.mp3", "90s_outro_justtobeaghost_1.mp3", "90s_outro_monsoon_1.mp3",
   "90s_outro_papercrown_1.mp3", "90s_outro_paperhands_1.mp3", "90s_outro_spinmeright_1.mp3",
   "90s_outro_spinmeright_2.mp3", "90s_outro_talktilldawn_1.mp3", "90s_outro_tellme_1.mp3",
@@ -2106,6 +2468,8 @@ const Library = {
       for (const era of ["70s", "80s", "90s", "00s"])
         this.meta[era] = (d.stations[era] && d.stations[era].tracks) || [];
       this.updateButton();
+      if (!document.getElementById("library").classList.contains("hidden")) this.render();
+      openLibraryFromHash();
     }).catch(() => {});
   },
   key(era, file) { return era + "|" + file; },
@@ -2246,11 +2610,25 @@ document.getElementById("stopMusicBtn").addEventListener("click", () => {
 document.getElementById("mixtapeBtn").addEventListener("click", () => Library.open());
 document.getElementById("libClose").addEventListener("click", () => Library.close());
 document.getElementById("libNowStop").addEventListener("click", () => Library.stopPlayer());
+function openLibraryFromHash() {
+  if (location.hash === "#mixtape") Library.open();
+}
+window.addEventListener("hashchange", openLibraryFromHash);
+openLibraryFromHash();
+function setRadioEra(era, persist) {
+  if (!Radio.patterns[era] && era !== "off") era = "90s";
+  document.querySelectorAll(".decade").forEach((b) => b.classList.toggle("active", b.dataset.era === era));
+  Radio.era = era;
+  if (persist && era !== "off") {
+    if (!Save.data.settings || typeof Save.data.settings !== "object") Save.data.settings = {};
+    Save.data.settings.station = era;
+    Save.persist();
+  }
+}
+setRadioEra(Radio.era, false);
 document.querySelectorAll(".decade").forEach((btn) => {
   btn.addEventListener("click", () => {
-    document.querySelectorAll(".decade").forEach((b) => b.classList.remove("active"));
-    btn.classList.add("active");
-    Radio.era = btn.dataset.era;
+    setRadioEra(btn.dataset.era, true);
     if (S.running) Radio.start();
   });
 });
