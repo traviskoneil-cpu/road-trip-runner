@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#12172b">
-<title>Tap Trip — Road Trip Runner Rhythm</title>
+<title>Driver — Road Trip Runner Rhythm</title>
 <style>
   :root {
     --bg:#12172b; --panel:#1a2138; --accent:#e94560; --l0:#e94560; --l1:#ffd166; --l2:#4ec3c7; --text:#f0f0f0;
@@ -51,24 +51,13 @@
     height:100vh;
     height:100dvh;
     overflow:hidden;
-    background:linear-gradient(180deg, #bdebf8 0%, #f8eed4 45%, #182744 46%, #0d1424 100%);
+    background:
+      radial-gradient(260px 150px at 50% -8%, rgba(255,248,236,0.76), transparent 72%),
+      linear-gradient(180deg, #bdebf8 0%, #f8eed4 44%, #223553 44.5%, #0d1424 100%);
     color:var(--cream);
     display:flex;
     flex-direction:column;
     box-shadow:0 0 0 8px #05070d, 0 30px 80px rgba(0,0,0,0.5);
-  }
-  .driver-shell::before {
-    content:"";
-    position:absolute;
-    left:-20%;
-    right:-20%;
-    top:28%;
-    height:42%;
-    background:
-      linear-gradient(92deg, transparent 0 46%, rgba(255,255,255,0.42) 47% 49%, transparent 50% 100%),
-      linear-gradient(180deg, #243554 0%, #0f1728 100%);
-    clip-path:polygon(45% 0,55% 0,100% 100%,0 100%);
-    opacity:0.95;
   }
   .driver-head {
     position:relative;
@@ -197,12 +186,33 @@
   /* ---- play ---- */
   #play { }
   #gameCanvas { position:absolute; inset:0; width:100%; height:100%; touch-action:none; }
-  #hud { position:absolute; top:12px; left:0; right:0; display:flex; justify-content:space-between; padding:0 18px; pointer-events:none; z-index:2; }
+  #hud {
+    position:absolute;
+    top:max(30px, calc(env(safe-area-inset-top) + 12px));
+    right:max(18px, env(safe-area-inset-right));
+    display:flex;
+    justify-content:flex-end;
+    pointer-events:none;
+    z-index:2;
+  }
+  #hud > div { text-align:right; }
   #hud .score { font-size:26px; font-weight:bold; }
-  #hud .right { text-align:right; }
   #hud .combo { font-size:20px; color:var(--l1); font-weight:bold; }
   #hud .acc { font-size:13px; opacity:0.7; }
-  #quit { position:absolute; top:12px; right:14px; background:rgba(0,0,0,0.4); border:1px solid #445; color:var(--text); border-radius:50%; width:34px; height:34px; font-size:15px; cursor:pointer; z-index:3; }
+  #quit {
+    position:absolute;
+    top:max(78px, calc(env(safe-area-inset-top) + 56px));
+    right:max(14px, env(safe-area-inset-right));
+    background:rgba(0,0,0,0.4);
+    border:1px solid #445;
+    color:var(--text);
+    border-radius:50%;
+    width:34px;
+    height:34px;
+    font-size:15px;
+    cursor:pointer;
+    z-index:3;
+  }
 
   /* ---- result ---- */
   #result { align-items:center; justify-content:center; text-align:center; gap:6px; padding:20px; }
@@ -227,7 +237,7 @@
     <header class="driver-head">
       <div class="driver-face"><img src="../assets/characters/dad-face.png" alt=""></div>
       <div>
-        <div class="driver-kicker">DAD MODE</div>
+        <div class="driver-kicker">DRIVER MODE</div>
         <h1>Driver's Seat</h1>
         <div class="sub" id="driverSub">Completed mixtape cuts only.</div>
       </div>
@@ -239,7 +249,7 @@
     <div class="driver-scroll">
       <div class="driver-empty hidden" id="driverEmpty">
         <strong>Locked</strong>
-        <span>Complete a radio song in Runner to put it on Dad's tape.</span>
+        <span>Complete a radio song in Runner to add it here.</span>
       </div>
       <div id="songGrid"></div>
     </div>
@@ -321,6 +331,8 @@ const LEAD = 1.5;            // seconds a note is visible before its hit time
 // timing windows (s). Touch input has more latency + less precision than a
 // keyboard, so phones/tablets get noticeably more forgiving windows.
 const IS_TOUCH = matchMedia("(pointer: coarse)").matches;
+const TOUCH_RENDER_DPR = 1.25;
+const HOLD_TRAIL_STEPS = IS_TOUCH ? 6 : 16;
 const W_PERFECT = IS_TOUCH ? 0.070 : 0.045;
 const W_GOOD    = IS_TOUCH ? 0.140 : 0.095;
 const W_MISS    = IS_TOUCH ? 0.180 : 0.130;
@@ -436,7 +448,7 @@ function renderGrid() {
   if (expandedSong && !COLLECTED.has(expandedSong)) expandedSong = null;
   $("driverSongCount").textContent = playable.length;
   $("driverSub").textContent = playable.length
-    ? "Dad's tape is ready."
+    ? "Your mixtape is ready."
     : "Complete a radio song in Runner.";
   $("driverEmpty").classList.toggle("hidden", playable.length > 0);
   for (const era of ["90s", "00s", "80s", "70s"]) {
@@ -669,7 +681,9 @@ async function startSong(m, diff) {
 const canvas = $("gameCanvas"), ctx = canvas.getContext("2d");
 let CW = 0, CH = 0, laneW = 0, fieldX = 0, fieldW = 0, targetY = 0, horizonY = 0, horizonX = 0;
 function resize() {
-  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  // Full-screen Android canvases can be enormous at native DPR. A lighter
+  // touch canvas keeps the audio clock and hold input responsive.
+  const dpr = Math.min(window.devicePixelRatio || 1, IS_TOUCH ? TOUCH_RENDER_DPR : 2);
   CW = canvas.clientWidth; CH = canvas.clientHeight;
   canvas.width = CW * dpr; canvas.height = CH * dpr;
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -821,12 +835,12 @@ function drawHoldTrail(lane, startProgress, endProgress, active, done) {
   if (b - a < 0.01) return;
 
   const baseAlpha = active ? 0.88 : (done ? 0.22 : 0.52);
-  const steps = 16;
+  const steps = HOLD_TRAIL_STEPS;
   ctx.save();
   ctx.lineCap = "round";
   ctx.lineJoin = "round";
   ctx.shadowColor = LANE_COLOR[lane];
-  ctx.shadowBlur = active ? 14 : 7;
+  ctx.shadowBlur = IS_TOUCH ? 0 : (active ? 14 : 7);
   for (let i = 0; i < steps; i++) {
     const p0 = a + (b - a) * (i / steps);
     const p1 = a + (b - a) * ((i + 1) / steps);
@@ -843,14 +857,16 @@ function drawHoldTrail(lane, startProgress, endProgress, active, done) {
     ctx.lineTo(pt1.x, pt1.y);
     ctx.stroke();
 
-    ctx.shadowBlur = 0;
-    ctx.lineWidth = laneW * (0.032 + Math.pow(road, 1.3) * 0.055);
-    ctx.strokeStyle = "rgba(255,255,255," + (alpha * 0.20) + ")";
-    ctx.beginPath();
-    ctx.moveTo(pt0.x, pt0.y);
-    ctx.lineTo(pt1.x, pt1.y);
-    ctx.stroke();
-    ctx.shadowBlur = active ? 14 : 7;
+    if (!IS_TOUCH) {
+      ctx.shadowBlur = 0;
+      ctx.lineWidth = laneW * (0.032 + Math.pow(road, 1.3) * 0.055);
+      ctx.strokeStyle = "rgba(255,255,255," + (alpha * 0.20) + ")";
+      ctx.beginPath();
+      ctx.moveTo(pt0.x, pt0.y);
+      ctx.lineTo(pt1.x, pt1.y);
+      ctx.stroke();
+      ctx.shadowBlur = active ? 14 : 7;
+    }
   }
   ctx.restore();
 }
@@ -1369,9 +1385,27 @@ function laneOf(x) {
   return Math.min(LANES - 1, Math.floor((x - fieldX) / laneW));
 }
 const pointerLane = {}; // pointerId -> lane, so multi-touch holds work
-canvas.addEventListener("pointerdown", (e) => { const L = laneOf(e.clientX); pointerLane[e.pointerId] = L; pressLane(L); });
-canvas.addEventListener("pointerup", (e) => { const L = pointerLane[e.pointerId]; if (L !== undefined) releaseLane(L); delete pointerLane[e.pointerId]; });
-canvas.addEventListener("pointercancel", (e) => { const L = pointerLane[e.pointerId]; if (L !== undefined) releaseLane(L); delete pointerLane[e.pointerId]; });
+function releasePointer(pointerId) {
+  const L = pointerLane[pointerId];
+  if (L === undefined) return;
+  delete pointerLane[pointerId];
+  // Do not cut a lane's hold short when a second finger is still on it.
+  if (!Object.values(pointerLane).includes(L)) releaseLane(L);
+}
+canvas.addEventListener("pointerdown", (e) => {
+  e.preventDefault();
+  const L = laneOf(e.clientX);
+  pointerLane[e.pointerId] = L;
+  try { canvas.setPointerCapture(e.pointerId); } catch (err) {}
+  pressLane(L);
+}, { passive: false });
+canvas.addEventListener("pointerup", (e) => {
+  e.preventDefault();
+  releasePointer(e.pointerId);
+  try { canvas.releasePointerCapture(e.pointerId); } catch (err) {}
+}, { passive: false });
+canvas.addEventListener("pointercancel", (e) => releasePointer(e.pointerId));
+canvas.addEventListener("lostpointercapture", (e) => releasePointer(e.pointerId));
 
 // ---------- end / result ----------
 function stopSource() { if (source) { try { source.onended = null; source.stop(); } catch (e) {} source = null; } }

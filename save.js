@@ -11,6 +11,9 @@
 (function (global) {
   const KEY = "rtr_save";
   const NATIVE_BACKUP_KEY = "rtr_save_native_backup";
+  const PLAYTEST_BACKUP_KEY = "rtr_playtest_real_save";
+  const NATIVE_PLAYTEST_BACKUP_KEY = "rtr_playtest_real_save_native_backup";
+  const PLAYTEST_ACTIVE_KEY = "rtr_playtest_active";
   const NAVIGATOR_BOARD_CELLS = 48;
   const NAVIGATOR_DOG_SNACK_OFFSET = 100;
   const STARTER_CAR = "minivan";
@@ -21,7 +24,7 @@
     customVan: { name: "Custom Van", station: "70s" },
   };
   const DEFAULTS = {
-    v: 6,
+    v: 8,
     difficulties: ["easy"],   // legacy Dad Mode global difficulty unlocks
     driverSongs: {},          // per-song Driver progress: { "era|file": { difficulties, best } }
     collected: [],            // collected song ids, "era|file"
@@ -44,6 +47,12 @@
       generators: ["snackBag"],
     },
     settings: { station: "90s" }, // radio station
+    tutorials: {},           // one-time mode introductions
+    gasStation: {            // roadside store progress
+      lastDailyFuelDay: "",
+      dailyFuelClaims: 0,
+      roadsideCanPurchases: 0,
+    },
     _migrated: {},            // one-time migration flags
   };
   const RANK_ORDER = { D: 0, C: 1, B: 2, A: 3, S: 4 };
@@ -116,6 +125,13 @@
       if (!d.settings || typeof d.settings !== "object") d.settings = clone(DEFAULTS.settings);
       if ("syncMs" in d.settings) delete d.settings.syncMs;
       if (!d.settings.station) d.settings.station = DEFAULTS.settings.station;
+      if (!d.tutorials || typeof d.tutorials !== "object" || Array.isArray(d.tutorials)) d.tutorials = {};
+      if (!d.gasStation || typeof d.gasStation !== "object" || Array.isArray(d.gasStation)) d.gasStation = clone(DEFAULTS.gasStation);
+      if (typeof d.gasStation.lastDailyFuelDay !== "string") d.gasStation.lastDailyFuelDay = "";
+      if (typeof d.gasStation.dailyFuelClaims !== "number" || !Number.isFinite(d.gasStation.dailyFuelClaims)) d.gasStation.dailyFuelClaims = 0;
+      if (typeof d.gasStation.roadsideCanPurchases !== "number" || !Number.isFinite(d.gasStation.roadsideCanPurchases)) d.gasStation.roadsideCanPurchases = 0;
+      d.gasStation.dailyFuelClaims = Math.max(0, Math.floor(d.gasStation.dailyFuelClaims));
+      d.gasStation.roadsideCanPurchases = Math.max(0, Math.floor(d.gasStation.roadsideCanPurchases));
       if (!d._migrated || typeof d._migrated !== "object") d._migrated = {};
       this._migrateStarterCar();
       d.cars = Array.from(new Set(d.cars.filter((car) => VEHICLES[car])));
@@ -187,6 +203,58 @@
           global.dispatchEvent?.(new CustomEvent("rtr-save-restored"));
         } catch (e) {}
       }).catch(() => {});
+    },
+
+    freshData() { return clone(DEFAULTS); },
+    isPlaytest() {
+      try { return localStorage.getItem(PLAYTEST_ACTIVE_KEY) === "1"; }
+      catch (e) { return false; }
+    },
+    _notifyProfileChanged() {
+      global.dispatchEvent?.(new CustomEvent("rtr-save-restored"));
+    },
+    _savePlaytestBackup() {
+      const value = JSON.stringify(this.data);
+      try { localStorage.setItem(PLAYTEST_BACKUP_KEY, value); } catch (e) {}
+      const prefs = this.nativePreferences();
+      if (prefs && typeof prefs.set === "function") {
+        try { prefs.set({ key: NATIVE_PLAYTEST_BACKUP_KEY, value }); } catch (e) {}
+      }
+    },
+    applyPlaytest(data) {
+      if (!data || typeof data !== "object") return false;
+      if (!this.isPlaytest()) this._savePlaytestBackup();
+      try { localStorage.setItem(PLAYTEST_ACTIVE_KEY, "1"); } catch (e) {}
+      this.data = clone(data);
+      this.persist();
+      this._notifyProfileChanged();
+      return true;
+    },
+    restoreRealProfile() {
+      const restore = (raw) => {
+        try {
+          const data = JSON.parse(raw || "null");
+          if (!data || typeof data !== "object") return false;
+          this.data = Object.assign(clone(DEFAULTS), data);
+          try {
+            localStorage.removeItem(PLAYTEST_BACKUP_KEY);
+            localStorage.removeItem(PLAYTEST_ACTIVE_KEY);
+          } catch (e) {}
+          this.persist();
+          this._notifyProfileChanged();
+          return true;
+        } catch (e) { return false; }
+      };
+      let localBackup = "";
+      try { localBackup = localStorage.getItem(PLAYTEST_BACKUP_KEY) || ""; } catch (e) {}
+      if (localBackup) return restore(localBackup);
+      const prefs = this.nativePreferences();
+      if (prefs && typeof prefs.get === "function") {
+        prefs.get({ key: NATIVE_PLAYTEST_BACKUP_KEY }).then((result) => {
+          if (result && result.value) restore(result.value);
+        }).catch(() => {});
+      }
+      return false;
     },
 
     // ---- vehicles / radio stations ----
@@ -271,6 +339,15 @@
       this.data.collected.push(id); this.persist(); return true;
     },
     collectedSet() { return new Set(this.data.collected); },
+
+    // ---- first-time introductions ----
+    hasTutorialSeen(id) { return !!(id && this.data.tutorials && this.data.tutorials[id]); },
+    markTutorialSeen(id) {
+      if (!id) return;
+      if (!this.data.tutorials || typeof this.data.tutorials !== "object") this.data.tutorials = {};
+      this.data.tutorials[id] = true;
+      this.persist();
+    },
 
     // ---- miles (currency) ----
     get miles() { return this.data.miles || 0; },

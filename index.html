@@ -27,6 +27,48 @@
     align-items: center;
     min-height: 100vh;
     padding: 12px;
+    --window-shell: #0b1322;
+    --window-dark: #060a12;
+    --window-panel: #131d2d;
+    --window-trim: #41546c;
+    --window-seam: #2b3c52;
+    --window-pin: #819cb5;
+    --window-frame: #121d2c;
+    --window-shadow: #080d18;
+    --window-outline: rgba(74,95,118,0.8);
+  }
+  body[data-vehicle="suv"] {
+    --window-shell: #101312;
+    --window-dark: #090b0b;
+    --window-panel: #1d2221;
+    --window-trim: #718174;
+    --window-seam: #39413e;
+    --window-pin: #a6afa5;
+    --window-frame: #252d29;
+    --window-shadow: #0a0d0d;
+    --window-outline: rgba(113,129,116,0.82);
+  }
+  body[data-vehicle="wagon"] {
+    --window-shell: #1c1720;
+    --window-dark: #100e10;
+    --window-panel: #2a2223;
+    --window-trim: #bb8b5c;
+    --window-seam: #5a3d2c;
+    --window-pin: #d0b079;
+    --window-frame: #33251f;
+    --window-shadow: #171113;
+    --window-outline: rgba(187,139,92,0.82);
+  }
+  body[data-vehicle="customVan"] {
+    --window-shell: #171019;
+    --window-dark: #0a070d;
+    --window-panel: #271a2d;
+    --window-trim: #9b6d86;
+    --window-seam: #4b324f;
+    --window-pin: #d1a6b5;
+    --window-frame: #301b31;
+    --window-shadow: #0f0911;
+    --window-outline: rgba(155,109,134,0.84);
   }
   h1 {
     font-size: 28px;
@@ -53,6 +95,26 @@
     backdrop-filter: blur(8px);
   }
   .map-link:hover { border-color: var(--accent); }
+  #pauseBtn {
+    position: fixed;
+    top: max(12px, env(safe-area-inset-top));
+    right: max(12px, env(safe-area-inset-right));
+    z-index: 25;
+    width: 38px;
+    height: 38px;
+    display: grid;
+    place-items: center;
+    color: var(--text);
+    background: rgba(10, 12, 30, 0.68);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 50%;
+    cursor: pointer;
+    font: 700 15px/1 Arial, sans-serif;
+    letter-spacing: 2px;
+    backdrop-filter: blur(8px);
+  }
+  #pauseBtn:hover { border-color: var(--accent); }
+  #pauseBtn.hidden { display: none; }
   #gameWrap {
     position: relative;
     width: 960px;
@@ -99,7 +161,36 @@
   }
   /* ---- mobile landscape: edge-to-edge game ---- */
   @media (pointer: coarse) and (orientation: landscape) {
-    body { padding: 0; justify-content: center; }
+    body {
+      padding: 0;
+      justify-content: center;
+      position: relative;
+      isolation: isolate;
+      background: var(--window-shell);
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(90deg,
+          var(--window-dark) 0%, var(--window-panel) 2.4%, var(--window-trim) 3%, var(--window-seam) 4.3%, var(--window-panel) 5.2%,
+          transparent 10.5%, transparent 89.5%,
+          var(--window-panel) 94.8%, var(--window-seam) 95.7%, var(--window-trim) 97%, var(--window-panel) 97.6%, var(--window-dark) 100%),
+        linear-gradient(180deg, rgba(255,255,255,0.08), transparent 17%, transparent 78%, rgba(0,0,0,0.28));
+    }
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(90deg, transparent 0 5%, color-mix(in srgb, var(--window-pin) 22%, transparent) 5.1% 5.35%, transparent 5.5% 94.5%, color-mix(in srgb, var(--window-pin) 22%, transparent) 94.65% 94.9%, transparent 95%),
+        linear-gradient(180deg, transparent 0 73%, rgba(3,7,14,0.44) 73.5% 100%);
+    }
     h1, .tagline, #hud-help { display: none; }
     #gameWrap {
       height: 100vh;
@@ -107,32 +198,13 @@
       aspect-ratio: 16 / 9;
       max-width: 100vw;
       width: auto;
+      z-index: 1;
+      background: var(--window-shadow);
+      box-shadow: 0 0 0 5px var(--window-frame), 0 0 0 8px var(--window-outline);
     }
     canvas { height: 100%; border-radius: 0; box-shadow: none; }
     #overlay { border-radius: 0; }
   }
-  /* ---- touch ride-switcher (fingers / skateboard / motorcycle) ---- */
-  #rideBar {
-    display: none;
-    position: absolute;
-    right: 14px;
-    bottom: 58px;
-    gap: 8px;
-    z-index: 10;
-  }
-  @media (pointer: coarse) { #rideBar { display: flex; } }
-  #rideBar button {
-    width: 46px;
-    height: 46px;
-    border-radius: 50%;
-    border: 2px solid rgba(255,255,255,0.25);
-    background: rgba(10,12,30,0.55);
-    font-size: 22px;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-  }
-  #rideBar button.active { border-color: var(--accent); background: rgba(233,69,96,0.35); }
-  #rideBar button.locked { opacity: 0.35; }
   #overlay {
     position: absolute;
     inset: 0;
@@ -262,6 +334,7 @@
 </head>
 <body>
   <a class="map-link" href="home.html">MAP</a>
+  <button id="pauseBtn" class="hidden" type="button" aria-label="Pause trip" title="Pause trip">&#10074;&#10074;</button>
   <h1>Road Trip <span>Runner</span></h1>
   <div class="tagline">Your fingers vs. the great American landscape. Just like the back seat of the minivan.</div>
 
@@ -273,30 +346,13 @@
 
   <div id="gameWrap">
     <canvas id="game" width="960" height="540"></canvas>
-    <div id="rideBar">
-      <button data-ride="run" title="Fingers">&#9995;</button>
-      <button data-ride="skateboard" title="Skateboard">&#128761;</button>
-      <button data-ride="motorcycle" title="Motorcycle">&#127949;</button>
-    </div>
     <div id="overlay">
       <h2 id="ovTitle">ROAD TRIP RUNNER</h2>
       <p id="ovText">
-        Run your fingers along the horizon. Jump over landmarks and land on
-        fences and rooftops.<br><br>
-        <kbd>Space</kbd> / <kbd>&uarr;</kbd> / <kbd>click</kbd> to jump &nbsp;•&nbsp; hold to jump higher<br>
-        <kbd>1</kbd> fingers &nbsp; <kbd>2</kbd> skateboard &nbsp; <kbd>3</kbd> motorcycle
+        Touch anywhere to jump. Hold to jump higher.<br>
+        Land on fences and rooftops, and clear the rest.
       </p>
-      <div class="radio">
-        <label>&#128251; CAR RADIO</label>
-        <button class="decade" data-era="70s">'70s</button>
-        <button class="decade" data-era="80s">'80s</button>
-        <button class="decade active" data-era="90s">'90s</button>
-        <button class="decade" data-era="00s">'00s</button>
-        <button class="decade" data-era="off">OFF</button>
-      </div>
       <button class="btn" id="startBtn">START THE TRIP</button>
-      <button class="btn-mixtape" id="mixtapeBtn">&#9834; MY MIXTAPE</button>
-      <button class="btn-stop" id="stopMusicBtn">&#9632; STOP MUSIC</button>
     </div>
   </div>
 
@@ -349,7 +405,7 @@ const THEMES = [
     backgroundArt: "nyHarbor",
     landmarks: ["empireState", "statueOfLiberty", "skyline"],
     obstacles: ["hydrant", "taxi", "fence", "waterTower"],
-    extraObstacles: ["mailbox", "trashBags", "subwayEntrance", "hotDogCart", "newsstand", "messengerBike"],
+    extraObstacles: ["trashBags", "mailbox", "subwayEntrance", "hotDogCart", "newsstand", "messengerBike"],
   },
   {
     id: "dc",
@@ -413,9 +469,16 @@ const THEMES = [
     extraObstacles: ["parkletPlanter", "ferryBollards", "goldenGateBarricade", "cableCarBarrier", "cableCar"],
   },
 ];
+const RUNNER_PREVIEW_THEME_ID = new URLSearchParams(window.location.search).get("preview");
+const RUNNER_PREVIEW_THEME = THEMES.find((theme) => theme.id === RUNNER_PREVIEW_THEME_ID) || null;
 const THEME_LENGTH = 1800; // meters per unlocked route stop before the next city
-const FULL_ROUTE_LENGTH = THEME_LENGTH * THEMES.length;
 const STARTING_OBSTACLE_COUNT = 4;
+const OBSTACLE_MILESTONES = [
+  { miles: 0, count: 4 },
+  { miles: 50, count: 5 },
+  { miles: 125, count: 6 },
+  { miles: 225, count: Infinity },
+];
 const STARTER_SECTION_SECONDS = 180;
 const BASE_ROUTE_METERS_PER_SECOND = THEME_LENGTH / STARTER_SECTION_SECONDS;
 const RUNNER_METERS_PER_BANKED_MILE = 30;
@@ -425,6 +488,12 @@ const CAR_STATS = {
   minivan: { routeMultiplier: 1, worldSpeedStart: 260, worldSpeedRamp: 3, worldSpeedMax: 520 },
   suv: { routeMultiplier: 1, worldSpeedStart: 260, worldSpeedRamp: 3, worldSpeedMax: 520 },
   customVan: { routeMultiplier: 1, worldSpeedStart: 260, worldSpeedRamp: 3, worldSpeedMax: 520 },
+};
+const CAR_INTERIORS = {
+  minivan: { trim: 18, panelHeight: 44, radius: 24, frame: "#1c1f2b", chrome: "#454b63", seal: "rgba(0,0,0,0.55)", panel: "#242938", armrest: "#2e3447", lock: "#12141c" },
+  suv: { trim: 22, panelHeight: 52, radius: 16, frame: "#1d2221", chrome: "#718174", seal: "rgba(0,0,0,0.64)", panel: "#262e2a", armrest: "#39443e", lock: "#101311" },
+  wagon: { trim: 16, panelHeight: 38, radius: 10, frame: "#2a2223", chrome: "#bb8b5c", seal: "rgba(16,9,7,0.66)", panel: "#3b2d28", armrest: "#684631", lock: "#1a1110" },
+  customVan: { trim: 20, panelHeight: 48, radius: 28, frame: "#26172a", chrome: "#9b6d86", seal: "rgba(0,0,0,0.64)", panel: "#35203a", armrest: "#513453", lock: "#120b14" },
 };
 
 const BackgroundArt = {
@@ -563,6 +632,7 @@ const OBSTACLE_DEFS = {
 // ---------- Game state ----------
 const S = {
   running: false,
+  paused: false,
   gameOver: false,
   t: 0,
   speed: 320,          // px/sec world scroll
@@ -573,6 +643,7 @@ const S = {
   themeIndex: 0,
   banner: null,        // {text, timer}
   obstacles: [],
+  obstacleDebuts: {},
   spawnTimer: 1.2,
   // weather
   raining: false,
@@ -580,9 +651,8 @@ const S = {
   drops: [],
   // parallax scroll offsets
   farX: 0, midX: 0, groundX: 0,
-  // rides: run -> skateboard -> motorcycle
+  // The current runner is intentionally a single, touch-first ride.
   ride: "run",
-  unlocked: { skateboard: false, motorcycle: false },
   toast: null,         // {text, timer}
 };
 
@@ -613,13 +683,19 @@ function routeLength() {
   return routeThemes().length * THEME_LENGTH;
 }
 
-function routeLoopIndex() {
-  return Math.floor(S.distance / Math.max(THEME_LENGTH, routeLength()));
-}
-
 function currentCarStats() {
   return CAR_STATS[Save.data.currentCar] || CAR_STATS.minivan;
 }
+
+function currentCarInterior() {
+  return CAR_INTERIORS[Save.data.currentCar] || CAR_INTERIORS.minivan;
+}
+
+function applyVehicleWindowTheme() {
+  document.body.dataset.vehicle = CAR_INTERIORS[Save.data.currentCar] ? Save.data.currentCar : "minivan";
+}
+
+applyVehicleWindowTheme();
 
 function routeMetersPerSecond() {
   return BASE_ROUTE_METERS_PER_SECOND * currentCarStats().routeMultiplier;
@@ -648,14 +724,15 @@ function bankedMilesForDistance(distance) {
 }
 
 function currentTheme() {
+  if (RUNNER_PREVIEW_THEME) return RUNNER_PREVIEW_THEME;
   const route = routeThemes();
   return route[S.themeIndex % route.length] || THEMES[0];
 }
 
 function resetGame() {
-  S.running = true; S.gameOver = false;
+  S.running = true; S.paused = false; S.gameOver = false;
   S.t = 0; S.speed = 320; S.distance = 0; S.lives = 3; S.invuln = 0;
-  S.themeIndex = 0; S.obstacles = []; S.spawnTimer = 1.2;
+  S.themeIndex = 0; S.obstacles = []; S.obstacleDebuts = {}; S.spawnTimer = 1.2;
   S.raining = false; S.rainTimer = 14; S.drops = [];
   S.rainAnnounced = false; // Meg calls the weather once per run
   // clear skies until around the end of the first leg
@@ -664,14 +741,13 @@ function resetGame() {
   S.ride = "run";
   S.banner = { text: "NOW ENTERING: " + currentTheme().name, timer: 2.5 };
   player.y = GROUND_Y; player.vy = 0; player.onGround = true;
-  updateRideBar();
 }
 
 // ============================================================
 // INPUT
 // ============================================================
 function jumpPress() {
-  if (!S.running) return;
+  if (!S.running || S.paused) return;
   if (player.onGround) {
     player.vy = -JUMP_V;
     player.onGround = false;
@@ -686,41 +762,20 @@ function jumpRelease() {
 
 document.addEventListener("keydown", (e) => {
   if (e.repeat) return;
+  if (e.code === "KeyP" || e.code === "Escape") {
+    if (S.running) {
+      e.preventDefault();
+      S.paused ? resumeGame() : pauseGame();
+    }
+    return;
+  }
   if (e.code === "Space" || e.code === "ArrowUp") { e.preventDefault(); jumpPress(); }
-  if (e.key === "1") setRide("run");
-  if (e.key === "2") setRide("skateboard");
-  if (e.key === "3") setRide("motorcycle");
 });
 document.addEventListener("keyup", (e) => {
   if (e.code === "Space" || e.code === "ArrowUp") jumpRelease();
 });
 canvas.addEventListener("pointerdown", jumpPress);
 canvas.addEventListener("pointerup", jumpRelease);
-
-function setRide(r) {
-  if (r !== "run" && !S.unlocked[r]) {
-    S.toast = { text: r.toUpperCase() + " not unlocked yet!", timer: 1.5 };
-    return;
-  }
-  S.ride = r;
-  S.toast = { text: "Ride: " + r.toUpperCase(), timer: 1.2 };
-  updateRideBar();
-}
-
-// touch ride-switcher buttons (shown on touch devices only)
-function updateRideBar() {
-  document.querySelectorAll("#rideBar button").forEach((b) => {
-    const r = b.dataset.ride;
-    b.classList.toggle("active", S.ride === r);
-    b.classList.toggle("locked", r !== "run" && !S.unlocked[r]);
-  });
-}
-document.querySelectorAll("#rideBar button").forEach((b) => {
-  b.addEventListener("pointerdown", (e) => {
-    e.stopPropagation(); // don't trigger a jump
-    setRide(b.dataset.ride);
-  });
-});
 
 // ============================================================
 // AUDIO — placeholder era "radio" built on WebAudio.
@@ -732,6 +787,9 @@ const Radio = {
   actx: null, nextNote: 0, step: 0, timer: null,
   playlist: {},        // era -> [filenames], loaded from radio/music/playlist.json
   audio: null, queue: [],
+  pausedByGame: false,
+  resumeAudio: false,
+  resumeContext: false,
   patterns: {
     // [scale notes as semitone offsets from root], root Hz, bpm, waveform
     "70s": { notes: [0, 3, 5, 7, 10, 7, 5, 3], root: 110,    bpm: 96,  wave: "triangle", swing: true  },
@@ -860,6 +918,29 @@ const Radio = {
     if (this.audio) { this.audio.pause(); this.audio = null; }
     DJ.cut();
     this.queue = [];
+    this.pausedByGame = false;
+    this.resumeAudio = false;
+    this.resumeContext = false;
+  },
+  pauseForGame() {
+    if (this.pausedByGame) return;
+    this.pausedByGame = true;
+    DJ.pauseForGame();
+    this.resumeAudio = Boolean(this.audio && !this.audio.paused);
+    if (this.resumeAudio) this.audio.pause();
+    this.resumeContext = Boolean(this.actx && this.actx.state === "running");
+    if (this.resumeContext) this.actx.suspend().catch(() => {});
+  },
+  resumeForGame() {
+    if (!this.pausedByGame) return;
+    const resumeAudio = this.resumeAudio;
+    const resumeContext = this.resumeContext;
+    this.pausedByGame = false;
+    this.resumeAudio = false;
+    this.resumeContext = false;
+    if (resumeContext && this.actx) this.actx.resume().catch(() => {});
+    DJ.resumeForGame();
+    if (resumeAudio && this.audio) this.audio.play().catch(() => {});
   },
   // game over: let the current song play to the end, then go quiet —
   // no more DJ breaks or next tracks
@@ -919,6 +1000,7 @@ const Radio = {
 // ============================================================
 const DJ = {
   reg: {}, files: new Set(), voice: null, breaks: 0,
+  pausedByGame: false, resumeVoice: false,
   setFiles(files) {
     this.reg = {};
     this.files = new Set(files);
@@ -965,6 +1047,21 @@ const DJ = {
       this.voice.pause();
       this.voice = null;
     }
+    this.pausedByGame = false;
+    this.resumeVoice = false;
+  },
+  pauseForGame() {
+    if (this.pausedByGame) return;
+    this.pausedByGame = true;
+    this.resumeVoice = Boolean(this.voice && !this.voice.paused);
+    if (this.resumeVoice) this.voice.pause();
+  },
+  resumeForGame() {
+    if (!this.pausedByGame) return;
+    const resumeVoice = this.resumeVoice;
+    this.pausedByGame = false;
+    this.resumeVoice = false;
+    if (resumeVoice && this.voice) this.voice.play().catch(() => {});
   },
 };
 
@@ -1016,30 +1113,15 @@ function update(dt) {
   S.farX += px * 0.07; S.midX += px * 0.24; S.groundX += px;
 
   // route changes
-  const route = routeThemes();
-  const idx = Math.floor((S.distance % routeLength()) / THEME_LENGTH) % route.length;
-  if (idx !== S.themeIndex) {
-    S.themeIndex = idx;
-    const theme = currentTheme();
-    S.banner = { text: "NOW ENTERING: " + theme.name, timer: 2.5 };
-    DJ.event("city", theme.citySlug);
-  }
-
-  // unlocks
-  const rideLoop = FULL_ROUTE_LENGTH;
-  if (!S.unlocked.skateboard && S.distance >= rideLoop / 2) {
-    S.unlocked.skateboard = true;
-    S.toast = { text: "SKATEBOARD UNLOCKED! Press 2", timer: 3 };
-    Sfx.unlock();
-    DJ.event("unlock", "skateboard");
-    updateRideBar();
-  }
-  if (!S.unlocked.motorcycle && S.distance >= rideLoop) {
-    S.unlocked.motorcycle = true;
-    S.toast = { text: "MOTORCYCLE UNLOCKED! Press 3", timer: 3 };
-    Sfx.unlock();
-    DJ.event("unlock", "motorcycle");
-    updateRideBar();
+  if (!RUNNER_PREVIEW_THEME) {
+    const route = routeThemes();
+    const idx = Math.floor((S.distance % routeLength()) / THEME_LENGTH) % route.length;
+    if (idx !== S.themeIndex) {
+      S.themeIndex = idx;
+      const theme = currentTheme();
+      S.banner = { text: "NOW ENTERING: " + theme.name, timer: 2.5 };
+      DJ.event("city", theme.citySlug);
+    }
   }
 
   // ---- player physics ----
@@ -1132,7 +1214,12 @@ function update(dt) {
 function spawnObstacle() {
   const theme = currentTheme();
   const pool = obstaclePoolForTheme(theme);
-  const key = pool[Math.floor(Math.random() * pool.length)];
+  const debuted = S.obstacleDebuts[theme.id] || (S.obstacleDebuts[theme.id] = {});
+  // Give each newly available obstacle an on-road debut before randomizing
+  // the pool again. The moving one remains last in its city's roster.
+  const key = pool.find((candidate) => !debuted[candidate])
+    || pool[Math.floor(Math.random() * pool.length)];
+  debuted[key] = true;
   const def = OBSTACLE_DEFS[key];
   const last = S.obstacles[S.obstacles.length - 1];
   const currentFactor = obstacleMoveFactor(def);
@@ -1153,7 +1240,13 @@ function obstacleSurfaceY(o) {
 
 function obstaclePoolForTheme(theme) {
   const roster = obstacleRosterForTheme(theme);
-  const count = Math.min(roster.length, STARTING_OBSTACLE_COUNT + routeLoopIndex());
+  const tripMiles = S.distance / RUNNER_METERS_PER_BANKED_MILE;
+  let count = STARTING_OBSTACLE_COUNT;
+  for (const milestone of OBSTACLE_MILESTONES) {
+    if (tripMiles >= milestone.miles) count = milestone.count;
+  }
+  if (!Number.isFinite(count)) count = roster.length;
+  count = Math.min(roster.length, count);
   return roster.slice(0, count);
 }
 
@@ -1172,7 +1265,7 @@ function takeHit() {
 }
 
 function endGame() {
-  S.running = false;
+  S.running = false; S.paused = false;
   S.gameOver = true;
   Radio.finishSong(); // the last song plays out over the game-over screen
   if (Save.setRunnerBest(S.distance)) S.best = Save.runnerBest;
@@ -1186,13 +1279,34 @@ function endGame() {
     "<br>+<b>" + earned + " mi</b> earned · <b>" + totalMiles + " mi</b> banked";
   document.getElementById("startBtn").textContent = "TAKE ANOTHER TRIP";
   ov.classList.remove("hidden");
+  document.getElementById("pauseBtn").classList.add("hidden");
   updateStopBtn(); // offer to stop the song still playing out
+}
+
+function pauseGame() {
+  if (!S.running || S.paused || S.gameOver) return;
+  S.paused = true;
+  player.jumpHeld = false;
+  Radio.pauseForGame();
+  document.getElementById("ovTitle").textContent = "TRIP PAUSED";
+  document.getElementById("ovText").textContent = "Your road, radio, and miles are waiting right here.";
+  document.getElementById("startBtn").textContent = "RESUME TRIP";
+  document.getElementById("overlay").classList.remove("hidden");
+  document.getElementById("pauseBtn").classList.add("hidden");
+}
+
+function resumeGame() {
+  if (!S.running || !S.paused) return;
+  S.paused = false;
+  Radio.resumeForGame();
+  document.getElementById("overlay").classList.add("hidden");
+  document.getElementById("pauseBtn").classList.remove("hidden");
 }
 
 // show the stop button only while a song is playing over the menu
 function updateStopBtn() {
-  document.getElementById("stopMusicBtn")
-    .classList.toggle("show", !S.running && Radio.audio !== null);
+  const button = document.getElementById("stopMusicBtn");
+  if (button) button.classList.toggle("show", !S.running && Radio.audio !== null);
 }
 
 // ============================================================
@@ -1432,26 +1546,27 @@ function drawGlassSheen() {
 
 // ---- the car door + window frame you're looking through ----
 function drawCarFrame() {
-  const T = 18, B = 44, R = 24; // trim thickness, door panel height, corner radius
+  const interior = currentCarInterior();
+  const T = interior.trim, B = interior.panelHeight, R = interior.radius;
   ctx.save();
   // door and pillars around the window opening
   ctx.beginPath();
   ctx.rect(0, 0, W, H);
   ctx.roundRect(T, T, W - T * 2, H - T - B, R);
-  ctx.fillStyle = "#1c1f2b";
+  ctx.fillStyle = interior.frame;
   ctx.fill("evenodd");
   // chrome trim + rubber seal
   ctx.beginPath(); ctx.roundRect(T, T, W - T * 2, H - T - B, R);
-  ctx.strokeStyle = "#454b63"; ctx.lineWidth = 5; ctx.stroke();
+  ctx.strokeStyle = interior.chrome; ctx.lineWidth = 5; ctx.stroke();
   ctx.beginPath(); ctx.roundRect(T + 4, T + 4, W - T * 2 - 8, H - T - B - 8, R - 4);
-  ctx.strokeStyle = "rgba(0,0,0,0.55)"; ctx.lineWidth = 3; ctx.stroke();
+  ctx.strokeStyle = interior.seal; ctx.lineWidth = 3; ctx.stroke();
   // door panel with armrest
-  ctx.fillStyle = "#242938";
+  ctx.fillStyle = interior.panel;
   ctx.fillRect(0, H - B + 8, W, B - 8);
-  ctx.fillStyle = "#2e3447";
+  ctx.fillStyle = interior.armrest;
   ctx.beginPath(); ctx.roundRect(W * 0.58, H - B + 16, 240, 18, 9); ctx.fill();
   // door lock knob poking up over the sill
-  ctx.fillStyle = "#12141c";
+  ctx.fillStyle = interior.lock;
   ctx.beginPath(); ctx.roundRect(70, H - B - 14, 10, 18, 4); ctx.fill();
   ctx.restore();
 }
@@ -2436,7 +2551,7 @@ let lastTime = 0;
 function frame(t) {
   const dt = Math.min((t - lastTime) / 1000, 0.05);
   lastTime = t;
-  if (S.running) update(dt);
+  if (S.running && !S.paused) update(dt);
   draw();
   requestAnimationFrame(frame);
 }
@@ -2642,17 +2757,33 @@ function goFullscreenOnMobile() {
 }
 
 document.getElementById("startBtn").addEventListener("click", () => {
+  if (S.paused) {
+    resumeGame();
+    return;
+  }
   document.getElementById("overlay").classList.add("hidden");
   goFullscreenOnMobile();
   resetGame();
   Radio.start();
+  document.getElementById("pauseBtn").classList.remove("hidden");
   updateStopBtn();
 });
-document.getElementById("stopMusicBtn").addEventListener("click", () => {
+document.getElementById("pauseBtn").addEventListener("click", pauseGame);
+// Android calls and app switching can take focus without unloading this page.
+// Pause through every browser lifecycle signal so the trip remains intact.
+function pauseForAppInterruption() { pauseGame(); }
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) pauseForAppInterruption();
+});
+document.addEventListener("pause", pauseForAppInterruption);
+window.addEventListener("blur", pauseForAppInterruption);
+window.addEventListener("pagehide", pauseForAppInterruption);
+window.addEventListener("freeze", pauseForAppInterruption);
+document.getElementById("stopMusicBtn")?.addEventListener("click", () => {
   Radio.stop();
   updateStopBtn();
 });
-document.getElementById("mixtapeBtn").addEventListener("click", () => Library.open());
+document.getElementById("mixtapeBtn")?.addEventListener("click", () => Library.open());
 document.getElementById("libClose").addEventListener("click", () => Library.close());
 document.getElementById("libNowStop").addEventListener("click", () => Library.stopPlayer());
 function openLibraryFromHash() {
@@ -2692,6 +2823,7 @@ document.querySelectorAll(".decade").forEach((btn) => {
 window.addEventListener("rtr-save-restored", () => {
   Library.collected = Save.collectedSet();
   Library.updateButton();
+  applyVehicleWindowTheme();
   setRadioEra(unlockedRadioEra((Save.data.settings && Save.data.settings.station) || "90s"), false);
 });
 </script>

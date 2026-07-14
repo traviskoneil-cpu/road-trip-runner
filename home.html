@@ -133,7 +133,7 @@
 
   .start-pin {
     position: absolute;
-    top: 3.5%;
+    top: 7.2%;
     left: 36%;
     z-index: 4;
     display: flex;
@@ -326,7 +326,7 @@
 
   .hud {
     position: absolute;
-    top: 14px;
+    top: max(34px, calc(env(safe-area-inset-top) + 14px));
     left: 14px;
     right: 14px;
     z-index: 8;
@@ -347,6 +347,8 @@
 
   .logo-pill {
     padding: 8px 14px;
+    pointer-events: auto;
+    cursor: pointer;
   }
 
   .logo {
@@ -379,7 +381,7 @@
 
   .right-dock {
     position: absolute;
-    top: 92px;
+    top: max(116px, calc(env(safe-area-inset-top) + 92px));
     right: 0;
     z-index: 8;
     display: flex;
@@ -451,8 +453,21 @@
 
   .dock-driver { --accent: var(--orange); }
   .dock-nav { --accent: var(--teal); }
+  .dock-gas { --accent: #f06a2b; }
   .dock-dealer { --accent: var(--gold); }
   .dock-tape { --accent: var(--purple); }
+
+  .dock-gas .dock-bubble {
+    background: #cfeef2;
+  }
+
+  .dock-gas-img {
+    width: 92px;
+    height: 92px;
+    max-width: none;
+    object-fit: contain;
+    transform: translate(-1px, 3px);
+  }
 
   .dock-dealer .dock-label {
     color: var(--ink);
@@ -478,8 +493,8 @@
   .radio-dock {
     position: absolute;
     left: 14px;
-    right: 96px;
-    bottom: 14px;
+    right: 14px;
+    bottom: max(14px, calc(env(safe-area-inset-bottom) + 10px));
     z-index: 8;
     min-height: 62px;
     border: 0;
@@ -646,7 +661,7 @@
     position: absolute;
     left: 14px;
     right: 14px;
-    top: 92px;
+    top: max(116px, calc(env(safe-area-inset-top) + 92px));
     z-index: 30;
     background: rgba(31, 58, 95, 0.94);
     color: var(--cream);
@@ -671,7 +686,7 @@
 
   .map-back {
     position: absolute;
-    top: 14px;
+    top: calc(22px + env(safe-area-inset-top, 0px));
     left: 14px;
     z-index: 6;
     padding: 8px 16px;
@@ -696,6 +711,315 @@
 
   .mode-screen[data-screen="navigator"] {
     overflow: hidden;
+  }
+
+  .mode-screen[data-screen="gasstation"] {
+    background: #c5e8ef;
+  }
+
+  .gas-station {
+    min-height: 100%;
+    padding: max(78px, calc(env(safe-area-inset-top) + 56px)) 15px max(24px, calc(env(safe-area-inset-bottom) + 20px));
+    background:
+      linear-gradient(180deg, rgba(255, 248, 236, 0.22), rgba(255, 248, 236, 0) 25%),
+      repeating-linear-gradient(0deg, rgba(31, 58, 95, 0.035) 0 1px, transparent 1px 6px),
+      linear-gradient(180deg, #bdebf3 0%, #eaf2d2 54%, #f8d682 100%);
+  }
+
+  .station-heading {
+    position: relative;
+    min-height: 220px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 3px 12px;
+  }
+
+  .station-art {
+    position: absolute;
+    top: -24px;
+    right: -13px;
+    width: min(100%, 350px);
+    height: 220px;
+    object-fit: contain;
+    object-position: right bottom;
+    filter: drop-shadow(0 7px 0 rgba(31, 58, 95, 0.14));
+    pointer-events: none;
+  }
+
+  .station-heading-copy {
+    position: relative;
+    z-index: 1;
+    max-width: 184px;
+  }
+
+  .station-kicker,
+  .station-section-title {
+    color: #bf4925;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 1.15px;
+    text-transform: uppercase;
+  }
+
+  .station-heading h2 {
+    margin: 3px 0 0;
+    color: var(--ink);
+    font-size: 27px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    line-height: 0.98;
+  }
+
+  .station-heading p {
+    margin: 7px 0 0;
+    color: #36536c;
+    font-size: 11.5px;
+    font-weight: 800;
+    line-height: 1.32;
+  }
+
+  .station-fuel-strip {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 12px;
+    align-items: center;
+    padding: 11px 12px;
+    background: #17385a;
+    color: var(--cream);
+    border-radius: 8px;
+    box-shadow: 0 5px 0 rgba(31, 58, 95, 0.22);
+  }
+
+  .station-fuel-label,
+  .station-fuel-caption {
+    display: block;
+    color: rgba(255, 248, 236, 0.72);
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: 0.9px;
+    text-transform: uppercase;
+  }
+
+  .station-fuel-value {
+    display: block;
+    margin-top: 2px;
+    font-size: 20px;
+    font-weight: 900;
+    line-height: 1;
+  }
+
+  .station-fuel-value em {
+    color: rgba(255, 248, 236, 0.62);
+    font-size: 12px;
+    font-style: normal;
+  }
+
+  .station-fuel-track {
+    height: 13px;
+    overflow: hidden;
+    border: 2px solid rgba(255, 248, 236, 0.64);
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.22);
+  }
+
+  .station-fuel-fill {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: #f5c84b;
+    transition: width 0.2s ease;
+  }
+
+  .station-section {
+    padding: 18px 0;
+    border-bottom: 2px dashed rgba(31, 58, 95, 0.24);
+  }
+
+  .station-section:last-child {
+    border-bottom: 0;
+  }
+
+  .station-section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .station-section h3 {
+    margin: 0;
+    color: var(--ink);
+    font-size: 17px;
+    font-weight: 900;
+    letter-spacing: 0.2px;
+  }
+
+  .station-section-title {
+    color: #487b85;
+    font-size: 8.5px;
+    white-space: nowrap;
+  }
+
+  .station-offer {
+    width: 100%;
+    min-height: 78px;
+    border: 0;
+    border-radius: 8px;
+    padding: 10px 11px;
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr) auto;
+    gap: 10px;
+    align-items: center;
+    color: var(--ink);
+    background: rgba(255, 248, 236, 0.95);
+    box-shadow: 0 4px 0 rgba(31, 58, 95, 0.16);
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .station-offer + .station-offer {
+    margin-top: 9px;
+  }
+
+  .station-offer:not(:disabled):active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 rgba(31, 58, 95, 0.16);
+  }
+
+  .station-offer:disabled {
+    cursor: not-allowed;
+    opacity: 0.62;
+  }
+
+  .station-offer.station-map {
+    background: #fff4d7;
+  }
+
+  .station-offer.station-future {
+    background: #e5f3f0;
+    box-shadow: inset 0 0 0 2px rgba(63, 182, 199, 0.4), 0 4px 0 rgba(31, 58, 95, 0.12);
+  }
+
+  .station-offer.station-future .station-price {
+    background: var(--teal);
+    color: #fff;
+  }
+
+  .station-offer-copy {
+    min-width: 0;
+  }
+
+  .station-offer-copy strong,
+  .station-offer-copy span {
+    display: block;
+  }
+
+  .station-offer-copy strong {
+    font-size: 13px;
+    font-weight: 900;
+  }
+
+  .station-offer-copy span {
+    margin-top: 3px;
+    color: #4c647a;
+    font-size: 10.5px;
+    font-weight: 700;
+    line-height: 1.22;
+  }
+
+  .station-price {
+    min-width: 46px;
+    border-radius: 7px;
+    padding: 6px 7px 5px;
+    color: var(--ink);
+    background: var(--gold);
+    font-size: 10px;
+    font-weight: 900;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .station-price.free {
+    color: #fff;
+    background: var(--orange);
+  }
+
+  .station-note {
+    min-height: 15px;
+    margin: 8px 2px 0;
+    color: #3d6470;
+    font-size: 10px;
+    font-weight: 800;
+    line-height: 1.3;
+  }
+
+  .station-mark {
+    position: relative;
+    width: 42px;
+    height: 48px;
+    display: grid;
+    place-items: center;
+  }
+
+  .station-mark.can::before {
+    content: "";
+    width: 28px;
+    height: 36px;
+    border: 3px solid #17385a;
+    border-radius: 6px 6px 8px 8px;
+    background: #f06a2b;
+    box-shadow: inset 0 -6px 0 rgba(31, 58, 95, 0.12);
+  }
+
+  .station-mark.can::after {
+    content: "+";
+    position: absolute;
+    top: 13px;
+    color: var(--cream);
+    font-size: 18px;
+    font-weight: 900;
+  }
+
+  .station-mark.map::before,
+  .station-mark.map::after {
+    content: "";
+    position: absolute;
+    width: 29px;
+    height: 35px;
+    border: 3px solid #17385a;
+    border-radius: 3px;
+    background: linear-gradient(90deg, #f9d667 0 32%, #d8f1ef 32% 65%, #f5a26f 65% 100%);
+    transform: skewY(-8deg);
+  }
+
+  .station-mark.map::after {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    border-width: 2px;
+    background: var(--orange);
+    transform: translate(4px, -4px);
+  }
+
+  .station-mark.pass::before {
+    content: "";
+    width: 34px;
+    height: 26px;
+    border: 3px solid #17385a;
+    border-radius: 5px;
+    background: #4ec3c7;
+    box-shadow: 6px 6px 0 #f4bf45;
+  }
+
+  .station-mark.pass::after {
+    content: ">";
+    position: absolute;
+    color: var(--cream);
+    font-size: 20px;
+    font-weight: 900;
   }
 
   .placeholder-wrap {
@@ -817,17 +1141,25 @@
   }
 
   .navigator-game {
+    position: relative;
+    overflow: hidden;
     height: 100%;
     min-height: 0;
-    padding: 42px 12px 6px;
+    padding: calc(22px + env(safe-area-inset-top, 0px)) 12px calc(10px + env(safe-area-inset-bottom, 0px));
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
     background:
-      linear-gradient(180deg, rgba(255, 248, 236, 0.7) 0 90px, transparent 90px),
-      radial-gradient(230px 140px at 10% 17%, rgba(255, 210, 63, 0.22), transparent 72%),
-      radial-gradient(250px 160px at 92% 34%, rgba(63, 182, 199, 0.22), transparent 70%),
-      linear-gradient(180deg, #bdebf8 0%, #e9f7ed 52%, #fff4d2 100%);
+      linear-gradient(180deg, rgba(31, 58, 95, 0.08), rgba(255, 248, 236, 0) 34%, rgba(31, 58, 95, 0.18) 100%),
+      url("assets/backgrounds/navigator-seatback-organizer.png") center center / cover no-repeat;
+  }
+
+  .nav-top,
+  .kid-request-row,
+  .generator-row,
+  .merge-board-panel {
+    position: relative;
+    z-index: 1;
   }
 
   .navigator-game.locked {
@@ -837,31 +1169,8 @@
   .nav-top {
     display: flex;
     align-items: flex-start;
-    justify-content: space-between;
-    gap: 12px;
-  }
-
-  .nav-kicker {
-    color: var(--teal);
-    font-size: 10px;
-    font-weight: 900;
-    letter-spacing: 1.2px;
-    text-transform: uppercase;
-  }
-
-  .nav-title {
-    color: var(--ink);
-    font-size: 20px;
-    font-weight: 900;
-    letter-spacing: 1px;
-    line-height: 1;
-  }
-
-  .nav-sub {
-    color: #4a647d;
-    margin-top: 2px;
-    font-size: 10px;
-    font-weight: 900;
+    justify-content: flex-end;
+    min-height: 48px;
   }
 
   .nav-energy {
@@ -903,22 +1212,24 @@
 
   .kid-request-row {
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 4px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
   }
 
   .kid-request {
+    position: relative;
     min-width: 0;
-    min-height: 42px;
-    border-radius: 12px;
-    background: rgba(255, 248, 236, 0.94);
+    min-height: 74px;
+    border-radius: 15px;
+    background:
+      linear-gradient(180deg, rgba(255, 248, 236, 0.96), rgba(255, 248, 236, 0.88));
     border: 2px solid rgba(255, 255, 255, 0.7);
     box-shadow: 0 4px 0 rgba(0, 0, 0, 0.11);
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 2px;
-    padding: 3px;
+    gap: 6px;
+    padding: 8px 7px 17px;
     cursor: pointer;
   }
 
@@ -935,8 +1246,9 @@
 
   .kid-head {
     position: relative;
-    width: 31px;
-    height: 31px;
+    z-index: 1;
+    width: 54px;
+    height: 54px;
     border-radius: 50%;
     overflow: hidden;
     background: linear-gradient(180deg, #d7f0fb, #fff3c3);
@@ -946,20 +1258,67 @@
   }
 
   .kid-head img {
-    width: 100%;
-    height: 100%;
+    position: absolute;
+    max-width: none;
     object-fit: contain;
-    transform: scale(1.1);
+  }
+
+  .kid-head.kid-son img {
+    left: -37%;
+    top: -11%;
+    width: 150%;
+    height: 150%;
+  }
+
+  .kid-head.kid-daughter img {
+    left: -39%;
+    top: -3%;
+    width: 150%;
+    height: 150%;
+  }
+
+  .kid-head.kid-mom img {
+    left: -25%;
+    top: -14%;
+    width: 168%;
+    height: 168%;
+  }
+
+  .kid-head.kid-dad img {
+    left: -22%;
+    top: -16%;
+    width: 190%;
+    height: 190%;
+  }
+
+  .kid-head.kid-dog img {
+    left: -37%;
+    top: -10%;
+    width: 150%;
+    height: 150%;
+  }
+
+  .kid-request:not(:disabled) .kid-head {
+    animation: passengerFloat 3.2s ease-in-out infinite;
+    will-change: transform;
+  }
+
+  .kid-request:nth-child(2) .kid-head {
+    animation-delay: -1.6s;
   }
 
   .kid-wants {
     position: relative;
-    width: 30px;
-    height: 30px;
-    border-radius: 10px;
+    z-index: 1;
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
     background: #fff;
-    display: grid;
-    place-items: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    padding: 4px;
     flex: 0 0 auto;
     box-shadow: inset 0 0 0 2px rgba(31, 58, 95, 0.1), 0 2px 0 rgba(0, 0, 0, 0.08);
   }
@@ -969,8 +1328,81 @@
   }
 
   .kid-wants .snack-icon {
+    width: 35px;
+    height: 35px;
+    flex: 0 0 auto;
+  }
+
+  .kid-wants.want-count-2 {
+    width: 58px;
+  }
+
+  .kid-wants.want-count-2 .snack-icon {
     width: 24px;
     height: 24px;
+  }
+
+  .kid-wants.want-count-3 {
+    width: 66px;
+  }
+
+  .kid-wants.want-count-3 .snack-icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .kid-reward {
+    position: absolute;
+    right: 9px;
+    bottom: 4px;
+    z-index: 2;
+    color: var(--ink);
+    background: rgba(255, 210, 63, 0.72);
+    border: 1px solid rgba(31, 58, 95, 0.1);
+    border-radius: 999px;
+    padding: 2px 7px 1px;
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 0.3px;
+    line-height: 1.2;
+    white-space: nowrap;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.08);
+    pointer-events: none;
+  }
+
+  .kid-bubble {
+    position: absolute;
+    left: 45px;
+    top: -20px;
+    z-index: 6;
+    isolation: isolate;
+    overflow: visible;
+    color: var(--ink);
+    background: var(--cream);
+    border: 2px solid var(--gold);
+    border-radius: 999px;
+    padding: 4px 9px 3px;
+    font-size: 8.5px;
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: 0.15px;
+    white-space: nowrap;
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.1);
+    pointer-events: none;
+  }
+
+  .kid-bubble::after {
+    content: "";
+    position: absolute;
+    left: 18px;
+    bottom: -6px;
+    z-index: -1;
+    width: 9px;
+    height: 9px;
+    background: var(--cream);
+    border-right: 2px solid var(--gold);
+    border-bottom: 2px solid var(--gold);
+    transform: rotate(45deg);
   }
 
   .hungry-stage {
@@ -1055,17 +1487,6 @@
     border-right: 3px solid var(--gold);
     border-bottom: 3px solid var(--gold);
     transform: rotate(45deg);
-  }
-
-  .nav-section-title {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    color: #314c6a;
-    font-size: 11px;
-    font-weight: 900;
-    letter-spacing: 1px;
-    text-transform: uppercase;
   }
 
   .generator-row {
@@ -1289,36 +1710,43 @@
     flex: 1;
     min-height: 0;
     border-radius: 16px;
-    background: rgba(31, 58, 95, 0.14);
+    background:
+      linear-gradient(180deg, rgba(41, 92, 111, 0.22), rgba(21, 49, 64, 0.3)),
+      rgba(224, 246, 242, 0.26);
     padding: 7px;
-    box-shadow: inset 0 0 0 2px rgba(255, 248, 236, 0.32);
+    box-shadow: inset 0 0 0 2px rgba(255, 248, 236, 0.28), 0 6px 18px rgba(31, 58, 95, 0.13);
     display: flex;
     flex-direction: column;
   }
 
   .merge-board {
-    --cell-gap: 3px;
-    --merge-cell-size: clamp(27px, min(8.7vw, calc((100dvh - 296px) / 8)), 42px);
+    --cell-gap: 4px;
+    --merge-cell-size: clamp(39px, min(calc((min(100vw, 430px) - 50px) / 6), calc((100dvh - 364px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) / 8)), 64px);
     display: grid;
     grid-template-columns: repeat(6, var(--merge-cell-size));
+    grid-template-rows: repeat(8, var(--merge-cell-size));
     justify-content: center;
     gap: var(--cell-gap);
-    margin-top: 5px;
+    margin-top: 3px;
+    isolation: isolate;
   }
 
   .merge-cell {
     position: relative;
     min-width: 0;
-    aspect-ratio: 1 / 1;
-    border: 1px solid rgba(31, 58, 95, 0.13);
+    min-height: 0;
+    width: 100%;
+    height: 100%;
+    border: 1px solid rgba(35, 98, 119, 0.28);
     border-radius: 8px;
     background:
-      linear-gradient(180deg, rgba(255, 248, 236, 0.72), rgba(235, 246, 240, 0.66));
+      radial-gradient(circle at 34% 24%, rgba(255, 255, 255, 0.55), transparent 42%),
+      linear-gradient(180deg, rgba(203, 239, 241, 0.88), rgba(173, 219, 206, 0.82));
     display: grid;
     place-items: center;
     padding: 0;
     cursor: pointer;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.62), 0 1px 0 rgba(14, 37, 48, 0.08);
     touch-action: none;
   }
 
@@ -1329,10 +1757,29 @@
 
   .merge-cell.filled {
     background:
-      radial-gradient(circle at 36% 28%, rgba(255, 255, 255, 0.72), transparent 46%),
-      linear-gradient(180deg, #fff8ec 0%, #f0e3bc 100%);
+      radial-gradient(circle at 36% 28%, rgba(255, 255, 255, 0.78), transparent 46%),
+      linear-gradient(180deg, rgba(255, 248, 236, 0.94) 0%, rgba(240, 227, 188, 0.88) 100%);
     border-color: rgba(31, 58, 95, 0.2);
     box-shadow: 0 2px 0 rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.52);
+    z-index: 2;
+  }
+
+  .merge-cell.footprint-wide,
+  .merge-cell.footprint-block {
+    border-radius: 12px;
+    background:
+      linear-gradient(135deg, rgba(255, 255, 255, 0.55), transparent 32%),
+      linear-gradient(180deg, rgba(255, 248, 236, 0.95) 0%, rgba(234, 213, 159, 0.9) 100%);
+    border-color: rgba(31, 58, 95, 0.24);
+  }
+
+  .merge-cell.covered {
+    cursor: pointer;
+    background:
+      linear-gradient(135deg, rgba(31, 58, 95, 0.16), rgba(203, 239, 241, 0.16)),
+      rgba(95, 147, 142, 0.22);
+    box-shadow: inset 0 0 0 1px rgba(31, 58, 95, 0.1);
+    opacity: 0.82;
   }
 
   .merge-cell.selected {
@@ -1356,8 +1803,19 @@
   }
 
   .merge-cell .snack-icon {
-    width: 74%;
-    height: 74%;
+    width: 78%;
+    height: 78%;
+    pointer-events: none;
+  }
+
+  .merge-cell.footprint-wide .snack-icon {
+    width: min(78px, 62%);
+    height: 78%;
+  }
+
+  .merge-cell.footprint-block .snack-icon {
+    width: min(92px, 64%);
+    height: min(92px, 64%);
   }
 
   .merge-cell .snack-granola {
@@ -1402,50 +1860,44 @@
     transform: translate(-50%, -50%) scale(0.72) rotate(18deg);
   }
 
-  .merge-meta-row {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+  .snack-action-menu {
+    position: fixed;
+    z-index: 95;
+    display: flex;
     gap: 6px;
-    margin-top: 7px;
+    padding: 6px;
+    border-radius: 16px;
+    background: rgba(31, 58, 95, 0.95);
+    border: 2px solid rgba(255, 248, 236, 0.28);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.28);
   }
 
-  .merge-stat {
-    min-width: 0;
-    border-radius: 10px;
-    background: rgba(255, 248, 236, 0.82);
-    padding: 4px 7px 3px;
+  .snack-action-menu.hidden {
+    display: none;
+  }
+
+  .snack-action-menu button {
+    border: 0;
+    border-radius: 12px;
+    padding: 8px 12px 7px;
     color: var(--ink);
-    text-align: center;
-    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.08);
-  }
-
-  .merge-stat span {
-    display: block;
-    color: var(--muted);
-    font-size: 7.5px;
-    font-weight: 900;
-    letter-spacing: 0.7px;
-    text-transform: uppercase;
-  }
-
-  .merge-stat strong {
-    display: block;
-    margin-top: 2px;
-    font-size: 10.5px;
-    font-weight: 900;
-    line-height: 1.05;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .nav-feed-log {
-    color: #3f5872;
-    margin-top: 4px;
-    min-height: 13px;
+    background: var(--cream);
     font-size: 10px;
     font-weight: 900;
-    text-align: center;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    box-shadow: 0 3px 0 rgba(0, 0, 0, 0.16);
+    cursor: pointer;
+  }
+
+  .snack-action-menu button:disabled {
+    opacity: 0.46;
+    cursor: not-allowed;
+  }
+
+  .snack-action-menu .trash {
+    color: #fff;
+    background: var(--orange);
   }
 
   .snack-icon {
@@ -1705,6 +2157,257 @@
     display: none;
   }
 
+  .onboarding {
+    position: absolute;
+    inset: 0;
+    z-index: 90;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 14px max(16px, env(safe-area-inset-bottom));
+    background: rgba(8, 16, 31, 0.72);
+    backdrop-filter: blur(8px);
+  }
+
+  .onboarding-card {
+    width: min(100%, 392px);
+    max-height: calc(100svh - max(32px, env(safe-area-inset-top)) - max(32px, env(safe-area-inset-bottom)));
+    overflow: hidden;
+    border-radius: 12px;
+    background: var(--cream);
+    color: var(--ink);
+    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.38);
+  }
+
+  .onboarding-video-wrap {
+    position: relative;
+    aspect-ratio: 9 / 16;
+    overflow: hidden;
+    background: #14233a;
+  }
+
+  .onboarding-video-wrap.no-video {
+    display: none;
+  }
+
+  #onboardingVideo {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    background: #14233a;
+  }
+
+  .onboarding-video-skip {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: 50%;
+    color: var(--cream);
+    background: rgba(8, 16, 31, 0.64);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+    cursor: pointer;
+    font-size: 23px;
+    line-height: 1;
+  }
+
+  .onboarding-video-skip:focus-visible {
+    outline: 3px solid var(--gold);
+    outline-offset: 2px;
+  }
+
+  .onboarding-dialog {
+    display: grid;
+    grid-template-columns: 58px minmax(0, 1fr);
+    gap: 10px;
+    align-items: center;
+    padding: 13px 14px 10px;
+  }
+
+  .onboarding-face {
+    width: 58px;
+    height: 58px;
+    overflow: hidden;
+    border: 3px solid var(--gold);
+    border-radius: 50%;
+    background: #d7f0fb;
+    box-shadow: 0 4px 0 rgba(31, 58, 95, 0.16);
+  }
+
+  .onboarding-face img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .onboarding-kicker {
+    color: var(--orange);
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 1.15px;
+    text-transform: uppercase;
+  }
+
+  .onboarding-copy {
+    margin-top: 3px;
+    color: #3d5670;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+
+  .onboarding-actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.45fr);
+    gap: 8px;
+    padding: 0 14px 14px;
+  }
+
+  .onboarding-actions button {
+    min-height: 42px;
+    border: 0;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    text-transform: uppercase;
+  }
+
+  #onboardingSkip {
+    color: var(--ink);
+    background: rgba(31, 58, 95, 0.1);
+  }
+
+  #onboardingContinue {
+    color: var(--ink);
+    background: var(--gold);
+    box-shadow: 0 4px 0 rgba(124, 88, 0, 0.2);
+  }
+
+  .playtest-shell {
+    height: 100%;
+    overflow-y: auto;
+    padding: max(78px, calc(env(safe-area-inset-top) + 58px)) 16px max(20px, calc(env(safe-area-inset-bottom) + 16px));
+    background:
+      linear-gradient(180deg, rgba(11, 21, 39, 0.16), rgba(11, 21, 39, 0.82)),
+      linear-gradient(180deg, #bdebf8 0%, #e9f7ed 100%);
+  }
+
+  .playtest-heading {
+    color: var(--ink);
+    margin-bottom: 18px;
+  }
+
+  .playtest-eyebrow {
+    color: var(--orange);
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 1.25px;
+    text-transform: uppercase;
+  }
+
+  .playtest-heading h2 {
+    margin-top: 3px;
+    font-size: 26px;
+    letter-spacing: 0.5px;
+  }
+
+  .playtest-status {
+    margin-top: 5px;
+    color: #3d5670;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .playtest-section + .playtest-section {
+    margin-top: 18px;
+  }
+
+  .playtest-section h3 {
+    margin: 0 0 8px 2px;
+    color: var(--cream);
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+  }
+
+  .playtest-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .playtest-choice {
+    min-height: 96px;
+    border: 0;
+    border-radius: 8px;
+    padding: 12px;
+    color: var(--ink);
+    background: rgba(255, 248, 236, 0.94);
+    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.14);
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .playtest-choice strong,
+  .playtest-choice span {
+    display: block;
+  }
+
+  .playtest-choice strong {
+    font-size: 13px;
+  }
+
+  .playtest-choice span {
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1.25;
+  }
+
+  .playtest-choice.accent {
+    background: var(--gold);
+  }
+
+  .playtest-choice.accent span {
+    color: rgba(31, 58, 95, 0.76);
+  }
+
+  .playtest-route-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 7px;
+  }
+
+  .playtest-route {
+    min-height: 42px;
+    border: 0;
+    border-radius: 8px;
+    color: var(--ink);
+    background: rgba(255, 248, 236, 0.92);
+    font-size: 10px;
+    font-weight: 900;
+    cursor: pointer;
+  }
+
+  .playtest-restore {
+    width: 100%;
+    min-height: 46px;
+    border: 2px solid rgba(255, 248, 236, 0.54);
+    border-radius: 8px;
+    color: var(--cream);
+    background: rgba(31, 58, 95, 0.78);
+    font-size: 12px;
+    font-weight: 900;
+    cursor: pointer;
+  }
+
   .wipe-label {
     color: var(--ink);
     font-size: 15px;
@@ -1755,6 +2458,11 @@
     100% { transform: scale(1) rotate(0deg); opacity: 1; }
   }
 
+  @keyframes passengerFloat {
+    0%, 100% { transform: translate3d(0, 1px, 0); }
+    50% { transform: translate3d(0, -4px, 0); }
+  }
+
   @keyframes shake {
     0%, 100% { transform: translateX(0); }
     25% { transform: translateX(-4px); }
@@ -1788,11 +2496,11 @@
           <div class="road-sheen"></div>
 
           <div class="start-pin">
-            <button class="start-trip" type="button" id="startTrip">Start Trip</button>
             <div class="start-ring">
               <img id="mapCar" src="assets/vehicles/minivan-blue.png" alt="">
             </div>
             <div class="pin-shadow"></div>
+            <button class="start-trip" type="button" id="startTrip">Start Trip</button>
           </div>
 
           <button class="city dc" type="button" data-city="dc">
@@ -1821,7 +2529,7 @@
       </div>
 
       <div class="hud">
-        <div class="logo-pill">
+        <div class="logo-pill" id="logoPill" title="Hold for playtest tools">
           <div class="logo">ROAD<span>TRIP</span></div>
         </div>
         <div class="stats">
@@ -1833,11 +2541,15 @@
       <nav class="right-dock" aria-label="Game modes">
         <button class="dock-btn dock-driver disabled" type="button" id="dadDock" data-href="tap/index.html" data-label="TUNING IN..." data-color="#ffd23f">
           <span class="dock-bubble"><img class="dock-img" src="assets/characters/dad-face.png" alt=""><span class="dock-lock" id="dadLock">!</span></span>
-          <span class="dock-label">Dad Mode</span>
+          <span class="dock-label">Driver</span>
         </button>
         <button class="dock-btn dock-nav" type="button" id="navigatorDock" data-screen-target="navigator">
           <span class="dock-bubble"><img class="dock-img" src="assets/characters/mom-face.png" alt=""><span class="dock-lock">!</span></span>
           <span class="dock-label">Navigator</span>
+        </button>
+        <button class="dock-btn dock-gas" type="button" data-screen-target="gasstation">
+          <span class="dock-bubble"><img class="dock-gas-img" src="assets/places/roadside-gas-station.png" alt=""></span>
+          <span class="dock-label">Gas</span>
         </button>
         <button class="dock-btn dock-dealer disabled" type="button" data-screen-target="dealership">
           <span class="dock-bubble"><img class="vehicle-img" src="assets/vehicles/minivan-blue.png" alt=""><span class="dock-lock">!</span></span>
@@ -1868,13 +2580,8 @@
       <button class="map-back" type="button" data-screen-target="hub">MAP</button>
       <div class="navigator-game" id="navigatorGame">
         <header class="nav-top">
-          <div>
-            <div class="nav-kicker">Back Seat</div>
-            <div class="nav-title">NAVIGATOR</div>
-            <div class="nav-sub" id="navigatorStatus">Snack duty live</div>
-          </div>
           <div class="nav-energy" aria-live="polite">
-            <span class="nav-energy-label">Energy</span>
+            <span class="nav-energy-label">Gas</span>
             <span class="nav-energy-main"><span id="navEnergyCount">100</span><span>/100</span></span>
             <span class="nav-energy-timer" id="navEnergyTimer">FULL</span>
           </div>
@@ -1882,16 +2589,12 @@
 
         <div class="kid-request-row" id="navKidRequests" aria-label="Back seat snack requests"></div>
 
-        <div class="nav-section-title">
-          <span>Generators</span>
-          <span id="navGeneratorStatus">Snack bag online</span>
-        </div>
         <div class="generator-row">
           <button class="generator active" type="button" id="snackBagGenerator">
             <span class="generator-art snack-bag-art" aria-hidden="true"></span>
             <span class="generator-copy">
               <span class="generator-name">Snack Bag</span>
-              <span class="generator-meta" id="snackBagMeta">8 energy</span>
+              <span class="generator-meta" id="snackBagMeta">8 gas</span>
             </span>
           </button>
           <button class="generator future" type="button" data-future-generator="drinks">
@@ -1912,18 +2615,80 @@
         </div>
 
         <div class="merge-board-panel">
-          <div class="nav-section-title">
-            <span>Snack Grid</span>
-            <span id="navBoardCount">0/48</span>
-          </div>
           <div class="merge-board" id="navMergeGrid" role="grid" aria-label="Navigator snack merge grid"></div>
-          <div class="merge-meta-row">
-            <div class="merge-stat"><span>Merges</span><strong id="navMergeCount">0</strong></div>
-            <div class="merge-stat"><span>Best</span><strong id="navBestSnack">Chips</strong></div>
-            <div class="merge-stat"><span>Bag</span><strong id="navBagUses">0</strong></div>
+          <div class="snack-action-menu hidden" id="snackActionMenu" role="dialog" aria-label="Snack actions">
+            <button type="button" id="snackActionGive">Give</button>
+            <button class="trash" type="button" id="snackActionTrash">Trash</button>
           </div>
-          <div class="nav-feed-log" id="navMergeLog"></div>
         </div>
+      </div>
+    </section>
+
+    <section class="mode-screen hidden" data-screen="gasstation">
+      <button class="map-back" type="button" data-screen-target="hub">MAP</button>
+      <div class="gas-station">
+        <header class="station-heading">
+          <img class="station-art" src="assets/places/roadside-gas-station.png" alt="">
+          <div class="station-heading-copy">
+            <div class="station-kicker">Roadside Supplies</div>
+            <h2>Gas Station</h2>
+            <p>Fuel the Navigator, unfold the next route, and keep the trip rolling.</p>
+          </div>
+        </header>
+
+        <div class="station-fuel-strip" aria-live="polite">
+          <div>
+            <span class="station-fuel-label">Navigator Fuel</span>
+            <strong class="station-fuel-value"><span id="stationGasCount">100</span><em>/100</em></strong>
+          </div>
+          <div>
+            <span class="station-fuel-caption">Snack bag power</span>
+            <div class="station-fuel-track"><span class="station-fuel-fill" id="stationFuelFill"></span></div>
+          </div>
+        </div>
+
+        <section class="station-section" aria-labelledby="stationDailyHeading">
+          <div class="station-section-head">
+            <h3 id="stationDailyHeading">Today's Stop</h3>
+            <span class="station-section-title">One per day</span>
+          </div>
+          <button class="station-offer" type="button" id="dailyFuelClaim">
+            <span class="station-mark can" aria-hidden="true"></span>
+            <span class="station-offer-copy"><strong id="stationDailyTitle">Free Daily Fill-up</strong><span id="stationDailyDetail">A gas can for the Navigator.</span></span>
+            <span class="station-price free" id="stationDailyPrice">FREE</span>
+          </button>
+          <p class="station-note" id="stationDailyNote">Stop in once a day for a free gas can.</p>
+        </section>
+
+        <section class="station-section" aria-labelledby="stationMapHeading">
+          <div class="station-section-head">
+            <h3 id="stationMapHeading">Map Rack</h3>
+            <span class="station-section-title">Pick the next road</span>
+          </div>
+          <button class="station-offer station-map" type="button" id="buyRouteMap">
+            <span class="station-mark map" aria-hidden="true"></span>
+            <span class="station-offer-copy"><strong id="stationMapTitle">Paper Route Map</strong><span id="stationMapDetail">Unlock the next stop with miles.</span></span>
+            <span class="station-price" id="stationMapPrice">250 mi</span>
+          </button>
+          <button class="station-offer station-future" type="button" id="routePassPreview">
+            <span class="station-mark pass" aria-hidden="true"></span>
+            <span class="station-offer-copy"><strong id="stationPassTitle">Route Pass</strong><span id="stationPassDetail">Early route unlock, coming with checkout.</span></span>
+            <span class="station-price">$0.99</span>
+          </button>
+        </section>
+
+        <section class="station-section" aria-labelledby="stationSupplyHeading">
+          <div class="station-section-head">
+            <h3 id="stationSupplyHeading">Roadside Supplies</h3>
+            <span class="station-section-title">Use miles</span>
+          </div>
+          <button class="station-offer" type="button" id="buyFuelCan">
+            <span class="station-mark can" aria-hidden="true"></span>
+            <span class="station-offer-copy"><strong>Roadside Gas Can</strong><span id="stationCanDetail">Add 25 gas to Navigator.</span></span>
+            <span class="station-price">150 mi</span>
+          </button>
+          <p class="station-note" id="stationSupplyNote">Keep a little fuel in reserve for snack emergencies.</p>
+        </section>
       </div>
     </section>
 
@@ -1942,6 +2707,75 @@
         </div>
       </div>
     </section>
+
+    <section class="mode-screen hidden" data-screen="playtest">
+      <button class="map-back" type="button" data-screen-target="hub">MAP</button>
+      <div class="playtest-shell">
+        <header class="playtest-heading">
+          <div class="playtest-eyebrow">Development Build</div>
+          <h2>Playtest Console</h2>
+          <p class="playtest-status" id="playtestStatus">Real trip protected</p>
+        </header>
+
+        <section class="playtest-section" aria-label="Test saves">
+          <h3>Test Saves</h3>
+          <div class="playtest-grid">
+            <button class="playtest-choice" type="button" data-playtest-profile="fresh"><strong>Fresh Family</strong><span>Starting map and empty mixtape.</span></button>
+            <button class="playtest-choice" type="button" data-playtest-profile="navigator"><strong>Navigator Ready</strong><span>D.C. open, snack board stocked.</span></button>
+            <button class="playtest-choice" type="button" data-playtest-profile="la"><strong>L.A. Arrival</strong><span>Long route, Driver songs, SUV.</span></button>
+            <button class="playtest-choice accent" type="button" data-playtest-profile="all"><strong>All Access</strong><span>All routes, rides, stations, and modes.</span></button>
+          </div>
+        </section>
+
+        <section class="playtest-section" aria-label="Mode shortcuts">
+          <h3>Mode Shortcuts</h3>
+          <div class="playtest-grid">
+            <button class="playtest-choice" type="button" data-playtest-screen="navigator"><strong>Navigator</strong><span>Open the snack board with a full tank.</span></button>
+            <button class="playtest-choice" type="button" data-playtest-screen="gasstation"><strong>Gas Station</strong><span>Open the daily fuel and map shop.</span></button>
+            <button class="playtest-choice" type="button" data-playtest-screen="driver"><strong>Driver</strong><span>Open a stocked song list.</span></button>
+            <button class="playtest-choice" type="button" data-playtest-screen="dealership"><strong>Dealership</strong><span>Open the future storefront.</span></button>
+          </div>
+        </section>
+
+        <section class="playtest-section" aria-label="Runner scenery previews">
+          <h3>Runner Scenery</h3>
+          <div class="playtest-route-grid">
+            <button class="playtest-route" type="button" data-playtest-city="nyc">NYC</button>
+            <button class="playtest-route" type="button" data-playtest-city="dc">D.C.</button>
+            <button class="playtest-route" type="button" data-playtest-city="farm">Farm</button>
+            <button class="playtest-route" type="button" data-playtest-city="desert">Desert</button>
+            <button class="playtest-route" type="button" data-playtest-city="la">L.A.</button>
+            <button class="playtest-route" type="button" data-playtest-city="sf">S.F.</button>
+          </div>
+        </section>
+
+        <section class="playtest-section" aria-label="Restore your trip">
+          <button class="playtest-restore" type="button" id="restoreRealTrip">Return to My Real Trip</button>
+        </section>
+      </div>
+    </section>
+
+    <div class="onboarding hidden" id="onboarding" role="dialog" aria-modal="true" aria-live="polite">
+      <div class="onboarding-card">
+        <div class="onboarding-video-wrap" id="onboardingVideoWrap">
+          <video id="onboardingVideo" playsinline preload="metadata"></video>
+          <button class="onboarding-video-skip" id="onboardingVideoSkip" type="button" aria-label="Skip introduction" title="Skip introduction">&times;</button>
+        </div>
+        <div id="onboardingDetails">
+          <div class="onboarding-dialog">
+            <div class="onboarding-face"><img id="onboardingFace" src="assets/characters/son-face.png" alt=""></div>
+            <div>
+              <div class="onboarding-kicker" id="onboardingKicker">Welcome</div>
+              <p class="onboarding-copy" id="onboardingCopy"></p>
+            </div>
+          </div>
+          <div class="onboarding-actions">
+            <button id="onboardingSkip" type="button">Skip</button>
+            <button id="onboardingContinue" type="button">Continue</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </main>
 
 <script src="save.js"></script>
@@ -1966,6 +2800,58 @@ const STATIONS = [
   { era: "70s", call: "KWAX", name: "Wax Museum", car: "customVan" },
 ];
 
+const ONBOARDING = {
+  intro: {
+    video: "videos/Intro Video.mp4",
+    face: "assets/characters/son-face.png",
+    kicker: "Welcome to Road Trip",
+    copy: "We are filling the miles between rest stops with the games we played before phones came along.",
+    action: "Start exploring",
+  },
+  runner: {
+    video: "videos/Runner Video.mp4",
+    face: "assets/characters/son-face.png",
+    kicker: "Start Trip",
+    copy: "Tap to jump and hold to jump higher. Clear the road, land on the safe stuff, and keep the trip moving.",
+    action: "Start the runner",
+  },
+  navigator: {
+    video: "videos/Naviagtor Video.mp4",
+    face: "assets/characters/mom-face.png",
+    kicker: "Navigator",
+    copy: "The back seat needs snacks. Match what everyone asks for, then hand it over before the whole car gets grumpy.",
+    action: "Open the snack bag",
+  },
+  driver: {
+    video: "videos/Driver Mode.mp4",
+    face: "assets/characters/dad-face.png",
+    kicker: "Driver",
+    copy: "These are the songs you picked up on the road. Keep the beat, chase the score, and earn a few more miles.",
+    action: "Take the wheel",
+  },
+  dealership: {
+    video: null,
+    face: "assets/characters/dad-face.png",
+    kicker: "Dealership",
+    copy: "This is where future rides, new radio stations, and early route passes will live. For now, it is your preview stop.",
+    action: "Browse the lot",
+  },
+  gasstation: {
+    video: null,
+    face: "assets/characters/mom-face.png",
+    kicker: "Gas Station",
+    copy: "Grab your free daily gas can here. Paper maps use the miles you have driven to open the next stop on the route.",
+    action: "Check the shelves",
+  },
+};
+
+const PLAYTEST_SONGS = [
+  "90s|Falling Down The Road.mp3",
+  "90s|Birthday Cake.mp3",
+  "00s|Backseat Sunrise.mp3",
+  "80s|After Hours Arcade.mp3",
+];
+
 const NAV_ENERGY_CAP = 100;
 const NAV_ENERGY_REGEN_MS = 60000;
 const NAV_SNACK_COST = 8;
@@ -1975,6 +2861,14 @@ const NAV_GRID_CELLS = NAV_GRID_COLS * NAV_GRID_ROWS;
 const NAVIGATOR_TEST_UNLOCK = true;
 const NAV_DOG_SNACK_OFFSET = 100;
 const NAV_DOG_SNACK_CHANCE = 0.2;
+const NAV_ACTIVE_REQUEST_COUNT = 2;
+const NAV_MAX_REQUEST_ITEMS = 3;
+const NAV_FEED_MILES_BASE = 12;
+const NAV_FEED_MILES_PER_TIER = 6;
+const NAV_SNACK_HOLD_MS = 540;
+const GAS_STATION_DAILY_FUEL = 40;
+const GAS_STATION_ROADSIDE_FUEL = 25;
+const GAS_STATION_ROADSIDE_COST = 150;
 
 const NAV_REQUESTERS = [
   { id: "son", name: "Son", img: "assets/characters/son-face.png", branch: "human" },
@@ -2026,7 +2920,34 @@ let toastTimer = 0;
 let selectedMergeCell = null;
 let bornMergeCell = null;
 let dragState = null;
+let snackHoldTimer = 0;
+let snackActionCell = null;
 let suppressNextGridClick = false;
+let activeOnboarding = null;
+let onboardingContinuation = null;
+let playtestHoldTimer = 0;
+
+function revealOnboardingDetails() {
+  $("onboardingVideoWrap").classList.add("hidden");
+  $("onboardingDetails").classList.remove("hidden");
+}
+
+async function playOnboardingVideo(video) {
+  video.muted = false;
+  video.volume = 1;
+  try {
+    await video.play();
+  } catch (_) {
+    // A regular browser may still require a tap for audible autoplay. Keep the
+    // video available there; the native Android WebView is configured for it.
+    video.muted = true;
+    try {
+      await video.play();
+    } catch (_) {
+      revealOnboardingDetails();
+    }
+  }
+}
 
 function carName(id) {
   return Save.vehicleName ? Save.vehicleName(id) : ({ minivan: "Blue Minivan", suv: "Family SUV", wagon: "Station Wagon", customVan: "Custom Van" })[id] || id;
@@ -2044,6 +2965,24 @@ function isNavigatorUnlocked() {
 function nextLockedCity() {
   const open = unlockedCities();
   return ROUTE.find((city) => !open.has(city.id)) || null;
+}
+
+function localDayKey(now = new Date()) {
+  const local = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
+  return local.toISOString().slice(0, 10);
+}
+
+function gasStationProfile() {
+  if (!Save.data.gasStation || typeof Save.data.gasStation !== "object") {
+    Save.data.gasStation = {};
+  }
+  const station = Save.data.gasStation;
+  if (typeof station.lastDailyFuelDay !== "string") station.lastDailyFuelDay = "";
+  if (typeof station.dailyFuelClaims !== "number" || !Number.isFinite(station.dailyFuelClaims)) station.dailyFuelClaims = 0;
+  if (typeof station.roadsideCanPurchases !== "number" || !Number.isFinite(station.roadsideCanPurchases)) station.roadsideCanPurchases = 0;
+  station.dailyFuelClaims = Math.max(0, Math.floor(station.dailyFuelClaims));
+  station.roadsideCanPurchases = Math.max(0, Math.floor(station.roadsideCanPurchases));
+  return station;
 }
 
 function unlockedEras() {
@@ -2074,6 +3013,55 @@ function showToast(message) {
   toast.classList.add("show");
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => toast.classList.remove("show"), 2400);
+}
+
+function showOnboarding(id, continuation) {
+  const guide = ONBOARDING[id];
+  if (!guide) {
+    if (continuation) continuation();
+    return;
+  }
+  if (Save.hasTutorialSeen && Save.hasTutorialSeen(id)) {
+    if (continuation) continuation();
+    return;
+  }
+  activeOnboarding = id;
+  onboardingContinuation = continuation || null;
+  $("onboardingFace").src = guide.face;
+  $("onboardingKicker").textContent = guide.kicker;
+  $("onboardingCopy").textContent = guide.copy;
+  $("onboardingContinue").textContent = guide.action;
+  const wrap = $("onboardingVideoWrap");
+  const video = $("onboardingVideo");
+  video.pause();
+  video.removeAttribute("src");
+  wrap.classList.toggle("no-video", !guide.video);
+  wrap.classList.toggle("hidden", !guide.video);
+  $("onboardingDetails").classList.toggle("hidden", Boolean(guide.video));
+  if (guide.video) {
+    video.src = guide.video;
+    video.load();
+    video.onended = revealOnboardingDetails;
+    video.onerror = revealOnboardingDetails;
+    playOnboardingVideo(video);
+  }
+  $("onboarding").classList.remove("hidden");
+}
+
+function finishOnboarding() {
+  const id = activeOnboarding;
+  const continuation = onboardingContinuation;
+  activeOnboarding = null;
+  onboardingContinuation = null;
+  const video = $("onboardingVideo");
+  video.pause();
+  video.removeAttribute("src");
+  video.onended = null;
+  video.onerror = null;
+  video.load();
+  $("onboarding").classList.add("hidden");
+  if (id && Save.markTutorialSeen) Save.markTutorialSeen(id);
+  if (continuation) continuation();
 }
 
 function terminalPunctuation(text) {
@@ -2137,6 +3125,216 @@ function bestSnackShort(nav) {
   return NAV_SNACK_TIERS[human].short;
 }
 
+function snackFeedMiles(value) {
+  const item = snackItem(value);
+  return NAV_FEED_MILES_BASE + item.tier * NAV_FEED_MILES_PER_TIER + (item.branch === "dog" ? 3 : 0);
+}
+
+function snackListText(values) {
+  const names = values.map((value) => snackTier(value).name);
+  if (names.length <= 1) return names[0] || "a snack";
+  if (names.length === 2) return names[0] + " and " + names[1];
+  return names.slice(0, -1).join(", ") + ", and " + names[names.length - 1];
+}
+
+function snackMilesTotal(values) {
+  return values.reduce((total, value) => total + snackFeedMiles(value), 0);
+}
+
+function snackFootprint(value) {
+  const item = snackItem(value);
+  if (item.tier >= Math.max(4, item.maxTier - 1)) {
+    return { cols: 2, rows: 2, className: "footprint-block", label: "large" };
+  }
+  if (item.tier >= 3) {
+    return { cols: 2, rows: 1, className: "footprint-wide", label: "wide" };
+  }
+  return { cols: 1, rows: 1, className: "footprint-single", label: "single" };
+}
+
+function snackFootprintCells(anchorIndex, value) {
+  if (value === null || anchorIndex < 0 || anchorIndex >= NAV_GRID_CELLS) return [];
+  const footprint = snackFootprint(value);
+  const startRow = Math.floor(anchorIndex / NAV_GRID_COLS);
+  const startCol = anchorIndex % NAV_GRID_COLS;
+  if (startCol + footprint.cols > NAV_GRID_COLS || startRow + footprint.rows > NAV_GRID_ROWS) return [];
+  const cells = [];
+  for (let row = 0; row < footprint.rows; row += 1) {
+    for (let col = 0; col < footprint.cols; col += 1) {
+      cells.push((startRow + row) * NAV_GRID_COLS + startCol + col);
+    }
+  }
+  return cells;
+}
+
+function occupiedCellMap(nav, ignoredAnchors = []) {
+  const ignored = new Set(ignoredAnchors);
+  const covered = new Map();
+  nav.board.forEach((value, index) => {
+    if (value === null || ignored.has(index)) return;
+    snackFootprintCells(index, value).forEach((cell) => {
+      if (cell !== index && !ignored.has(cell)) covered.set(cell, index);
+    });
+  });
+  return covered;
+}
+
+function coveredAnchorForCell(nav, index, ignoredAnchors = []) {
+  return occupiedCellMap(nav, ignoredAnchors).get(index);
+}
+
+function canPlaceSnackAt(nav, index, value, ignoredAnchors = []) {
+  const cells = snackFootprintCells(index, value);
+  if (!cells.length) return false;
+  const ignored = new Set(ignoredAnchors);
+  const covered = occupiedCellMap(nav, ignoredAnchors);
+  return cells.every((cell) => {
+    if (covered.has(cell)) return false;
+    return nav.board[cell] === null || ignored.has(cell);
+  });
+}
+
+function occupiedBoardCount(nav) {
+  const occupied = new Set();
+  nav.board.forEach((value, index) => {
+    if (value === null) return;
+    const cells = snackFootprintCells(index, value);
+    if (!cells.length) occupied.add(index);
+    cells.forEach((cell) => occupied.add(cell));
+  });
+  return occupied.size;
+}
+
+function matchingRequestForValue(nav, value) {
+  if (value === null) return null;
+  return syncNavigatorRequests(nav).find((request) => requestValues(request).includes(value)) || null;
+}
+
+function dogRequestsAvailable(nav) {
+  return (nav.highestDogTier || 0) > 0 || nav.board.some((value) => value !== null && snackBranchForValue(value) === "dog");
+}
+
+function randomInt(maxExclusive) {
+  return Math.max(0, Math.floor(Math.random() * Math.max(1, maxExclusive)));
+}
+
+function requestProgressScore(nav, branch) {
+  const topTier = branch === "dog"
+    ? boundedSnackTier("dog", nav.highestDogTier || 0)
+    : boundedSnackTier("human", nav.highestTier || 0);
+  return (nav.fedCount || 0) + Math.floor((nav.mergeCount || 0) / 3) + topTier * 2;
+}
+
+function requestItemCountForRequester(nav, requester) {
+  const branch = requester.branch === "dog" ? "dog" : "human";
+  const topTier = branch === "dog"
+    ? boundedSnackTier("dog", nav.highestDogTier || 0)
+    : boundedSnackTier("human", nav.highestTier || 0);
+  const progress = requestProgressScore(nav, branch);
+  if (progress >= 20 && topTier >= 3) return 1 + randomInt(NAV_MAX_REQUEST_ITEMS);
+  if (progress >= 8 && topTier >= 1) return 1 + randomInt(2);
+  return 1;
+}
+
+function requestTierForBranch(nav, branch, slotIndex, itemCount) {
+  const maxTier = branch === "dog"
+    ? boundedSnackTier("dog", nav.highestDogTier || 0)
+    : boundedSnackTier("human", nav.highestTier || 0);
+  if (maxTier <= 0) return 0;
+  const progress = requestProgressScore(nav, branch);
+  let minTier = 0;
+  if (progress >= 20) minTier = Math.max(0, maxTier - 1);
+  else if (progress >= 10) minTier = Math.max(0, maxTier - 2);
+  let tier = minTier + randomInt(maxTier - minTier + 1);
+  if (slotIndex === 0 && progress >= 6) tier = Math.max(tier, Math.max(0, maxTier - 1));
+  if (itemCount > 1 && slotIndex > 0 && Math.random() < 0.45) tier = Math.max(0, tier - 1);
+  return boundedSnackTier(branch, tier);
+}
+
+function requestValuesForRequester(nav, requester) {
+  const branch = requester.branch === "dog" ? "dog" : "human";
+  const itemCount = requestItemCountForRequester(nav, requester);
+  return Array.from({ length: itemCount }, (_, index) => {
+    return encodeSnack(branch, requestTierForBranch(nav, branch, index, itemCount));
+  });
+}
+
+function requestValues(request) {
+  if (!request || typeof request !== "object") return [];
+  const rawValues = Array.isArray(request.values) ? request.values : [request.value];
+  return rawValues
+    .map(normalizeSnackTier)
+    .filter((value) => value !== null)
+    .slice(0, NAV_MAX_REQUEST_ITEMS);
+}
+
+function requestValueForRequester(nav, requester) {
+  return requestValuesForRequester(nav, requester)[0];
+}
+
+function makeNavigatorRequest(nav, usedIds = []) {
+  const dogReady = dogRequestsAvailable(nav);
+  let pool = NAV_REQUESTERS.filter((requester) => {
+    if (usedIds.includes(requester.id)) return false;
+    return requester.branch !== "dog" || dogReady;
+  });
+  if (!pool.length) pool = NAV_REQUESTERS.filter((requester) => !usedIds.includes(requester.id) && requester.branch === "human");
+  if (!pool.length) pool = NAV_REQUESTERS.filter((requester) => requester.branch === "human");
+  const requester = pool[randomInt(pool.length)] || NAV_REQUESTERS[0];
+  return {
+    requesterId: requester.id,
+    values: requestValuesForRequester(nav, requester),
+  };
+}
+
+function normalizeNavigatorRequest(nav, request, usedIds = []) {
+  if (!request || typeof request !== "object") return makeNavigatorRequest(nav, usedIds);
+  const requester = requesterById(request.requesterId || request.id);
+  if (!requester || usedIds.includes(requester.id)) return makeNavigatorRequest(nav, usedIds);
+  const values = requestValues(request).filter((value) => snackBranchForValue(value) === requester.branch);
+  if (!values.length) return makeNavigatorRequest(nav, usedIds);
+  return { requesterId: requester.id, values };
+}
+
+function syncNavigatorRequests(nav) {
+  if (!Array.isArray(nav.requests)) nav.requests = [];
+  const usedIds = [];
+  const requests = [];
+  nav.requests.forEach((request) => {
+    if (requests.length >= NAV_ACTIVE_REQUEST_COUNT) return;
+    const normalized = normalizeNavigatorRequest(nav, request, usedIds);
+    if (!normalized || usedIds.includes(normalized.requesterId)) return;
+    usedIds.push(normalized.requesterId);
+    requests.push(normalized);
+  });
+  while (requests.length < NAV_ACTIVE_REQUEST_COUNT) {
+    const next = makeNavigatorRequest(nav, usedIds);
+    if (!next || usedIds.includes(next.requesterId)) break;
+    usedIds.push(next.requesterId);
+    requests.push(next);
+  }
+  nav.requests = requests;
+  return nav.requests;
+}
+
+function activeRequestForRequester(nav, requesterId) {
+  return syncNavigatorRequests(nav).find((request) => request.requesterId === requesterId) || null;
+}
+
+function replaceNavigatorRequest(nav, requesterId) {
+  const index = nav.requests.findIndex((request) => request.requesterId === requesterId);
+  if (index === -1) {
+    syncNavigatorRequests(nav);
+    return;
+  }
+  const usedIds = nav.requests
+    .filter((_, requestIndex) => requestIndex !== index)
+    .map((request) => request.requesterId);
+  usedIds.push(requesterId);
+  nav.requests[index] = makeNavigatorRequest(nav, usedIds);
+  syncNavigatorRequests(nav);
+}
+
 function navigatorProfile() {
   if (!Save.data.navigator || typeof Save.data.navigator !== "object") {
     Save.data.navigator = {
@@ -2148,6 +3346,7 @@ function navigatorProfile() {
       highestTier: 0,
       highestDogTier: 0,
       board: Array(NAV_GRID_CELLS).fill(null),
+      requests: [],
       generators: ["snackBag"],
     };
   }
@@ -2159,7 +3358,9 @@ function navigatorProfile() {
   if (typeof nav.mergeCount !== "number" || !Number.isFinite(nav.mergeCount)) nav.mergeCount = 0;
   if (typeof nav.highestTier !== "number" || !Number.isFinite(nav.highestTier)) nav.highestTier = 0;
   if (typeof nav.highestDogTier !== "number" || !Number.isFinite(nav.highestDogTier)) nav.highestDogTier = 0;
+  if (!Array.isArray(nav.requests)) nav.requests = [];
   normalizeMergeBoard(nav);
+  syncNavigatorRequests(nav);
   return nav;
 }
 
@@ -2219,6 +3420,117 @@ function navEnergyTimerText(nav) {
   return "+1 in " + formatNavClock(remaining);
 }
 
+function addNavigatorFuel(amount) {
+  const nav = syncNavigatorEnergy();
+  const before = nav.energy;
+  nav.energy = Math.min(NAV_ENERGY_CAP, nav.energy + Math.max(0, Math.floor(amount)));
+  if (nav.energy > before) nav.lastEnergyAt = Date.now();
+  return nav.energy - before;
+}
+
+function renderGasStation() {
+  const count = $("stationGasCount");
+  if (!count) return;
+  const nav = syncNavigatorEnergy();
+  const station = gasStationProfile();
+  const today = localDayKey();
+  const dailyClaimed = station.lastDailyFuelDay === today;
+  const tankFull = nav.energy >= NAV_ENERGY_CAP;
+  const next = nextLockedCity();
+  const fuelFill = $("stationFuelFill");
+
+  count.textContent = nav.energy;
+  fuelFill.style.width = Math.round((nav.energy / NAV_ENERGY_CAP) * 100) + "%";
+
+  $("stationDailyTitle").textContent = dailyClaimed ? "Daily Fill-up Collected" : "Free Daily Fill-up";
+  $("stationDailyDetail").textContent = dailyClaimed
+    ? "Another can will be waiting tomorrow."
+    : "+" + GAS_STATION_DAILY_FUEL + " gas for the Navigator.";
+  $("stationDailyPrice").textContent = dailyClaimed ? "DONE" : "FREE";
+  $("stationDailyNote").textContent = tankFull && !dailyClaimed
+    ? "Tank is full. Come back after a snack run to claim today's can."
+    : (dailyClaimed ? "A fresh can comes back tomorrow." : "Stop in once a day for a free gas can.");
+  $("dailyFuelClaim").disabled = dailyClaimed || tankFull;
+
+  const mapButton = $("buyRouteMap");
+  if (next) {
+    $("stationMapTitle").textContent = next.name + " Paper Map";
+    $("stationMapDetail").textContent = "Open the next route stop with miles you have earned.";
+    $("stationMapPrice").textContent = next.cost + " mi";
+    mapButton.disabled = Save.miles < next.cost;
+    $("stationPassTitle").textContent = next.name + " Route Pass";
+    $("stationPassDetail").textContent = "Early unlock preview. Checkout comes with the real store.";
+  } else {
+    $("stationMapTitle").textContent = "Route Complete";
+    $("stationMapDetail").textContent = "Every city on this coast-to-coast map is open.";
+    $("stationMapPrice").textContent = "DONE";
+    mapButton.disabled = true;
+    $("stationPassTitle").textContent = "All Routes Open";
+    $("stationPassDetail").textContent = "More roads will be stocked here later.";
+  }
+
+  $("stationCanDetail").textContent = tankFull
+    ? "Tank is full. Save your miles for the next stop."
+    : "Add " + GAS_STATION_ROADSIDE_FUEL + " gas to Navigator.";
+  $("stationSupplyNote").textContent = Save.miles < GAS_STATION_ROADSIDE_COST && !tankFull
+    ? "Drive " + (GAS_STATION_ROADSIDE_COST - Save.miles) + " more miles for a roadside can."
+    : "Keep a little fuel in reserve for snack emergencies.";
+  $("buyFuelCan").disabled = tankFull || Save.miles < GAS_STATION_ROADSIDE_COST;
+}
+
+function claimDailyFuel() {
+  const station = gasStationProfile();
+  const today = localDayKey();
+  if (station.lastDailyFuelDay === today) {
+    showToast("Today's free gas can is already packed.");
+    return;
+  }
+  const added = addNavigatorFuel(GAS_STATION_DAILY_FUEL);
+  if (!added) {
+    showToast("Navigator's tank is already full.");
+    return;
+  }
+  station.lastDailyFuelDay = today;
+  station.dailyFuelClaims += 1;
+  Save.persist();
+  renderAll();
+  showToast("Daily gas can added +" + added + " gas.");
+}
+
+function buyRoadsideFuel() {
+  const nav = syncNavigatorEnergy();
+  if (nav.energy >= NAV_ENERGY_CAP) {
+    showToast("Navigator's tank is already full.");
+    return;
+  }
+  if (Save.miles < GAS_STATION_ROADSIDE_COST || !Save.spendMiles(GAS_STATION_ROADSIDE_COST)) {
+    showToast("Need " + Math.max(0, GAS_STATION_ROADSIDE_COST - Save.miles) + " more miles for a roadside can.");
+    return;
+  }
+  const station = gasStationProfile();
+  const added = addNavigatorFuel(GAS_STATION_ROADSIDE_FUEL);
+  station.roadsideCanPurchases += 1;
+  Save.persist();
+  renderAll();
+  showToast("Roadside can added +" + added + " gas.");
+}
+
+function unlockNextRouteWithMap() {
+  const next = nextLockedCity();
+  if (!next) {
+    showToast("The whole route is already open.");
+    return;
+  }
+  if (Save.miles < next.cost || !Save.spendMiles(next.cost)) {
+    showToast("Need " + Math.max(0, next.cost - Save.miles) + " more miles for " + next.name + terminalPunctuation(next.name));
+    return;
+  }
+  Save.data.cities.push(next.id);
+  Save.persist();
+  renderAll();
+  showToast(next.id === "dc" ? "D.C. map unfolded. Navigator ready." : next.name + " map unfolded.");
+}
+
 function snackTier(tier) {
   return snackItem(tier).def;
 }
@@ -2228,12 +3540,22 @@ function snackIcon(tier) {
   return '<span class="snack-icon snack-' + item.def.id + ' snack-branch-' + item.branch + '" aria-hidden="true"></span>';
 }
 
+function mergeCellGridStyle(index, footprint = { cols: 1, rows: 1 }) {
+  const row = Math.floor(index / NAV_GRID_COLS) + 1;
+  const col = (index % NAV_GRID_COLS) + 1;
+  return 'grid-column:' + col + ' / span ' + footprint.cols + ';grid-row:' + row + ' / span ' + footprint.rows + ';';
+}
+
+function requestBubbleText(value) {
+  const item = snackItem(value);
+  return item.branch === "dog" ? "Treat, please" : "I'm hungry";
+}
+
 function requesterRequestValue(nav, requester, index) {
-  if (requester.branch === "dog") return encodeSnack("dog", nav.highestDogTier || 0);
-  const humanRequesters = NAV_REQUESTERS.filter((item) => item.branch === "human");
-  const humanIndex = Math.max(0, humanRequesters.findIndex((item) => item.id === requester.id));
-  const highest = boundedSnackTier("human", nav.highestTier || 0);
-  return encodeSnack("human", highest - (humanRequesters.length - 1 - humanIndex));
+  const request = activeRequestForRequester(nav, requester.id);
+  const values = requestValues(request);
+  if (values.length) return values[0];
+  return requestValueForRequester(nav, requester);
 }
 
 function requesterById(id) {
@@ -2243,13 +3565,28 @@ function requesterById(id) {
 function renderKidRequests(nav, unlocked) {
   const row = $("navKidRequests");
   if (!row) return;
-  row.innerHTML = NAV_REQUESTERS.map((kid, index) => {
-    const value = unlocked ? requesterRequestValue(nav, kid, index) : encodeSnack(kid.branch, 0);
-    const snack = snackTier(value);
+  const requests = unlocked ? syncNavigatorRequests(nav) : NAV_REQUESTERS.slice(0, NAV_ACTIVE_REQUEST_COUNT).map((requester) => ({
+    requesterId: requester.id,
+    values: [encodeSnack(requester.branch, 0)],
+  }));
+  const renderKey = [
+    unlocked ? "on" : "off",
+    requests.map((request) => request.requesterId + ":" + requestValues(request).join(",")).join("|"),
+  ].join(":");
+  if (row.dataset.requestRenderKey === renderKey && row.children.length === requests.length) return;
+  row.dataset.requestRenderKey = renderKey;
+  row.innerHTML = requests.map((request, index) => {
+    const kid = requesterById(request.requesterId) || NAV_REQUESTERS[index] || NAV_REQUESTERS[0];
+    const values = requestValues(request);
+    const firstValue = values[0] ?? encodeSnack(kid.branch, 0);
+    const bubble = requestBubbleText(firstValue);
+    const wantsClass = "kid-wants want-count-" + Math.min(values.length || 1, NAV_MAX_REQUEST_ITEMS);
     return (
-      '<button class="kid-request request-' + kid.id + '" type="button" data-feed-target data-requester="' + kid.id + '"' + (unlocked ? "" : " disabled") + ' aria-label="' + kid.name + ' wants ' + snack.name + '">' +
+      '<button class="kid-request request-' + kid.id + '" type="button" data-feed-target data-requester="' + kid.id + '"' + (unlocked ? "" : " disabled") + ' aria-label="' + kid.name + ' wants ' + snackListText(values) + ' for ' + snackMilesTotal(values) + ' miles">' +
         '<span class="kid-head kid-' + kid.id + '"><img src="' + kid.img + '" alt="' + kid.name + '"></span>' +
-        '<span class="kid-wants">' + snackIcon(value) + '</span>' +
+        '<span class="kid-bubble">' + bubble + '</span>' +
+        '<span class="' + wantsClass + '">' + values.map(snackIcon).join("") + '</span>' +
+        '<span class="kid-reward">+' + snackMilesTotal(values) + ' mi</span>' +
       '</button>'
     );
   }).join("");
@@ -2288,6 +3625,75 @@ function launchSnackFromBag(cellIndex, tier) {
   setTimeout(() => flyer.remove?.(), 460);
 }
 
+function clearSnackHoldTimer() {
+  clearTimeout(snackHoldTimer);
+  snackHoldTimer = 0;
+}
+
+function positionSnackActionMenu(menu, x, y) {
+  const margin = 8;
+  const rect = menu.getBoundingClientRect();
+  const left = Math.min(Math.max(margin, x - rect.width / 2), Math.max(margin, window.innerWidth - rect.width - margin));
+  const top = Math.min(Math.max(margin, y - rect.height - 14), Math.max(margin, window.innerHeight - rect.height - margin));
+  menu.style.left = left + "px";
+  menu.style.top = top + "px";
+}
+
+function closeSnackActionMenu() {
+  const menu = $("snackActionMenu");
+  if (menu) menu.classList.add("hidden");
+  snackActionCell = null;
+}
+
+function openSnackActionMenu(index, x, y) {
+  const nav = syncNavigatorEnergy();
+  const value = nav.board[index];
+  const menu = $("snackActionMenu");
+  if (!menu || value === null) return;
+  snackActionCell = index;
+  selectedMergeCell = index;
+  const give = $("snackActionGive");
+  if (give) {
+    const match = matchingRequestForValue(nav, value);
+    give.disabled = !match;
+    give.textContent = "Give";
+  }
+  menu.classList.remove("hidden");
+  requestAnimationFrame(() => positionSnackActionMenu(menu, x, y));
+  renderNavigator();
+}
+
+function giveSnackFromActionMenu() {
+  if (snackActionCell === null) return;
+  const nav = syncNavigatorEnergy();
+  const request = matchingRequestForValue(nav, nav.board[snackActionCell]);
+  const cell = snackActionCell;
+  closeSnackActionMenu();
+  if (!request) {
+    selectedMergeCell = cell;
+    renderNavigator();
+    showToast("No one wants that snack yet.");
+    return;
+  }
+  feedRequesterFromCell(cell, request.requesterId);
+}
+
+function trashSnackFromActionMenu() {
+  if (snackActionCell === null) return;
+  const nav = syncNavigatorEnergy();
+  const cell = snackActionCell;
+  const value = nav.board[cell];
+  closeSnackActionMenu();
+  if (value === null) return;
+  nav.board[cell] = null;
+  selectedMergeCell = null;
+  bornMergeCell = null;
+  nav.lastMessage = snackTier(value).name + " tossed.";
+  Save.persist();
+  renderNavigator();
+  showToast(nav.lastMessage);
+}
+
 function clearDragTarget() {
   if (!dragState || !dragState.target) return;
   const previous = dragState.target.type === "request"
@@ -2300,7 +3706,10 @@ function clearDragTarget() {
 function dragTargetFromNode(node) {
   if (!node) return null;
   if (node.dataset.feedTarget !== undefined) return { type: "request", requesterId: node.dataset.requester };
-  if (node.dataset.mergeCell !== undefined) return { type: "cell", index: Number(node.dataset.mergeCell) };
+  if (node.dataset.mergeCell !== undefined) {
+    const index = node.dataset.coveredBy !== undefined ? Number(node.dataset.coveredBy) : Number(node.dataset.mergeCell);
+    return { type: "cell", index };
+  }
   return null;
 }
 
@@ -2317,14 +3726,20 @@ function updateDragTarget(x, y) {
   clearDragTarget();
   if (nextTarget) {
     dragState.target = nextTarget;
-    node.classList.add("drop-target");
+    const highlight = nextTarget.type === "cell"
+      ? document.querySelector?.('[data-merge-cell="' + nextTarget.index + '"]') || node
+      : node;
+    highlight.classList.add("drop-target");
   }
 }
 
 function updateDragGhost(event) {
   if (!dragState) return;
   const point = pointFromEvent(event);
-  dragState.moved = dragState.moved || Math.hypot(point.x - dragState.startX, point.y - dragState.startY) > 5;
+  if (Math.hypot(point.x - dragState.startX, point.y - dragState.startY) > 5) {
+    dragState.moved = true;
+    clearSnackHoldTimer();
+  }
   setSnackElementPosition(dragState.ghost, point.x, point.y);
   updateDragTarget(point.x, point.y);
 }
@@ -2337,6 +3752,14 @@ function completeDraggedSnack(sourceIndex, targetIndex) {
   if (sourceTier === null) return false;
 
   if (targetTier === null) {
+    if (!canPlaceSnackAt(nav, targetIndex, sourceTier, [sourceIndex])) {
+      selectedMergeCell = sourceIndex;
+      nav.lastMessage = "That snack needs more open grid space.";
+      Save.persist();
+      renderNavigator();
+      showToast(nav.lastMessage);
+      return false;
+    }
     nav.board[targetIndex] = sourceTier;
     nav.board[sourceIndex] = null;
     bornMergeCell = targetIndex;
@@ -2357,6 +3780,14 @@ function completeDraggedSnack(sourceIndex, targetIndex) {
   }
 
   const nextTier = nextSnackValue(sourceTier);
+  if (!canPlaceSnackAt(nav, targetIndex, nextTier, [sourceIndex, targetIndex])) {
+    selectedMergeCell = sourceIndex;
+    nav.lastMessage = "Make room before that snack grows.";
+    Save.persist();
+    renderNavigator();
+    showToast(nav.lastMessage);
+    return false;
+  }
   nav.board[targetIndex] = nextTier;
   nav.board[sourceIndex] = null;
   nav.mergeCount = (nav.mergeCount || 0) + 1;
@@ -2380,20 +3811,37 @@ function feedRequesterFromCell(sourceIndex, requesterId) {
   const nav = syncNavigatorEnergy();
   const value = nav.board[sourceIndex];
   if (!requester || value === null) return false;
-  const wanted = requesterRequestValue(nav, requester, 0);
-  if (value !== wanted) {
+  const activeRequest = activeRequestForRequester(nav, requester.id);
+  const wantedValues = activeRequest ? requestValues(activeRequest) : [requesterRequestValue(nav, requester, 0)];
+  const matchIndex = wantedValues.indexOf(value);
+  if (matchIndex === -1) {
     selectedMergeCell = sourceIndex;
-    nav.lastMessage = requester.name + " wants " + snackTier(wanted).name + ".";
+    nav.lastMessage = requester.name + " wants " + snackListText(wantedValues) + ".";
     Save.persist();
     renderNavigator();
     showToast(nav.lastMessage);
     return false;
   }
+  const milesEarned = snackFeedMiles(value);
+  const snackName = snackTier(value).name;
+  const remainingValues = wantedValues.slice();
+  remainingValues.splice(matchIndex, 1);
   nav.board[sourceIndex] = null;
   nav.fedCount = (nav.fedCount || 0) + 1;
   selectedMergeCell = null;
-  nav.lastMessage = requester.name + " got " + snackTier(value).name + ".";
-  Save.persist();
+  if (activeRequest && remainingValues.length) {
+    activeRequest.values = remainingValues;
+    delete activeRequest.value;
+    nav.lastMessage = requester.name + " got " + snackName + ". " + remainingValues.length + " left. +" + milesEarned + " mi.";
+  } else {
+    nav.lastMessage = requester.name + " got " + snackName + ". Order done. +" + milesEarned + " mi.";
+    replaceNavigatorRequest(nav, requester.id);
+  }
+  if (typeof Save.addMiles === "function") Save.addMiles(milesEarned);
+  else {
+    Save.data.miles = Math.max(0, (Save.data.miles || 0) + milesEarned);
+    Save.persist();
+  }
   renderAll();
   showToast(nav.lastMessage);
   return true;
@@ -2407,6 +3855,7 @@ function completeSnackDrop(sourceIndex, target) {
 
 function startSnackDrag(event, cell) {
   if (!isNavigatorUnlocked() || event.button > 0) return;
+  closeSnackActionMenu();
   const index = Number(cell.dataset.mergeCell);
   const nav = syncNavigatorEnergy();
   const tier = nav.board[index];
@@ -2432,14 +3881,23 @@ function startSnackDrag(event, cell) {
   document.addEventListener("pointermove", onSnackPointerMove);
   document.addEventListener("pointerup", onSnackPointerUp);
   document.addEventListener("pointercancel", onSnackPointerCancel);
+  clearSnackHoldTimer();
+  snackHoldTimer = setTimeout(() => {
+    if (!dragState || dragState.moved) return;
+    const state = dragState;
+    const menuX = state.startX;
+    const menuY = state.startY;
+    const menuCell = state.sourceIndex;
+    teardownSnackDrag();
+    openSnackActionMenu(menuCell, menuX, menuY);
+  }, NAV_SNACK_HOLD_MS);
   event.preventDefault();
 }
 
-function finishSnackDrag(event, canceled) {
+function teardownSnackDrag() {
   if (!dragState) return;
-  updateDragGhost(event);
   const state = dragState;
-  const target = state.target;
+  clearSnackHoldTimer();
   clearDragTarget();
   state.sourceEl?.classList.remove("drag-source");
   state.ghost?.remove?.();
@@ -2447,6 +3905,15 @@ function finishSnackDrag(event, canceled) {
   document.removeEventListener("pointerup", onSnackPointerUp);
   document.removeEventListener("pointercancel", onSnackPointerCancel);
   dragState = null;
+  return state;
+}
+
+function finishSnackDrag(event, canceled) {
+  if (!dragState) return;
+  updateDragGhost(event);
+  const state = dragState;
+  const target = state.target;
+  teardownSnackDrag();
   if (!canceled && state.moved) {
     suppressNextGridClick = true;
     completeSnackDrop(state.sourceIndex, target);
@@ -2468,13 +3935,14 @@ function onSnackPointerCancel(event) {
 }
 
 function filledBoardCount(nav) {
-  return nav.board.reduce((count, cell) => count + (cell === null ? 0 : 1), 0);
+  return occupiedBoardCount(nav);
 }
 
 function emptyBoardCells(nav) {
   const cells = [];
+  const covered = occupiedCellMap(nav);
   nav.board.forEach((cell, index) => {
-    if (cell === null) cells.push(index);
+    if (cell === null && !covered.has(index)) cells.push(index);
   });
   return cells;
 }
@@ -2482,17 +3950,28 @@ function emptyBoardCells(nav) {
 function renderMergeBoard(nav, unlocked) {
   const grid = $("navMergeGrid");
   const bornCell = typeof bornMergeCell === "number" ? bornMergeCell : -1;
+  const covered = occupiedCellMap(nav);
   grid.innerHTML = nav.board.map((tier, index) => {
+    const coveredBy = tier === null ? covered.get(index) : undefined;
+    const coveredOnly = coveredBy !== undefined;
     const filled = tier !== null;
     const snack = filled ? snackTier(tier) : null;
+    const footprint = filled ? snackFootprint(tier) : { cols: 1, rows: 1, className: "", label: "" };
     const classes = [
       "merge-cell",
       filled ? "filled" : "empty",
+      coveredOnly ? "covered" : "",
+      filled ? footprint.className : "",
       selectedMergeCell === index ? "selected" : "",
       bornCell === index ? "born" : "",
     ].filter(Boolean).join(" ");
+    const coveredAttr = coveredOnly ? ' data-covered-by="' + coveredBy + '"' : "";
+    const disabled = !unlocked ? " disabled" : "";
+    const label = filled
+      ? snack.name + (footprint.label === "single" ? "" : " (" + footprint.label + ")")
+      : (coveredOnly ? "Space used by " + snackTier(nav.board[coveredBy]).name : "Empty");
     return (
-      '<button class="' + classes + '" type="button" role="gridcell" data-merge-cell="' + index + '"' + (unlocked ? "" : " disabled") + ' aria-label="' + (filled ? snack.name : "Empty") + '">' +
+      '<button class="' + classes + '" type="button" role="gridcell" data-merge-cell="' + index + '"' + coveredAttr + disabled + ' style="' + mergeCellGridStyle(index, footprint) + '" aria-label="' + label + '">' +
         (filled ? snackIcon(tier) : "") +
       '</button>'
     );
@@ -2506,34 +3985,23 @@ function renderNavigator() {
   const game = $("navigatorGame");
   if (!game) return;
   game.classList.toggle("locked", !unlocked);
-  $("navigatorStatus").textContent = unlocked
-    ? "Snack duty live"
-    : "Unlock D.C. to open Navigator mode.";
-  $("navGeneratorStatus").textContent = unlocked ? "Snack bag online" : "D.C. locked";
   $("navEnergyCount").textContent = nav.energy;
   $("navEnergyTimer").textContent = navEnergyTimerText(nav);
   $("snackBagMeta").textContent = nav.energy >= NAV_SNACK_COST
-    ? NAV_SNACK_COST + " energy"
+    ? NAV_SNACK_COST + " gas"
     : "needs " + (NAV_SNACK_COST - nav.energy);
   $("snackBagGenerator").disabled = !unlocked;
-  const filled = filledBoardCount(nav);
-  $("navBoardCount").textContent = filled + "/" + NAV_GRID_CELLS;
-  $("navMergeCount").textContent = nav.mergeCount || 0;
-  $("navBestSnack").textContent = bestSnackShort(nav);
-  $("navBagUses").textContent = nav.snackBagUses || 0;
   renderKidRequests(nav, unlocked);
   if (!dragState) renderMergeBoard(nav, unlocked);
 
   if (!unlocked) {
     selectedMergeCell = null;
-    $("navMergeLog").textContent = "Locked at D.C.";
     return;
   }
-
-  $("navMergeLog").textContent = nav.lastMessage || (filled ? "I'm hungry." : "I'm hungry.");
 }
 
 function rummageSnackBag() {
+  closeSnackActionMenu();
   if (!isNavigatorUnlocked()) {
     showToast("Unlock D.C. to open Navigator mode.");
     renderNavigator();
@@ -2541,7 +4009,7 @@ function rummageSnackBag() {
   }
   const nav = syncNavigatorEnergy();
   if (nav.energy < NAV_SNACK_COST) {
-    showToast("Snack bag needs " + (NAV_SNACK_COST - nav.energy) + " more energy.");
+    showToast("Snack bag needs " + (NAV_SNACK_COST - nav.energy) + " more gas.");
     renderNavigator();
     return;
   }
@@ -2568,6 +4036,7 @@ function rummageSnackBag() {
 }
 
 function handleMergeCell(index) {
+  closeSnackActionMenu();
   if (!isNavigatorUnlocked()) {
     showToast("Unlock D.C. to open Navigator mode.");
     renderNavigator();
@@ -2576,6 +4045,8 @@ function handleMergeCell(index) {
   const nav = syncNavigatorEnergy();
   index = Number(index);
   if (!Number.isInteger(index) || index < 0 || index >= NAV_GRID_CELLS) return;
+  const coveredBy = coveredAnchorForCell(nav, index);
+  if (coveredBy !== undefined) index = coveredBy;
   const tier = nav.board[index];
 
   if (selectedMergeCell === index) {
@@ -2592,6 +4063,13 @@ function handleMergeCell(index) {
 
   const selectedTier = nav.board[selectedMergeCell];
   if (tier === null) {
+    if (!canPlaceSnackAt(nav, index, selectedTier, [selectedMergeCell])) {
+      nav.lastMessage = "That snack needs more open grid space.";
+      Save.persist();
+      renderNavigator();
+      showToast(nav.lastMessage);
+      return;
+    }
     nav.board[index] = selectedTier;
     nav.board[selectedMergeCell] = null;
     bornMergeCell = index;
@@ -2611,6 +4089,13 @@ function handleMergeCell(index) {
   }
 
   const nextTier = nextSnackValue(tier);
+  if (!canPlaceSnackAt(nav, index, nextTier, [selectedMergeCell, index])) {
+    nav.lastMessage = "Make room before that snack grows.";
+    Save.persist();
+    renderNavigator();
+    showToast(nav.lastMessage);
+    return;
+  }
   nav.board[index] = nextTier;
   nav.board[selectedMergeCell] = null;
   nav.mergeCount = (nav.mergeCount || 0) + 1;
@@ -2632,11 +4117,99 @@ function goTo(href, label, color) {
 }
 
 function setScreen(screen) {
+  closeSnackActionMenu();
   document.querySelectorAll("[data-screen]").forEach((node) => {
     node.classList.toggle("hidden", node.dataset.screen !== screen);
   });
   if (screen === "hub") $("mapScroll").focus?.();
-  if (screen === "navigator") renderNavigator();
+  if (screen === "navigator") {
+    renderNavigator();
+    showOnboarding("navigator");
+  }
+  if (screen === "gasstation") {
+    renderGasStation();
+    showOnboarding("gasstation");
+  }
+  if (screen === "dealership") showOnboarding("dealership");
+  if (screen === "playtest") renderPlaytest();
+}
+
+function makePlaytestProfile(kind) {
+  const profile = Save.freshData();
+  profile.tutorials = { intro: true, runner: true, navigator: true, driver: true, dealership: true, gasstation: true };
+  if (kind === "fresh") return profile;
+
+  profile.cities = ["nyc", "dc"];
+  profile.miles = 900;
+  profile.navigator.energy = 72;
+  profile.navigator.board[0] = 0;
+  profile.navigator.board[1] = 0;
+  profile.navigator.board[6] = 1;
+  profile.navigator.board[7] = 1;
+  profile.navigator.board[14] = 2;
+  profile.collected = PLAYTEST_SONGS.slice(0, 2);
+
+  if (kind === "navigator") return profile;
+
+  profile.cities = ["nyc", "dc", "farm", "desert", "la"];
+  profile.miles = 4200;
+  profile.cars = ["minivan", "suv"];
+  profile.currentCar = "suv";
+  profile.settings.station = "00s";
+  profile.collected = PLAYTEST_SONGS.slice();
+  profile.difficulties = ["easy", "medium", "hard"];
+  if (kind === "la") return profile;
+
+  profile.cities = ROUTE.map((city) => city.id);
+  profile.miles = 9999;
+  profile.cars = ["minivan", "suv", "wagon", "customVan"];
+  profile.currentCar = "customVan";
+  profile.settings.station = "70s";
+  profile.navigator.energy = 100;
+  profile.navigator.board[20] = 3;
+  profile.navigator.board[21] = 3;
+  return profile;
+}
+
+function renderPlaytest() {
+  const status = $("playtestStatus");
+  if (!status) return;
+  status.textContent = Save.isPlaytest && Save.isPlaytest()
+    ? "Test save active. Your real trip is backed up."
+    : "Choose a test save. Your real trip stays protected.";
+}
+
+function applyPlaytestProfile(kind) {
+  if (!Save.applyPlaytest || !Save.applyPlaytest(makePlaytestProfile(kind))) return;
+  renderAll();
+  if (kind === "fresh") {
+    setScreen("hub");
+    showOnboarding("intro");
+    return;
+  }
+  renderPlaytest();
+}
+
+function openPlaytestScene(screen) {
+  applyPlaytestProfile("all");
+  if (screen === "driver") {
+    goTo("tap/index.html", "TUNING IN...", "#ffd23f");
+    return;
+  }
+  setScreen(screen);
+}
+
+function openRunnerPreview(cityId) {
+  applyPlaytestProfile("all");
+  goTo("index.html?preview=" + encodeURIComponent(cityId), "LOADING " + cityId.toUpperCase() + "...", "#ffd23f");
+}
+
+function restoreRealTrip() {
+  if (!Save.restoreRealProfile || !Save.restoreRealProfile()) {
+    showToast("No local playtest save is active.");
+  }
+  renderAll();
+  renderPlaytest();
 }
 
 function renderStats() {
@@ -2707,6 +4280,7 @@ function renderAll() {
   renderCities();
   renderRadio();
   renderModeScreens();
+  renderGasStation();
   renderModes();
 }
 
@@ -2736,7 +4310,9 @@ function tryUnlockCity(button) {
   showToast(city.id === "dc" ? "D.C. unlocked. Navigator ready." : city.name + " unlocked.");
 }
 
-$("startTrip").addEventListener("click", () => goTo("index.html", "STARTING ENGINE...", "#ffd23f"));
+$("startTrip").addEventListener("click", () => {
+  showOnboarding("runner", () => goTo("index.html", "STARTING ENGINE...", "#ffd23f"));
+});
 
 document.querySelectorAll("[data-city]").forEach((button) => {
   button.addEventListener("click", () => tryUnlockCity(button));
@@ -2746,11 +4322,13 @@ document.querySelectorAll("[data-href]").forEach((button) => {
   button.addEventListener("click", () => {
     if (button.classList.contains("disabled")) {
       shake(button);
-      if (button.id === "dadDock") showToast("Complete a radio song in Runner to unlock Dad Mode.");
+      if (button.id === "dadDock") showToast("Complete a radio song in Runner to unlock Driver.");
       else showToast("That stop is still locked.");
       return;
     }
-    goTo(button.dataset.href, button.dataset.label, button.dataset.color);
+    const open = () => goTo(button.dataset.href, button.dataset.label, button.dataset.color);
+    if (button.id === "dadDock") showOnboarding("driver", open);
+    else open();
   });
 });
 
@@ -2766,7 +4344,17 @@ document.querySelectorAll("[data-screen-target]").forEach((button) => {
   });
 });
 
+$("dailyFuelClaim").addEventListener("click", claimDailyFuel);
+$("buyFuelCan").addEventListener("click", buyRoadsideFuel);
+$("buyRouteMap").addEventListener("click", unlockNextRouteWithMap);
+$("routePassPreview").addEventListener("click", () => {
+  showToast("Route Pass checkout is a preview for now. Paper maps use miles today.");
+});
+
 $("snackBagGenerator").addEventListener("click", rummageSnackBag);
+
+$("snackActionGive").addEventListener("click", giveSnackFromActionMenu);
+$("snackActionTrash").addEventListener("click", trashSnackFromActionMenu);
 
 $("navMergeGrid").addEventListener("click", (event) => {
   if (suppressNextGridClick) return;
@@ -2782,6 +4370,7 @@ $("navMergeGrid").addEventListener("pointerdown", (event) => {
 });
 
 $("navKidRequests").addEventListener("click", (event) => {
+  closeSnackActionMenu();
   const request = event.target.closest("[data-requester]");
   if (!request) return;
   if (selectedMergeCell === null) {
@@ -2789,6 +4378,13 @@ $("navKidRequests").addEventListener("click", (event) => {
     return;
   }
   feedRequesterFromCell(selectedMergeCell, request.dataset.requester);
+});
+
+document.addEventListener("pointerdown", (event) => {
+  const menu = $("snackActionMenu");
+  if (!menu || menu.classList.contains("hidden")) return;
+  if (event.target.closest("#snackActionMenu")) return;
+  closeSnackActionMenu();
 });
 
 document.querySelectorAll("[data-future-generator]").forEach((button) => {
@@ -2817,9 +4413,41 @@ $("radioDock").addEventListener("click", () => {
   renderRadio();
 });
 
+$("onboardingSkip").addEventListener("click", finishOnboarding);
+$("onboardingContinue").addEventListener("click", finishOnboarding);
+$("onboardingVideoSkip").addEventListener("click", finishOnboarding);
+
+document.querySelectorAll("[data-playtest-profile]").forEach((button) => {
+  button.addEventListener("click", () => applyPlaytestProfile(button.dataset.playtestProfile));
+});
+document.querySelectorAll("[data-playtest-screen]").forEach((button) => {
+  button.addEventListener("click", () => openPlaytestScene(button.dataset.playtestScreen));
+});
+document.querySelectorAll("[data-playtest-city]").forEach((button) => {
+  button.addEventListener("click", () => openRunnerPreview(button.dataset.playtestCity));
+});
+$("restoreRealTrip").addEventListener("click", restoreRealTrip);
+
+function clearPlaytestHold() {
+  if (playtestHoldTimer) clearTimeout(playtestHoldTimer);
+  playtestHoldTimer = 0;
+}
+$("logoPill").addEventListener("pointerdown", (event) => {
+  if (event.button && event.pointerType === "mouse") return;
+  clearPlaytestHold();
+  playtestHoldTimer = setTimeout(() => {
+    playtestHoldTimer = 0;
+    setScreen("playtest");
+  }, 700);
+});
+["pointerup", "pointercancel", "pointerleave"].forEach((type) => {
+  $("logoPill").addEventListener(type, clearPlaytestHold);
+});
+
 renderAll();
 window.addEventListener("rtr-save-restored", renderAll);
 setScreen("hub");
+setTimeout(() => showOnboarding("intro"), 220);
 setInterval(renderNavigator, 1000);
 </script>
 </body>

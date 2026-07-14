@@ -27,7 +27,7 @@ function appHome(html) {
   return html
     .replaceAll('data-href="index.html#mixtape"', 'data-href="runner.html#mixtape"')
     .replaceAll('data-href="index.html"', 'data-href="runner.html"')
-    .replaceAll('goTo("index.html"', 'goTo("runner.html"');
+    .replaceAll('goTo("index.html', 'goTo("runner.html');
 }
 
 function appRunner(html) {
@@ -47,5 +47,6 @@ copyFile(path.join(root, "icon.png"), path.join(out, "icon.png"));
 copyDir(path.join(root, "assets"), path.join(out, "assets"));
 copyDir(path.join(root, "radio"), path.join(out, "radio"));
 copyDir(path.join(root, "tap"), path.join(out, "tap"));
+copyDir(path.join(root, "videos"), path.join(out, "videos"));
 
 console.log("Prepared Capacitor web bundle at app/www");
