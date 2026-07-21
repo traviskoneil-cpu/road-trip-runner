@@ -1,0 +1,346 @@
+{
+  "model": "eleven_v3",
+  "voice": "Rick 'Hurricane' Hammers",
+  "latest_run_character_cost": 1060,
+  "error": null,
+  "clips": [
+    {
+      "file": "80s_id_1.mp3",
+      "status": "existing",
+      "script": "POWER ONE-OH-FOUR! KRZR! THE RAZOR! MAXIMUM VOLTAGE, MINIMUM MERCY!"
+    },
+    {
+      "file": "80s_id_2.mp3",
+      "status": "existing",
+      "script": "If your speakers aren't smoking, TURN IT UP! Rick Hurricane Hammers on THE RAZOR!"
+    },
+    {
+      "file": "80s_ad_1.mp3",
+      "status": "existing",
+      "script": "THIS SATURDAY at the Tri-County Fairgrounds! MONSTER TRUCKS! LASERS! A GUY WHO JUMPS OVER STUFF! Five bucks! SATURDAY!"
+    },
+    {
+      "file": "80s_ad_2.mp3",
+      "status": "existing",
+      "script": "Laser Tag Larry's grand opening! First hundred customers get a FREE HEADBAND! Larry's, next to the mall! OBVIOUSLY!"
+    },
+    {
+      "file": "80s_intro_afterhoursarcade_1.mp3",
+      "status": "existing",
+      "script": "Security gate DOWN, prize tickets FLYING, and somebody just took the crown! Electric Marquis with AFTER HOURS ARCADE!"
+    },
+    {
+      "file": "80s_intro_afterhoursarcade_2.mp3",
+      "status": "existing",
+      "script": "Quarters stacked! Leaderboard challenged! Falsetto fully ARMED! Electric Marquis is taking us to the AFTER HOURS ARCADE!"
+    },
+    {
+      "file": "80s_outro_afterhoursarcade_1.mp3",
+      "status": "existing",
+      "script": "Electric Marquis! AFTER HOURS ARCADE! Pack-Man has filed a formal complaint!"
+    },
+    {
+      "file": "80s_intro_americandream_1.mp3",
+      "status": "existing",
+      "script": "A few dollars, a tip jar, and enough hope to light the whole STATE LINE! Mercy County with AMERICAN DREAM!"
+    },
+    {
+      "file": "80s_intro_americandream_2.mp3",
+      "status": "existing",
+      "script": "She walked into a one-bar town and said, I AM STARTING OVER TONIGHT! Mercy County! AMERICAN DREAM!"
+    },
+    {
+      "file": "80s_outro_americandream_1.mp3",
+      "status": "existing",
+      "script": "Mercy County with AMERICAN DREAM! A little freedom, a little fire, and a LOT of saxophone!"
+    },
+    {
+      "file": "80s_intro_checktherhime_1.mp3",
+      "status": "existing",
+      "script": "CHECK ONE-TWO! The first generation is here to school the whole nation! Locker Room Kings! CHECK THE RHIME!"
+    },
+    {
+      "file": "80s_intro_checktherhime_2.mp3",
+      "status": "existing",
+      "script": "All natural! No preservatives! Fresh yesterday, today, AND tomorrow! Locker Room Kings with CHECK THE RHIME!"
+    },
+    {
+      "file": "80s_outro_checktherhime_1.mp3",
+      "status": "existing",
+      "script": "Locker Room Kings! CHECK THE RHIME! Twelve checks per chorus and every one CLEARED!"
+    },
+    {
+      "file": "80s_intro_forevernow_1.mp3",
+      "status": "existing",
+      "script": "Fireworks! Dynamite! A city exploding into OUTER SPACE! Chrome Viper makes love permanent with FOREVER NOW!"
+    },
+    {
+      "file": "80s_intro_forevernow_2.mp3",
+      "status": "existing",
+      "script": "When you cannot find the way back, FOLLOW THE HIGHWAY TRACK! Chrome Viper! FOREVER NOW!"
+    },
+    {
+      "file": "80s_outro_forevernow_1.mp3",
+      "status": "existing",
+      "script": "Chrome Viper with FOREVER NOW! Blaze, Dagger, Torque, and Kevin remain LEGALLY IMMORTAL!"
+    },
+    {
+      "file": "80s_intro_glimmers_1.mp3",
+      "status": "existing",
+      "script": "The doubters said NOT YOU, NOT YET! Stallion Force answered with a stadium full of IMPOSSIBLE DREAMS! GLIMMERS!"
+    },
+    {
+      "file": "80s_intro_glimmers_2.mp3",
+      "status": "existing",
+      "script": "The skyline is turning to FIRE and the high road is OPEN! Stallion Force with GLIMMERS!"
+    },
+    {
+      "file": "80s_outro_glimmers_1.mp3",
+      "status": "existing",
+      "script": "Stallion Force! GLIMMERS! If you saw the light, congratulations: the impossible is now POSSIBLE!"
+    },
+    {
+      "file": "80s_intro_highwindows_1.mp3",
+      "status": "existing",
+      "script": "Brick dust, rain-dark concrete, and one light burning over the whole city! Northbound Saints! HIGH WINDOWS!"
+    },
+    {
+      "file": "80s_intro_highwindows_2.mp3",
+      "status": "existing",
+      "script": "Every floor says turn around, but we keep looking UP! Northbound Saints with HIGH WINDOWS!"
+    },
+    {
+      "file": "80s_outro_highwindows_1.mp3",
+      "status": "existing",
+      "script": "Northbound Saints! HIGH WINDOWS! Pigeons rising like paper sparks and Hurricane Hammers getting EMOTIONAL!"
+    },
+    {
+      "file": "80s_intro_lastride_1.mp3",
+      "status": "existing",
+      "script": "Cracked mirror! Fog ahead! No stops until the end becomes the BEGINNING! Midnight Assembly with LAST RIDE!"
+    },
+    {
+      "file": "80s_intro_lastride_2.mp3",
+      "status": "existing",
+      "script": "We will never pass this way again, road warriors! Midnight Assembly is taking the LAST RIDE OUT OF TOWN!"
+    },
+    {
+      "file": "80s_outro_lastride_1.mp3",
+      "status": "existing",
+      "script": "Midnight Assembly! LAST RIDE! The rearview mirror survived, but it will never be the same!"
+    },
+    {
+      "file": "80s_intro_nightinneon_1.mp3",
+      "status": "existing",
+      "script": "Payphone ringing! Basement dancing! Arcade lights fully ENGAGED! Tiffany Blackout with NIGHT IN NEON!"
+    },
+    {
+      "file": "80s_intro_nightinneon_2.mp3",
+      "status": "existing",
+      "script": "A little too close, a little bit wrong, and ABSOLUTELY electric! Tiffany Blackout! NIGHT IN NEON!"
+    },
+    {
+      "file": "80s_outro_nightinneon_1.mp3",
+      "status": "existing",
+      "script": "Tiffany Blackout with NIGHT IN NEON! Ten out of ten payphones are still ringing!"
+    },
+    {
+      "file": "80s_intro_nightfall_1.mp3",
+      "status": "existing",
+      "script": "Red lights flashing and every step leading into the DARK! Neon Prophecy brings the NIGHTFALL!"
+    },
+    {
+      "file": "80s_intro_nightfall_2.mp3",
+      "status": "existing",
+      "script": "Like a bullet from a gun and one second from the end of it ALL! Neon Prophecy! NIGHTFALL!"
+    },
+    {
+      "file": "80s_outro_nightfall_1.mp3",
+      "status": "existing",
+      "script": "Neon Prophecy with NIGHTFALL! The city is gritty, the streetlights are sweating, and the pyramid is LOCKED!"
+    },
+    {
+      "file": "80s_intro_onlythewindowknows_1.mp3",
+      "status": "existing",
+      "script": "The hall phone rings, the rain comes down, and the truth is standing on the OTHER SIDE! Lila Hart! ONLY THE WINDOW KNOWS!"
+    },
+    {
+      "file": "80s_intro_onlythewindowknows_2.mp3",
+      "status": "existing",
+      "script": "Makeup on the towel! Dress on the chair! One powerhouse voice blowing the curtains OFF! Lila Hart!"
+    },
+    {
+      "file": "80s_outro_onlythewindowknows_1.mp3",
+      "status": "existing",
+      "script": "Lila Hart with ONLY THE WINDOW KNOWS! The whole world knows NOW!"
+    },
+    {
+      "file": "80s_intro_picturesintherain_1.mp3",
+      "status": "existing",
+      "script": "Wet photographs, a blue sundress, and handwriting that survived the STORM! The Glass Gardens! PICTURES IN THE RAIN!"
+    },
+    {
+      "file": "80s_intro_picturesintherain_2.mp3",
+      "status": "existing",
+      "script": "A shoebox of memories just blew across the garden wall! The Glass Gardens with PICTURES IN THE RAIN!"
+    },
+    {
+      "file": "80s_outro_picturesintherain_1.mp3",
+      "status": "existing",
+      "script": "The Glass Gardens! PICTURES IN THE RAIN! Somebody save the birthday candle!"
+    },
+    {
+      "file": "80s_intro_redlighton_1.mp3",
+      "status": "existing",
+      "script": "Hello from the dungeon! Do you READ ME up there? The Low Signals transmit with the RED LIGHT ON!"
+    },
+    {
+      "file": "80s_intro_redlighton_2.mp3",
+      "status": "existing",
+      "script": "Phantom, fraud, fever, or flicker from GOD? The Low Signals stay awake for you! RED LIGHT ON!"
+    },
+    {
+      "file": "80s_outro_redlighton_1.mp3",
+      "status": "existing",
+      "script": "The Low Signals with RED LIGHT ON! The transmission reached us and the snare hit filed paperwork!"
+    },
+    {
+      "file": "80s_intro_smallrevolutions_1.mp3",
+      "status": "existing",
+      "script": "One word breaks the ceiling! One hand turns the key! Paper Empire starts the SMALL REVOLUTIONS!"
+    },
+    {
+      "file": "80s_intro_smallrevolutions_2.mp3",
+      "status": "existing",
+      "script": "Office glass! Folded hands! A hundred ways to fall in line and ONE way to break OUT! Paper Empire!"
+    },
+    {
+      "file": "80s_outro_smallrevolutions_1.mp3",
+      "status": "existing",
+      "script": "Paper Empire with SMALL REVOLUTIONS! Quiet on the outside, DETONATING underneath!"
+    },
+    {
+      "file": "80s_intro_thedarker_1.mp3",
+      "status": "existing",
+      "script": "Smoke! Mirrors! Neon! And an unmistakable grin in the bathroom graffiti! Midnight Copy with THE DARKER!"
+    },
+    {
+      "file": "80s_intro_thedarker_2.mp3",
+      "status": "existing",
+      "script": "When the city falls asleep, the silhouettes come ALIVE! Midnight Copy! THE DARKER!"
+    },
+    {
+      "file": "80s_outro_thedarker_1.mp3",
+      "status": "existing",
+      "script": "Midnight Copy with THE DARKER! Once you see them, road warriors, you NEVER forget!"
+    },
+    {
+      "file": "80s_intro_whenyoulovedme_1.mp3",
+      "status": "generated",
+      "character_cost": 76,
+      "script": "[fast joyful gravelly 80s rock DJ] Piano first, heartbreak second, and a final chorus big enough to change the WEATHER! Roxanne Vale! WHEN YOU LOVED ME!"
+    },
+    {
+      "file": "80s_intro_whenyoulovedme_2.mp3",
+      "status": "generated",
+      "character_cost": 76,
+      "script": "[fast joyful gravelly 80s rock DJ] The storm is passing, the photograph is fading, and Roxanne Vale is about to LEVEL this frequency! WHEN YOU LOVED ME!"
+    },
+    {
+      "file": "80s_outro_whenyoulovedme_1.mp3",
+      "status": "generated",
+      "character_cost": 64,
+      "script": "[fast gravelly rock-DJ back-announce] Roxanne Vale with WHEN YOU LOVED ME! Hurricane Hammers is NOT crying! That is studio rain!"
+    },
+    {
+      "file": "80s_intro_withoutaword_1.mp3",
+      "status": "generated",
+      "character_cost": 64,
+      "script": "[fast joyful gravelly 80s rock DJ] Call it a jailbreak! Give them the slip! The Velcro Militia makes the escape WITHOUT A WORD!"
+    },
+    {
+      "file": "80s_intro_withoutaword_2.mp3",
+      "status": "generated",
+      "character_cost": 62,
+      "script": "[fast joyful gravelly 80s rock DJ] One step! A thousand miles! Two steps and we are walking in SUNSHINE! The Velcro Militia!"
+    },
+    {
+      "file": "80s_outro_withoutaword_1.mp3",
+      "status": "generated",
+      "character_cost": 62,
+      "script": "[fast gravelly rock-DJ back-announce] The Velcro Militia with WITHOUT A WORD! Their drummer remains a DEFINITELY HUMAN MAN!"
+    },
+    {
+      "file": "80s_intro_yourluckyjacket_1.mp3",
+      "status": "generated",
+      "character_cost": 75,
+      "script": "[fast joyful gravelly 80s rock DJ] Lipstick in the pocket! Glitter on the sleeve! Shoulder pads at MAXIMUM CAPACITY! Cassie Chrome! YOUR LUCKY JACKET!"
+    },
+    {
+      "file": "80s_intro_yourluckyjacket_2.mp3",
+      "status": "generated",
+      "character_cost": 74,
+      "script": "[fast joyful gravelly 80s rock DJ] She walked in like she owned the place, and the building signed over the DEED! Cassie Chrome! YOUR LUCKY JACKET!"
+    },
+    {
+      "file": "80s_outro_yourluckyjacket_1.mp3",
+      "status": "generated",
+      "character_cost": 59,
+      "script": "[fast gravelly rock-DJ back-announce] Cassie Chrome with YOUR LUCKY JACKET! It was lucky before; now it is LEGENDARY!"
+    },
+    {
+      "file": "80s_rain_1.mp3",
+      "status": "generated",
+      "character_cost": 45,
+      "script": "[urgent loud gravelly 80s DJ] STORM CELL INCOMING! The sky is doing a GUITAR SOLO! Hang on!"
+    },
+    {
+      "file": "80s_city_washingtondc_1.mp3",
+      "status": "generated",
+      "character_cost": 48,
+      "script": "[urgent loud gravelly 80s DJ] WASHINGTON, D.C.! Monuments up front, maximum voltage in the rear!"
+    },
+    {
+      "file": "80s_city_farmland_1.mp3",
+      "status": "generated",
+      "character_cost": 58,
+      "script": "[urgent loud gravelly 80s DJ] FARMLAND! Corn on the left, corn on the right, and THE RAZOR straight down the middle!"
+    },
+    {
+      "file": "80s_city_desert_1.mp3",
+      "status": "generated",
+      "character_cost": 44,
+      "script": "[urgent loud gravelly 80s DJ] THE DESERT! It is like the moon, but with SNAKES! Let's GO!"
+    },
+    {
+      "file": "80s_city_losangeles_1.mp3",
+      "status": "generated",
+      "character_cost": 52,
+      "script": "[urgent loud gravelly 80s DJ] LOS ANGELES! Neon, palm trees, and enough hairspray to alter the WEATHER!"
+    },
+    {
+      "file": "80s_city_sanfrancisco_1.mp3",
+      "status": "generated",
+      "character_cost": 48,
+      "script": "[urgent loud gravelly 80s DJ] SAN FRANCISCO! Hills ahead! Gravity just issued a formal CHALLENGE!"
+    },
+    {
+      "file": "80s_city_newyork_1.mp3",
+      "status": "generated",
+      "character_cost": 51,
+      "script": "[urgent loud gravelly 80s DJ] NEW YORK CITY! The buildings are HUGE! Turn it up until they get BIGGER!"
+    },
+    {
+      "file": "80s_unlock_skateboard_1.mp3",
+      "status": "generated",
+      "character_cost": 56,
+      "script": "[urgent loud gravelly 80s DJ] WHOA-HO-HO! Somebody unlocked a SKATEBOARD! Radical maneuvers are now AUTHORIZED!"
+    },
+    {
+      "file": "80s_unlock_motorcycle_1.mp3",
+      "status": "generated",
+      "character_cost": 46,
+      "script": "[urgent loud gravelly 80s DJ] TWO WHEELS! ONE ENGINE! ZERO MERCY! The motorcycle is UNLOCKED!"
+    }
+  ]
+}

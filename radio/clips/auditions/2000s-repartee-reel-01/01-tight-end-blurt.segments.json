@@ -1,0 +1,20 @@
+{
+  "voice_segments": [
+    {
+      "voice_id": "19akvrxzhb63VpcWo2Fv",
+      "start_time_seconds": 0.0,
+      "end_time_seconds": 9.839,
+      "character_start_index": 0,
+      "character_end_index": 175,
+      "dialogue_input_index": 0
+    },
+    {
+      "voice_id": "iktOP1l0mvjnb2nY1LSP",
+      "start_time_seconds": 9.839,
+      "end_time_seconds": 10.605,
+      "character_start_index": 175,
+      "character_end_index": 227,
+      "dialogue_input_index": 1
+    }
+  ]
+}

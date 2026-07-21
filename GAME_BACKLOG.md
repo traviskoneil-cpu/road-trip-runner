@@ -1,4 +1,4 @@
-# Road Trip Runner Backlog
+# Road Trip Arcade Backlog
 
 ## Secret Tracks
 
@@ -25,9 +25,38 @@ This is a future Runner event, not active gameplay yet.
 
 ## Store And Guides
 
-- Gas Station: active first pass with a daily free Navigator gas can, a
+- Gas Station: active first pass with a daily free Snack Stack gas can, a
   mileage-priced roadside refill, and a paper map that unlocks the next city.
   Route Pass cards are storefront previews only until real billing is added.
+- Gas Station music rack: add **Roadside Music Credits** as a song-unlock route
+  for players who want a larger rotation or are having trouble collecting a
+    particular song in Window Dash. One credit redeems one locked **core rotation**
+  song from a radio station the player has already unlocked. The credit is
+  format-neutral, but its art should match the tuned era/car: 8-track for the
+  '70s, cassette for the '80s, CD for the '90s, and an MP3-player/download card
+  for the '00s.
+  - Redeem credits from the Mixtape, not from a second song browser in the Gas
+    Station. A locked core-song card should show its station/era, genre, and
+    precomputed `m:ss` runtime while keeping the title, artist, cover, bio, and
+    playback hidden until it is collected. This preserves a little discovery
+    while still letting the player make an informed choice.
+  - Add `durationSeconds`, `catalogType` (`core` or `special`), and
+    `purchasable` metadata to each catalog entry. Do not inspect audio duration
+    at render time. Existing rotation tracks default to `core` and purchasable;
+    secret/achievement tracks must explicitly be `special` and never appear in
+    the redemption list.
+  - First-pass earning: grant one free credit on the first Gas Station visit,
+    one for each newly opened city, and one for each 10 unique U.S. plates.
+    Also sell one credit for **200 miles** as a repeatable mileage sink. These
+    numbers need playtest tuning alongside route-map and gas-can prices.
+  - Redeeming a credit should use the same collected-song entitlement as
+    finishing the track in Window Dash, so it immediately joins the Mixtape and
+    becomes playable in Wheel Jam. Store the credit balance and a small redemption
+    ledger in the shared save so later account sync can distinguish earned,
+    mileage-bought, and future paid grants.
+  - Do not sell individual songs for real money in the first pass. If paid music
+    packs arrive later, run them through the entitlement layer and preserve all
+    earned unlock paths.
 - Dealership: achievement route to earn cars plus an optional early-unlock path.
-- First-time mode guides: Driver has a Dad dialogue card now; wire in a Driver
+- First-time mode guides: Wheel Jam has a Dad dialogue card now; wire in a Wheel Jam
   video when that fourth clip is added to `videos/`.

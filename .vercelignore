@@ -1,0 +1,12 @@
+# Native build output is installed directly on devices; the web app serves the
+# source pages and shared assets from the repository root.
+android/
+ios/
+app/
+node_modules/
+.codex-image-tools/
+prototypes/qa/
+prototypes/references/
+radio/clips/auditions/
+scripts/
+*.md

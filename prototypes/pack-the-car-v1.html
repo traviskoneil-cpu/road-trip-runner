@@ -1,0 +1,1767 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#10162c">
+  <title>Pack the Car - Road Trip Arcade</title>
+  <style>
+    :root {
+      --ink: #f6f1df;
+      --muted: #aab4c8;
+      --night: #10162c;
+      --panel: #18233d;
+      --panel-2: #202d49;
+      --red: #ef476f;
+      --yellow: #ffd166;
+      --cyan: #54d6e5;
+      --line: rgba(255,255,255,.13);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { min-height: 100%; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 50% -15%, #2a3d66 0, transparent 38rem),
+        linear-gradient(180deg, #121a31 0%, #0b1021 100%);
+      overscroll-behavior: none;
+    }
+
+    button { font: inherit; }
+    button:focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
+
+    .app {
+      width: min(1120px, 100%);
+      margin: 0 auto;
+      padding: 18px clamp(12px, 3vw, 30px) 28px;
+    }
+
+    header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 14px;
+    }
+    .eyebrow {
+      color: var(--yellow);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+    }
+    h1 {
+      margin: 3px 0 0;
+      font-size: clamp(25px, 4vw, 42px);
+      line-height: .98;
+      letter-spacing: -.04em;
+      text-transform: uppercase;
+    }
+    h1 span { color: var(--red); }
+    .header-actions { display: flex; gap: 8px; }
+
+    .btn {
+      min-height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 0 14px;
+      color: var(--ink);
+      background: rgba(255,255,255,.06);
+      box-shadow: 0 3px 0 rgba(0,0,0,.25);
+      cursor: pointer;
+      font-weight: 900;
+      letter-spacing: .04em;
+    }
+    .btn:hover { background: rgba(255,255,255,.11); }
+    .btn.primary { color: #17121a; background: var(--yellow); border-color: #ffdf8b; }
+    .btn.danger { background: #922d4a; }
+
+    .game-layout {
+      display: grid;
+      grid-template-columns: minmax(160px, 230px) minmax(300px, 450px) minmax(180px, 250px);
+      gap: clamp(12px, 2vw, 22px);
+      align-items: start;
+      justify-content: center;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: linear-gradient(160deg, rgba(36,51,84,.96), rgba(20,29,52,.96));
+      box-shadow: 0 14px 35px rgba(0,0,0,.24), inset 0 1px rgba(255,255,255,.05);
+      overflow: hidden;
+    }
+    .card-title {
+      padding: 12px 14px 10px;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+    }
+    .stats { padding: 12px 14px 15px; }
+    .stat-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 7px 0;
+      border-bottom: 1px dashed rgba(255,255,255,.09);
+    }
+    .stat-row:last-child { border: 0; }
+    .stat-label { color: var(--muted); font-size: 13px; }
+    .stat-value { font-size: 21px; font-weight: 900; font-variant-numeric: tabular-nums; }
+    .miles-value { color: var(--yellow); }
+
+    .goal { padding: 0 14px 16px; }
+    .goal-copy { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); }
+    .meter { height: 9px; margin-top: 6px; border-radius: 20px; background: #0b1224; overflow: hidden; }
+    .meter > div {
+      width: 0;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--red), var(--yellow));
+      transition: width .35s ease;
+    }
+
+    .item-card { margin-top: 12px; }
+    .item { padding: 14px; text-align: center; }
+    .item-emoji { display: block; font-size: 34px; filter: drop-shadow(0 3px 3px #0007); }
+    .item-name { margin-top: 4px; font-size: 15px; font-weight: 900; }
+    .item-shape { color: var(--muted); font-size: 11px; margin-top: 2px; }
+    #nextCanvas, #holdCanvas { width: 110px; height: 76px; display: block; margin: 4px auto 0; }
+
+    .trunk-shell {
+      position: relative;
+      padding: 13px 15px 16px;
+      border: 5px solid #4b607e;
+      border-top-width: 12px;
+      border-radius: 52px 52px 20px 20px;
+      background: linear-gradient(100deg, #2a374d, #101827 10%, #101827 90%, #2a374d);
+      box-shadow:
+        0 0 0 4px #0b101b,
+        0 24px 35px #0007,
+        inset 0 4px 8px #000;
+    }
+    .trunk-shell::before,
+    .trunk-shell::after {
+      content: "";
+      position: absolute;
+      top: 20%;
+      width: 10px;
+      height: 75px;
+      border-radius: 8px;
+      background: linear-gradient(#ff8292, #d91f4c 60%, #67132e);
+      box-shadow: 0 0 12px #ef476f66;
+    }
+    .trunk-shell::before { left: -13px; }
+    .trunk-shell::after { right: -13px; }
+    .trunk-floor {
+      padding: 5px;
+      border-radius: 10px;
+      background: #050811;
+      box-shadow: inset 0 0 0 1px #72819a55;
+    }
+    #gameCanvas {
+      display: block;
+      width: 100%;
+      aspect-ratio: 10 / 18;
+      border-radius: 6px;
+      background: #0a1020;
+      touch-action: none;
+    }
+    .bumper {
+      width: 92%;
+      height: 13px;
+      margin: 12px auto -21px;
+      border: 1px solid #72819a;
+      border-radius: 4px 4px 12px 12px;
+      background: linear-gradient(#8392a7, #334056);
+      box-shadow: 0 6px 7px #0007;
+    }
+
+    .game-stage { position: relative; }
+    .overlay {
+      position: absolute;
+      inset: 17px 19px 20px;
+      z-index: 8;
+      display: grid;
+      place-items: center;
+      padding: 25px;
+      border-radius: 42px 42px 12px 12px;
+      text-align: center;
+      background: rgba(5,9,20,.84);
+      backdrop-filter: blur(5px);
+    }
+    .overlay.hidden { display: none; }
+    .overlay-panel { max-width: 310px; }
+    .overlay-kicker { color: var(--yellow); font-size: 12px; font-weight: 900; letter-spacing: .18em; text-transform: uppercase; }
+    .overlay h2 { margin: 5px 0 8px; font-size: clamp(28px, 6vw, 45px); line-height: 1; text-transform: uppercase; }
+    .overlay p { margin: 0 0 18px; color: #c8d0df; line-height: 1.45; font-size: 14px; }
+
+    .radio-body { padding: 14px; }
+    .radio-display {
+      min-height: 64px;
+      padding: 10px;
+      border: 1px solid #66735f;
+      border-radius: 6px;
+      color: #2d3527;
+      background: #b9c6a8;
+      box-shadow: inset 0 2px 5px #49534566;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+    .radio-status { font-size: 10px; letter-spacing: .12em; }
+    .track-name { margin-top: 7px; font-size: 12px; font-weight: 900; line-height: 1.2; }
+    .radio-controls { display: grid; grid-template-columns: 1fr auto; gap: 8px; margin-top: 10px; }
+    .volume { display: flex; align-items: center; gap: 7px; margin-top: 11px; color: var(--muted); font-size: 11px; }
+    input[type="range"] { min-width: 0; width: 100%; accent-color: var(--red); }
+
+    .score-key { padding: 12px 14px 15px; color: var(--muted); font-size: 12px; line-height: 1.65; }
+    .score-key strong { color: var(--ink); }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      width: min(520px, 100%);
+      margin: 21px auto 0;
+    }
+    .control {
+      min-height: 51px;
+      padding: 4px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      color: var(--ink);
+      background: #24324f;
+      box-shadow: 0 4px 0 #080c16;
+      cursor: pointer;
+      font-size: 21px;
+      font-weight: 900;
+      touch-action: manipulation;
+      user-select: none;
+    }
+    .control:active { transform: translateY(3px); box-shadow: 0 1px 0 #080c16; }
+    .control small { display: block; color: #abb5c7; font-size: 8px; letter-spacing: .08em; text-transform: uppercase; }
+    .control.drop { color: #17121a; background: var(--yellow); }
+    .keyboard-help { margin-top: 12px; color: #7f899c; text-align: center; font-size: 11px; }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      top: 16px;
+      z-index: 10;
+      width: min(370px, calc(100% - 24px));
+      padding: 12px 16px;
+      border: 1px solid #ffe19a;
+      border-radius: 12px;
+      color: #24191b;
+      background: var(--yellow);
+      box-shadow: 0 12px 30px #0008;
+      text-align: center;
+      font-weight: 900;
+      transform: translate(-50%, -150%);
+      transition: transform .3s cubic-bezier(.2,.9,.3,1.2);
+    }
+    .toast.show { transform: translate(-50%, 0); }
+
+    @media (max-width: 790px) {
+      .app { padding-top: 12px; }
+      header { align-items: center; }
+      .game-layout { grid-template-columns: minmax(125px, .45fr) minmax(260px, 1fr); }
+      .right-rail { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+      .right-rail .card { margin: 0; }
+      .keyboard-help { display: none; }
+    }
+
+    @media (max-width: 540px) {
+      header { align-items: flex-start; }
+      .header-actions { flex-direction: column; }
+      .header-actions .btn { min-height: 35px; padding: 0 10px; font-size: 11px; }
+      .game-layout { grid-template-columns: minmax(0, 1fr); }
+      .left-rail { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+      .left-rail .card { margin: 0; }
+      .left-rail .stats-card { grid-column: 1 / -1; }
+      .item { padding: 8px; }
+      .item-emoji { font-size: 25px; }
+      #nextCanvas, #holdCanvas { height: 53px; }
+      .game-stage { width: min(100%, 390px); margin: 0 auto; }
+      .right-rail { grid-template-columns: 1fr; }
+      .score-card { display: none; }
+      .controls { position: sticky; bottom: 5px; z-index: 6; margin-top: 18px; }
+      .control { min-height: 48px; background: #2b3c60f2; backdrop-filter: blur(5px); }
+    }
+
+    /* ---- V2 phone-first layout ---- */
+    html, body { width: 100%; height: 100%; overflow: hidden; }
+    body {
+      min-height: 100dvh;
+      display: grid;
+      place-items: center;
+      padding: 12px;
+      background:
+        radial-gradient(circle at 50% 5%, #354b73 0, #121a31 35rem, #090d1b 100%);
+    }
+    .app {
+      position: relative;
+      display: grid;
+      grid-template-rows: auto auto auto minmax(0, 1fr) auto auto;
+      width: min(390px, 100%);
+      height: min(844px, calc(100dvh - 24px));
+      margin: 0;
+      padding: max(8px, env(safe-area-inset-top)) 9px max(8px, env(safe-area-inset-bottom));
+      border: 5px solid #34435d;
+      border-radius: 34px;
+      background: linear-gradient(180deg, #17233e, #0c1326 80%);
+      box-shadow: 0 30px 80px #000b, inset 0 0 0 1px #7e8ba144;
+      overflow: hidden;
+    }
+    .app::before {
+      content: "";
+      position: absolute;
+      z-index: 20;
+      top: 4px;
+      left: 50%;
+      width: 82px;
+      height: 5px;
+      border-radius: 5px;
+      background: #070b14;
+      transform: translateX(-50%);
+      pointer-events: none;
+    }
+    header {
+      min-height: 46px;
+      margin: 0;
+      padding: 5px 1px 6px;
+      align-items: center;
+      border-bottom: 1px solid var(--line);
+    }
+    .eyebrow { font-size: 7px; letter-spacing: .16em; }
+    h1 { margin-top: 2px; font-size: 20px; letter-spacing: -.03em; }
+    .header-actions { flex-direction: row; gap: 5px; }
+    .header-actions .btn {
+      min-width: 39px;
+      min-height: 39px;
+      padding: 0 8px;
+      border-radius: 10px;
+      font-size: 12px;
+    }
+    #pauseBtn { min-width: 64px; }
+    #gearReviewBtn { color: var(--yellow); }
+
+    .map-back {
+      position: absolute;
+      top: max(12px, calc(env(safe-area-inset-top) + 8px));
+      left: 12px;
+      z-index: 24;
+      padding: 8px 16px;
+      border: 0;
+      border-radius: 20px;
+      color: #233b56;
+      background: #fff4d2;
+      box-shadow: 0 4px 0 rgba(0, 0, 0, .2);
+      font-size: 12.5px;
+      font-weight: 900;
+      letter-spacing: .5px;
+      cursor: pointer;
+    }
+
+    .gear-review {
+      position: absolute;
+      inset: 0;
+      z-index: 40;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+      padding: max(15px, env(safe-area-inset-top)) 12px max(12px, env(safe-area-inset-bottom));
+      background: linear-gradient(180deg, rgba(19,29,52,.98), rgba(7,12,24,.99));
+      backdrop-filter: blur(10px);
+    }
+    .gear-review.hidden { display: none; }
+    .gear-review-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 2px 2px 10px; }
+    .gear-review-head h2 { margin: 2px 0 0; font-size: 22px; text-transform: uppercase; }
+    .gear-review-head p { margin: 2px 0 0; color: var(--muted); font-size: 9px; }
+    .gear-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      min-height: 0;
+      overflow-y: auto;
+      scrollbar-width: thin;
+    }
+    .gear-card {
+      display: grid;
+      grid-template-rows: minmax(72px, 1fr) auto;
+      min-height: 128px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow: hidden;
+      background: #111a2e;
+    }
+    .gear-card canvas { display: block; width: 100%; height: 100%; min-height: 78px; background: #0a1020; }
+    .gear-card-copy { display: grid; grid-template-columns: auto 1fr; gap: 7px; align-items: center; padding: 7px 8px 8px; }
+    .shape-badge { display: grid; place-items: center; width: 25px; height: 25px; border-radius: 7px; color: #16131a; background: var(--yellow); font-size: 13px; font-weight: 900; }
+    .gear-card strong { display: block; font-size: 11px; line-height: 1.1; }
+    .gear-card small { color: var(--muted); font-size: 7px; text-transform: uppercase; }
+
+    .phone-hud {
+      padding: 7px 3px 8px;
+      border-bottom: 1px solid var(--line);
+    }
+    .hud-stats { display: grid; grid-template-columns: 1.35fr 1fr 1fr; gap: 5px; }
+    .hud-stat {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 5px;
+      min-width: 0;
+      padding: 3px 6px;
+      border-right: 1px solid var(--line);
+    }
+    .hud-stat:last-child { border-right: 0; }
+    .hud-stat small {
+      color: var(--muted);
+      font-size: 8px;
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .hud-stat strong { font-size: 17px; font-variant-numeric: tabular-nums; }
+    .hud-stat:first-child strong { color: var(--yellow); font-size: 22px; }
+    .hud-goal { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 7px; margin-top: 4px; }
+    .hud-goal-label, .hud-bonus { color: var(--muted); font-size: 7px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; }
+    .hud-goal .meter { height: 6px; margin: 0; }
+    #goalText { color: var(--ink); }
+
+    .play-shell {
+      position: relative;
+      min-height: 0;
+      padding: 6px 0 7px;
+      overflow: hidden;
+    }
+    .game-stage { width: auto; height: 100%; margin: 0 auto; aspect-ratio: 10 / 18; }
+    .trunk-shell {
+      width: 100%;
+      height: 100%;
+      padding: 8px 9px 9px;
+      border-width: 4px;
+      border-top-width: 8px;
+      border-radius: 33px 33px 14px 14px;
+      box-shadow: 0 0 0 3px #080d17, 0 12px 22px #0007, inset 0 3px 6px #000;
+    }
+    .trunk-shell::before, .trunk-shell::after { top: 22%; width: 7px; height: 58px; }
+    .trunk-shell::before { left: -10px; }
+    .trunk-shell::after { right: -10px; }
+    .trunk-floor { width: 100%; height: 100%; padding: 3px; }
+    #gameCanvas { width: 100%; height: 100%; aspect-ratio: auto; }
+    .bumper { height: 8px; margin: 7px auto -13px; }
+    .overlay { inset: 13px 12px 14px; border-radius: 27px 27px 9px 9px; padding: 15px; }
+    .overlay h2 { font-size: 31px; }
+    .overlay p { font-size: 12px; }
+
+    .piece-tray {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      min-height: 72px;
+      margin: 0 3px 5px;
+    }
+    .mini-panel {
+      position: relative;
+      z-index: 3;
+      top: auto;
+      width: auto;
+      min-width: 0;
+      min-height: 68px;
+      padding: 5px;
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 9px;
+      background: rgba(17,26,47,.91);
+      box-shadow: 0 6px 15px #0007;
+      backdrop-filter: blur(5px);
+      text-align: center;
+    }
+    .next-mini { right: auto; }
+    .hold-mini { left: auto; cursor: pointer; }
+    .mini-label { color: var(--yellow); font-size: 7px; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; }
+    #nextCanvas, #holdCanvas { width: 66px; height: 43px; margin: 1px auto 0; }
+    .mini-name { overflow: hidden; color: var(--ink); font-size: 8px; font-weight: 900; text-overflow: ellipsis; white-space: nowrap; }
+    #nextEmoji, #currentEmoji { display: none; }
+
+    .game-state-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+    }
+    .strip-label { color: var(--muted); font-size: 7px; font-weight: 900; letter-spacing: .09em; text-transform: uppercase; }
+    #currentName { overflow: hidden; font-size: 11px; font-weight: 900; text-overflow: ellipsis; white-space: nowrap; }
+    #currentShape { color: var(--muted); font-size: 7px; }
+    .radio-display {
+      min-width: 0;
+      min-height: 37px;
+      padding: 5px 7px;
+      border-radius: 5px;
+    }
+    .radio-status { font-size: 7px; }
+    .track-name { overflow: hidden; margin-top: 3px; font-size: 9px; text-overflow: ellipsis; white-space: nowrap; }
+    #skipBtn { min-width: 38px; min-height: 38px; padding: 0; }
+    .volume { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+
+    .gesture-bar {
+      display: grid;
+      grid-template-columns: 50px minmax(0, 1fr) 50px;
+      gap: 6px;
+      align-items: center;
+      min-height: 57px;
+      padding-top: 6px;
+    }
+    .gesture-copy { display: flex; justify-content: space-around; gap: 3px; text-align: center; }
+    .gesture-copy span { color: var(--muted); font-size: 7px; font-weight: 900; letter-spacing: .04em; text-transform: uppercase; }
+    .gesture-copy b { display: block; margin-bottom: 2px; color: var(--ink); font-size: 17px; line-height: 1; }
+    .gesture-btn {
+      min-height: 45px;
+      padding: 3px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      color: var(--ink);
+      background: #253552;
+      box-shadow: 0 3px 0 #060a13;
+      font-size: 16px;
+      font-weight: 900;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    .gesture-btn small { display: block; color: var(--muted); font-size: 7px; text-transform: uppercase; }
+    .gesture-btn.drop { color: #1b1720; background: var(--yellow); }
+    .toast { top: max(12px, env(safe-area-inset-top)); width: min(350px, calc(100% - 32px)); font-size: 12px; }
+
+    @media (max-width: 500px), (max-height: 870px) {
+      body { padding: 0; background: #0c1326; }
+      .app { width: 100%; height: 100dvh; border: 0; border-radius: 0; box-shadow: none; }
+      .app::before { display: none; }
+    }
+    @media (max-height: 700px) {
+      .app { grid-template-rows: auto auto auto minmax(0, 1fr) auto auto; }
+      .gesture-bar { position: absolute; z-index: 9; right: 12px; bottom: 57px; grid-template-columns: 44px 44px; min-height: 0; padding: 0; }
+      .gesture-copy { display: none; }
+      .gesture-btn { min-height: 42px; }
+    }
+
+    /* ---- V3 retro road-trip sticker direction ---- */
+    :root {
+      --ink: #fff4d2;
+      --muted: #b9d6cd;
+      --night: #101918;
+      --panel: #0d514f;
+      --panel-2: #123f3d;
+      --red: #df4b2f;
+      --yellow: #f2b536;
+      --cyan: #43b8ba;
+      --line: rgba(255, 225, 157, .28);
+    }
+    body { background: #17211f; }
+    .app {
+      grid-template-rows: auto auto auto minmax(0, 1fr) auto auto;
+      border-color: #0b3838;
+      border-radius: 26px;
+      background: #111a19;
+      box-shadow: 0 28px 70px #000c, inset 0 0 0 2px #d78b2d55;
+    }
+    .car-shell-art {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: fill;
+      pointer-events: none;
+      user-select: none;
+    }
+    header, .phone-hud, .piece-tray, .play-shell, .game-radio, .gesture-bar { position: relative; z-index: 2; }
+    .gear-review { z-index: 40; }
+    header {
+      min-height: 66px;
+      padding: 7px 4px 8px;
+      align-items: stretch;
+      border-bottom: 0;
+    }
+    header > div:first-child {
+      display: grid;
+      align-content: center;
+      margin-left: 72px;
+      padding: 5px 13px 4px;
+      border: 3px solid #f5dfad;
+      border-radius: 18px 9px 17px 10px;
+      color: #f8e7b9;
+      background: #0b5553;
+      box-shadow: 0 4px 0 #6a341c, inset 0 0 0 2px #142f2d;
+      transform: rotate(-1deg);
+    }
+    header .eyebrow { display: none; }
+    h1 {
+      margin: 0;
+      font-size: 24px;
+      line-height: .9;
+      letter-spacing: -.045em;
+      text-shadow: 0 3px 0 #18302e;
+    }
+    h1 span { color: #ef653d; }
+    .header-actions { align-items: center; gap: 5px; }
+    .header-actions .btn {
+      min-width: 36px;
+      min-height: 36px;
+      border: 2px solid #e7c987;
+      border-radius: 10px;
+      color: #fff1c5;
+      background: #0c4e4b;
+      box-shadow: 0 3px 0 #532c1b;
+    }
+    #gearReviewBtn { display: none; }
+    #pauseBtn { min-width: 54px; font-size: 10px; }
+    #newGameBtn { color: #2b1b13; background: #e75637; }
+
+    .phone-hud {
+      margin: 0 3px 5px;
+      padding: 6px 8px 7px;
+      border: 2px solid #c58d3a;
+      border-radius: 10px;
+      background: #0d504e;
+      box-shadow: inset 0 0 0 2px #102f2d;
+    }
+    .hud-stats { grid-template-columns: 1.25fr 1fr 1fr; }
+    .hud-stat { padding: 1px 5px; border-right-color: #e7c98755; }
+    .hud-stat small { color: #f8dfaa; font-size: 7px; }
+    .hud-stat strong { color: #fff4d2; }
+    .hud-stat:first-child strong { color: #f2b536; }
+    .hud-goal { margin-top: 2px; }
+    .hud-goal-label, .hud-bonus { color: #c6d9cd; }
+    .meter { background: #071f1e; }
+    .meter > div { background: #ef653d; }
+
+    .play-shell { padding: 2px 3px 6px; }
+    .trunk-shell {
+      padding: 4px 6px 6px;
+      border: 0;
+      border-radius: 16px;
+      background: transparent;
+      box-shadow: none;
+    }
+    .trunk-shell::before, .trunk-shell::after { display: none; }
+    .trunk-floor {
+      padding: 4px;
+      border: 2px solid #d19b49;
+      border-radius: 12px;
+      background: #0b4543;
+      box-shadow: inset 0 0 0 2px #071b1a;
+    }
+    #gameCanvas { border-radius: 7px; background: #0c5553; }
+    .bumper {
+      display: none;
+    }
+
+    .mini-panel {
+      top: auto;
+      width: auto;
+      min-height: 68px;
+      border: 2px solid #f0d79d;
+      border-radius: 12px 8px 12px 8px;
+      color: #173230;
+      background: #f0d9a7;
+      box-shadow: 0 4px 0 #6c3a21, inset 0 0 0 2px #bd8340;
+      backdrop-filter: none;
+    }
+    .hold-mini { top: auto; bottom: auto; left: auto; border-radius: 7px 15px 8px 14px; background: #0b504d; }
+    .next-mini { right: auto; background: #0b504d; transform: none; }
+    .mini-label { color: #153e3c; font-size: 8px; }
+    .hold-mini .mini-label, .hold-mini .mini-name,
+    .next-mini .mini-label, .next-mini .mini-name { color: #f8dfaa; }
+    .mini-name { color: #49301e; font-size: 7px; }
+
+    .game-radio {
+      display: grid;
+      grid-template-columns: 44px minmax(0, 1fr) 40px;
+      align-items: center;
+      gap: 6px;
+      min-height: 47px;
+      margin: 0 4px;
+      padding: 4px 6px;
+      border: 2px solid #c58d3a;
+      border-radius: 9px;
+      background: #0d504e;
+      box-shadow: inset 0 0 0 2px #102f2d;
+    }
+    .game-radio .btn {
+      min-width: 0;
+      min-height: 34px;
+      padding: 0;
+      border: 2px solid #f0d79d;
+      border-radius: 8px;
+      color: #fff0c9;
+      background: #d84c31;
+      box-shadow: 0 3px 0 #642f1c;
+      font-size: 16px;
+    }
+    .game-radio .radio-display {
+      min-width: 0;
+      min-height: 34px;
+      padding: 4px 7px;
+      border: 2px solid #493c25;
+      color: #263025;
+      background: #c6cf9d;
+      box-shadow: inset 0 2px 4px #49534566;
+      overflow: hidden;
+    }
+    .game-radio .radio-status { font-size: 7px; font-weight: 900; white-space: nowrap; }
+    .game-radio .track-name {
+      margin-top: 2px;
+      font-size: 9px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .game-radio .volume { position: absolute; width: 1px; height: 1px; overflow: hidden; opacity: 0; }
+
+    .overlay {
+      inset: 9px 10px 10px;
+      border: 2px solid #ebcf90;
+      border-radius: 17px 17px 8px 8px;
+      background: rgba(8, 28, 27, .91);
+      backdrop-filter: blur(3px);
+    }
+    .overlay-kicker { color: #f2b536; }
+    .overlay h2 { color: #fff0c9; text-shadow: 0 3px 0 #6b321f; }
+    .overlay p { color: #c9ded4; }
+    .btn.primary { color: #29180f; border: 2px solid #ffe4a1; background: #f2b536; box-shadow: 0 4px 0 #7d3e20; }
+
+    .gesture-bar {
+      grid-template-columns: 60px minmax(0, 1fr) 60px;
+      min-height: 55px;
+      padding: 6px 4px 0;
+      border-radius: 16px;
+      background: rgba(11, 31, 30, .58);
+      backdrop-filter: blur(2px);
+    }
+    .gesture-copy span { color: #b9d6cd; }
+    .gesture-copy b { color: #f5dfad; }
+    .gesture-btn {
+      min-height: 46px;
+      border: 2px solid #f0d79d;
+      border-radius: 12px;
+      color: #fff0c9;
+      background: #d84c31;
+      box-shadow: 0 4px 0 #642f1c;
+    }
+    .gesture-btn small { color: #fff0c9; }
+    .gesture-btn.drop { color: #2b1b13; background: #f2b536; }
+    .toast { border-width: 2px; color: #28180f; background: #f2b536; }
+
+    @media (max-width: 500px), (max-height: 870px) {
+      .app { border-radius: 0; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <img class="car-shell-art" src="../assets/packing/pack-car-trunk-frame.png" alt="" aria-hidden="true">
+    <button class="map-back" id="mapBtn" type="button">MAP</button>
+    <header>
+      <div>
+        <div class="eyebrow">Road Trip Arcade</div>
+        <h1>Pack the <span>Car</span></h1>
+      </div>
+      <div class="header-actions">
+        <button class="btn" id="gearReviewBtn" type="button" aria-label="Review packing items">▦</button>
+        <button class="btn" id="pauseBtn" type="button">Ⅱ Pause</button>
+        <button class="btn danger" id="newGameBtn" type="button" aria-label="New pack">↻</button>
+      </div>
+    </header>
+
+    <section class="phone-hud" aria-label="Trip odometer">
+      <div class="hud-stats">
+        <div class="hud-stat"><small>Miles</small><strong id="miles">0</strong></div>
+        <div class="hud-stat"><small>Rows</small><strong id="lines">0</strong></div>
+        <div class="hud-stat"><small>Level</small><strong id="level">1</strong></div>
+      </div>
+      <div class="hud-goal">
+        <span class="hud-goal-label">Trip Ready <span id="goalText">0 / 12 mi</span></span>
+        <div class="meter"><div id="goalBar"></div></div>
+        <span class="hud-bonus">Bonuses 1 • 3 • 5 • 8</span>
+      </div>
+    </section>
+
+    <section class="piece-tray" aria-label="Held and upcoming packing items">
+      <button class="mini-panel hold-mini" id="holdBtn" type="button" aria-label="Hold current item">
+        <span class="mini-label">Hold</span>
+        <canvas id="holdCanvas" width="220" height="152" aria-label="Held packing item"></canvas>
+        <span class="mini-name">Save for later</span>
+      </button>
+
+      <div class="mini-panel next-mini">
+        <div class="mini-label">Next</div>
+        <canvas id="nextCanvas" width="220" height="152" aria-label="Next packing item"></canvas>
+        <div class="mini-name" id="nextName">Tent</div>
+        <span id="nextEmoji">⛺</span>
+      </div>
+    </section>
+
+    <section class="play-shell">
+      <div class="game-stage">
+        <div class="trunk-shell">
+          <div class="trunk-floor">
+            <canvas id="gameCanvas" width="400" height="720" aria-label="Packing grid. Tap to rotate, swipe to move, swipe down to drop."></canvas>
+          </div>
+          <div class="bumper"></div>
+        </div>
+
+        <div class="overlay" id="overlay">
+          <div class="overlay-panel">
+            <div class="overlay-kicker" id="overlayKicker">The new car is yours</div>
+            <h2 id="overlayTitle">Now pack it.</h2>
+            <p id="overlayText">Tap items to rotate. Swipe left or right to move. Flick down to pack them.</p>
+            <button class="btn primary" id="startBtn" type="button">Start packing</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="game-radio" aria-label="Music player">
+      <button class="btn" id="radioBtn" type="button" aria-label="Turn radio on">♫</button>
+      <div class="radio-display" aria-live="polite">
+        <div class="radio-status" id="radioStatus">RADIO OFF • 90.3 KDRT</div>
+        <div class="track-name" id="trackName">Press power for The Dirt</div>
+      </div>
+      <button class="btn" id="skipBtn" type="button" aria-label="Next song">≫</button>
+      <label class="volume">Volume <input id="volume" type="range" min="0" max="1" value="0.55" step="0.05"></label>
+    </section>
+
+    <div class="game-state-hidden" aria-hidden="true">
+      <span id="currentEmoji">🧊</span>
+      <span id="currentName">Cooler</span>
+      <span id="currentShape">O piece</span>
+    </div>
+
+    <nav class="gesture-bar" aria-label="Touch controls">
+      <button class="gesture-btn" id="holdControl" type="button">▣<small>Hold</small></button>
+      <div class="gesture-copy" aria-hidden="true">
+        <span><b>↔</b>Swipe move</span>
+        <span><b>↻</b>Tap rotate</span>
+        <span><b>↓</b>Flick drop</span>
+      </div>
+      <button class="gesture-btn drop" data-action="drop" type="button">⇊<small>Pack</small></button>
+    </nav>
+
+    <section class="gear-review hidden" id="gearReview" aria-label="Packing item review">
+      <div class="gear-review-head">
+        <div>
+          <div class="eyebrow">Seven-piece gear set</div>
+          <h2>Review the items</h2>
+          <p>Each illustration still occupies exactly four grid spaces.</p>
+        </div>
+        <button class="btn" id="closeGearReview" type="button" aria-label="Close item review">✕</button>
+      </div>
+      <div class="gear-grid">
+        <article class="gear-card"><canvas data-review-piece="I" width="320" height="190"></canvas><div class="gear-card-copy"><span class="shape-badge">I</span><div><strong>Pop-up Tent</strong><small>Rolled carry bag</small></div></div></article>
+        <article class="gear-card"><canvas data-review-piece="O" width="320" height="190"></canvas><div class="gear-card-copy"><span class="shape-badge">O</span><div><strong>Cooler</strong><small>Hard-sided cooler</small></div></div></article>
+        <article class="gear-card"><canvas data-review-piece="T" width="320" height="190"></canvas><div class="gear-card-copy"><span class="shape-badge">T</span><div><strong>Duffel Bag</strong><small>Wide bag and handle</small></div></div></article>
+        <article class="gear-card"><canvas data-review-piece="L" width="320" height="190"></canvas><div class="gear-card-copy"><span class="shape-badge">L</span><div><strong>Hockey Stick</strong><small>Stick and blade</small></div></div></article>
+        <article class="gear-card"><canvas data-review-piece="J" width="320" height="190"></canvas><div class="gear-card-copy"><span class="shape-badge">J</span><div><strong>Rolling Suitcase</strong><small>Case and pull handle</small></div></div></article>
+        <article class="gear-card"><canvas data-review-piece="S" width="320" height="190"></canvas><div class="gear-card-copy"><span class="shape-badge">S</span><div><strong>Sleeping Bags</strong><small>Two bedrolls</small></div></div></article>
+        <article class="gear-card"><canvas data-review-piece="Z" width="320" height="190"></canvas><div class="gear-card-copy"><span class="shape-badge">Z</span><div><strong>Camp Chairs</strong><small>Two folded chairs</small></div></div></article>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="../analytics.js"></script>
+  <script src="../save.js"></script>
+  <script>
+    (() => {
+      "use strict";
+
+      const COLS = 10;
+      const ROWS = 18;
+      const CELL = 40;
+      const READY_MILES = 12;
+      const LINE_MILES = [0, 1, 3, 5, 8];
+
+      const PIECES = {
+        I: { name: "Pop-up Tent", emoji: "⛺", color: "#4ecdc4", matrix: [[1,1,1,1]] },
+        O: { name: "Cooler", emoji: "🧊", color: "#ffd166", matrix: [[1,1],[1,1]] },
+        T: { name: "Duffel Bag", emoji: "🎒", color: "#e56b35", matrix: [[1,1,1],[0,1,0]] },
+        L: { name: "Hockey Stick", emoji: "🏒", color: "#d9902f", matrix: [[0,0,1],[1,1,1]] },
+        J: { name: "Rolling Suitcase", emoji: "🧳", color: "#4d96ff", matrix: [[1,0,0],[1,1,1]] },
+        S: { name: "Sleeping Bags", emoji: "🛏️", color: "#63d471", matrix: [[0,1,1],[1,1,0]] },
+        Z: { name: "Camp Chairs", emoji: "🪑", color: "#ef476f", matrix: [[1,1,0],[0,1,1]] }
+      };
+
+      const PIECE_ART_SRC = {
+        I: "../assets/packing/pack-piece-i-tent.png",
+        O: "../assets/packing/pack-piece-o-cooler.png",
+        T: "../assets/packing/pack-piece-t-duffel.png",
+        L: "../assets/packing/pack-piece-l-hockey-stick.png",
+        J: "../assets/packing/pack-piece-j-suitcase.png",
+        S: "../assets/packing/pack-piece-s-sleeping-bags.png",
+        Z: "../assets/packing/pack-piece-z-camp-chairs.png"
+      };
+      const pieceArt = {};
+
+      function loadPieceArt() {
+        Object.entries(PIECE_ART_SRC).forEach(([type, src]) => {
+          const image = new Image();
+          image.addEventListener("load", () => {
+            const scan = document.createElement("canvas");
+            scan.width = image.naturalWidth;
+            scan.height = image.naturalHeight;
+            const scanCtx = scan.getContext("2d", { willReadFrequently: true });
+            scanCtx.drawImage(image, 0, 0);
+            const pixels = scanCtx.getImageData(0, 0, scan.width, scan.height).data;
+            let minX = scan.width, minY = scan.height, maxX = -1, maxY = -1;
+            for (let y = 0; y < scan.height; y++) {
+              for (let x = 0; x < scan.width; x++) {
+                if (pixels[(y * scan.width + x) * 4 + 3] < 18) continue;
+                minX = Math.min(minX, x); minY = Math.min(minY, y);
+                maxX = Math.max(maxX, x); maxY = Math.max(maxY, y);
+              }
+            }
+            if (maxX < minX || maxY < minY) return;
+            const pad = Math.max(2, Math.round(Math.min(scan.width, scan.height) * .008));
+            minX = Math.max(0, minX - pad); minY = Math.max(0, minY - pad);
+            maxX = Math.min(scan.width - 1, maxX + pad); maxY = Math.min(scan.height - 1, maxY + pad);
+            const cropped = document.createElement("canvas");
+            cropped.width = maxX - minX + 1;
+            cropped.height = maxY - minY + 1;
+            cropped.getContext("2d").drawImage(scan, minX, minY, cropped.width, cropped.height, 0, 0, cropped.width, cropped.height);
+            pieceArt[type] = cropped;
+            drawReviewGallery();
+            updateItemUI();
+            draw();
+          });
+          image.src = src;
+        });
+      }
+
+      const gameCanvas = document.querySelector("#gameCanvas");
+      const ctx = gameCanvas.getContext("2d");
+      const nextCtx = document.querySelector("#nextCanvas").getContext("2d");
+      const holdCtx = document.querySelector("#holdCanvas").getContext("2d");
+
+      const ui = Object.fromEntries([
+        "miles", "lines", "level", "goalText", "goalBar", "currentEmoji", "currentName", "currentShape",
+        "nextEmoji", "nextName", "overlay", "overlayKicker", "overlayTitle", "overlayText", "startBtn",
+        "pauseBtn", "newGameBtn", "radioBtn", "skipBtn", "radioStatus", "trackName", "volume", "toast"
+      ].map(id => [id, document.getElementById(id)]));
+
+      let board = emptyBoard();
+      let bag = [];
+      let current = null;
+      let nextType = null;
+      let holdType = null;
+      let canHold = true;
+      let running = false;
+      let paused = false;
+      let over = false;
+      let miles = 0;
+      let lines = 0;
+      let level = 1;
+      let readyCelebrated = false;
+      let lastTime = 0;
+      let dropAccumulator = 0;
+      let clearingRows = [];
+      let clearUntil = 0;
+      let toastTimer = 0;
+      let pieceSerial = 0;
+
+      function emptyBoard() {
+        return Array.from({ length: ROWS }, () => Array(COLS).fill(null));
+      }
+
+      function refillBag() {
+        bag = Object.keys(PIECES);
+        for (let i = bag.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [bag[i], bag[j]] = [bag[j], bag[i]];
+        }
+      }
+
+      function takeFromBag() {
+        if (!bag.length) refillBag();
+        return bag.pop();
+      }
+
+      function cloneMatrix(matrix) { return matrix.map(row => [...row]); }
+
+      function createPiece(type) {
+        const matrix = cloneMatrix(PIECES[type].matrix);
+        return { type, matrix, rotation: 0, x: Math.floor((COLS - matrix[0].length) / 2), y: 0 };
+      }
+
+      function resetGame() {
+        board = emptyBoard();
+        bag = [];
+        pieceSerial = 0;
+        miles = 0;
+        lines = 0;
+        level = 1;
+        holdType = null;
+        canHold = true;
+        over = false;
+        paused = false;
+        readyCelebrated = false;
+        clearingRows = [];
+        nextType = takeFromBag();
+        spawn();
+        updateUI();
+        draw();
+      }
+
+      function spawn(forcedType) {
+        const type = forcedType || nextType || takeFromBag();
+        current = createPiece(type);
+        if (!forcedType) nextType = takeFromBag();
+        canHold = true;
+        if (collides(current, 0, 0)) endGame();
+        updateItemUI();
+      }
+
+      function collides(piece, dx, dy, matrix = piece.matrix) {
+        for (let y = 0; y < matrix.length; y++) {
+          for (let x = 0; x < matrix[y].length; x++) {
+            if (!matrix[y][x]) continue;
+            const nx = piece.x + x + dx;
+            const ny = piece.y + y + dy;
+            if (nx < 0 || nx >= COLS || ny >= ROWS) return true;
+            if (ny >= 0 && board[ny][nx]) return true;
+          }
+        }
+        return false;
+      }
+
+      function move(dx, dy) {
+        if (!canAct()) return false;
+        if (!collides(current, dx, dy)) {
+          current.x += dx;
+          current.y += dy;
+          draw();
+          return true;
+        }
+        if (dy > 0) lockPiece();
+        return false;
+      }
+
+      function rotate() {
+        if (!canAct()) return;
+        const rotated = current.matrix[0].map((_, i) => current.matrix.map(row => row[i]).reverse());
+        for (const kick of [0, -1, 1, -2, 2]) {
+          if (!collides(current, kick, 0, rotated)) {
+            current.matrix = rotated;
+            current.rotation = (current.rotation + 1) % 4;
+            current.x += kick;
+            draw();
+            return;
+          }
+        }
+      }
+
+      function hardDrop() {
+        if (!canAct()) return;
+        while (!collides(current, 0, 1)) current.y++;
+        lockPiece();
+      }
+
+      function hold() {
+        if (!canAct() || !canHold) return;
+        const outgoing = current.type;
+        if (holdType) {
+          const incoming = holdType;
+          holdType = outgoing;
+          current = createPiece(incoming);
+        } else {
+          holdType = outgoing;
+          current = createPiece(nextType);
+          nextType = takeFromBag();
+        }
+        canHold = false;
+        if (collides(current, 0, 0)) endGame();
+        updateItemUI();
+        draw();
+      }
+
+      function lockPiece() {
+        if (!current || clearingRows.length) return;
+        const pieceId = ++pieceSerial;
+        const lockedMatrix = cloneMatrix(current.matrix);
+        current.matrix.forEach((row, y) => row.forEach((value, x) => {
+          if (value && current.y + y >= 0) {
+            board[current.y + y][current.x + x] = {
+              type: current.type,
+              pieceId,
+              localX: x,
+              localY: y,
+              rotation: current.rotation,
+              matrix: lockedMatrix
+            };
+          }
+        }));
+
+        clearingRows = [];
+        for (let y = 0; y < ROWS; y++) {
+          if (board[y].every(Boolean)) clearingRows.push(y);
+        }
+
+        if (clearingRows.length) {
+          clearUntil = performance.now() + 260;
+          draw();
+        } else {
+          spawn();
+        }
+      }
+
+      function finishClear() {
+        const count = clearingRows.length;
+        const earnedMiles = LINE_MILES[count] || count * 2;
+        const cleared = new Set(clearingRows);
+        board = board.filter((_, index) => !cleared.has(index));
+        while (board.length < ROWS) board.unshift(Array(COLS).fill(null));
+        lines += count;
+        miles += earnedMiles;
+        if (window.Save && typeof window.Save.addMiles === "function") window.Save.addMiles(earnedMiles);
+        level = 1 + Math.floor(lines / 8);
+        const label = count === 4 ? "Perfect pack! +8 miles" : `${count} row${count > 1 ? "s" : ""} packed! +${earnedMiles} mile${earnedMiles > 1 ? "s" : ""}`;
+        showToast(label);
+        clearingRows = [];
+        updateUI();
+        if (miles >= READY_MILES && !readyCelebrated) {
+          readyCelebrated = true;
+          setTimeout(() => showToast("🚗 Trip Ready! Keep packing for more miles."), 550);
+        }
+        spawn();
+      }
+
+      function canAct() { return running && !paused && !over && !clearingRows.length; }
+
+      function startGame() {
+        if (over || !current) resetGame();
+        running = true;
+        paused = false;
+        RoadTripAnalytics.capture("game_started", { game: "pack_the_car" });
+        ui.overlay.classList.add("hidden");
+        ui.pauseBtn.textContent = "Ⅱ Pause";
+        lastTime = performance.now();
+        dropAccumulator = 0;
+      }
+
+      function togglePause() {
+        if (!running || over) return;
+        paused = !paused;
+        ui.pauseBtn.textContent = paused ? "▶ Resume" : "Ⅱ Pause";
+        if (paused) {
+          ui.overlayKicker.textContent = "Snack break";
+          ui.overlayTitle.textContent = "Packing paused";
+          ui.overlayText.textContent = "Your trunk will stay exactly as you left it.";
+          ui.startBtn.textContent = "Resume packing";
+          ui.overlay.classList.remove("hidden");
+        } else {
+          ui.overlay.classList.add("hidden");
+          lastTime = performance.now();
+        }
+      }
+
+      function endGame() {
+        over = true;
+        running = false;
+        RoadTripAnalytics.capture("game_completed", {
+          game: "pack_the_car",
+          lines,
+          miles_earned: miles,
+          level,
+          trip_ready: readyCelebrated,
+        });
+        ui.overlayKicker.textContent = `${miles} mile${miles === 1 ? "" : "s"} earned`;
+        ui.overlayTitle.textContent = "Trunk is full";
+        ui.overlayText.textContent = readyCelebrated
+          ? `The car is trip ready, and you packed ${lines} complete rows. Want to beat it?`
+          : `You packed ${lines} complete rows. Reach ${READY_MILES} miles to hit the Trip Ready target.`;
+        ui.startBtn.textContent = "Pack again";
+        ui.overlay.classList.remove("hidden");
+      }
+
+      function updateUI() {
+        ui.miles.textContent = miles;
+        ui.lines.textContent = lines;
+        ui.level.textContent = level;
+        ui.goalText.textContent = `${Math.min(miles, READY_MILES)} / ${READY_MILES} mi`;
+        ui.goalBar.style.width = `${Math.min(100, miles / READY_MILES * 100)}%`;
+        updateItemUI();
+      }
+
+      function updateItemUI() {
+        if (current) {
+          ui.currentEmoji.textContent = PIECES[current.type].emoji;
+          ui.currentName.textContent = PIECES[current.type].name;
+          ui.currentShape.textContent = `${current.type} piece`;
+        }
+        if (nextType) {
+          ui.nextEmoji.textContent = PIECES[nextType].emoji;
+          ui.nextName.textContent = PIECES[nextType].name;
+        }
+        drawPreview(nextCtx, nextType);
+        drawPreview(holdCtx, holdType);
+      }
+
+      function drawBlock(target, px, py, size, type, alpha = 1) {
+        const color = PIECES[type].color;
+        target.save();
+        target.globalAlpha = alpha;
+        target.fillStyle = color;
+        target.fillRect(px + 1, py + 1, size - 2, size - 2);
+        const shine = target.createLinearGradient(px, py, px, py + size);
+        shine.addColorStop(0, "rgba(255,255,255,.30)");
+        shine.addColorStop(.36, "rgba(255,255,255,.04)");
+        shine.addColorStop(1, "rgba(0,0,0,.24)");
+        target.fillStyle = shine;
+        target.fillRect(px + 3, py + 3, size - 6, size - 6);
+        target.strokeStyle = "#f3ddaa";
+        target.lineWidth = Math.max(2, size * .07);
+        target.strokeRect(px + 3, py + 3, size - 6, size - 6);
+        target.fillStyle = "rgba(255,255,255,.42)";
+        target.fillRect(px + 5, py + 5, size - 10, Math.max(2, size * .07));
+        target.restore();
+      }
+
+      function roundedRectPath(target, x, y, width, height, radius) {
+        const r = Math.min(radius, width / 2, height / 2);
+        target.beginPath();
+        target.moveTo(x + r, y);
+        target.lineTo(x + width - r, y);
+        target.quadraticCurveTo(x + width, y, x + width, y + r);
+        target.lineTo(x + width, y + height - r);
+        target.quadraticCurveTo(x + width, y + height, x + width - r, y + height);
+        target.lineTo(x + r, y + height);
+        target.quadraticCurveTo(x, y + height, x, y + height - r);
+        target.lineTo(x, y + r);
+        target.quadraticCurveTo(x, y, x + r, y);
+        target.closePath();
+      }
+
+      function drawCooler(target, px, py, size, alpha) {
+        const w = size * 2;
+        const h = size * 2;
+        target.save();
+        target.globalAlpha = alpha;
+
+        target.strokeStyle = "#714f0c";
+        target.lineWidth = size * .12;
+        target.lineCap = "round";
+        target.beginPath();
+        target.moveTo(px + w * .22, py + h * .42);
+        target.quadraticCurveTo(px + w * .18, py + h * .06, px + w * .50, py + h * .06);
+        target.quadraticCurveTo(px + w * .82, py + h * .06, px + w * .78, py + h * .42);
+        target.stroke();
+
+        roundedRectPath(target, px + w * .07, py + h * .24, w * .86, h * .68, size * .16);
+        const bodyFill = target.createLinearGradient(px, py, px + w, py + h);
+        bodyFill.addColorStop(0, "#ffe08a");
+        bodyFill.addColorStop(.52, "#ffd166");
+        bodyFill.addColorStop(1, "#e9a92e");
+        target.fillStyle = bodyFill;
+        target.fill();
+        target.strokeStyle = "#8c6115";
+        target.lineWidth = size * .07;
+        target.stroke();
+
+        roundedRectPath(target, px + w * .035, py + h * .20, w * .93, h * .23, size * .10);
+        target.fillStyle = "#fff0b5";
+        target.fill();
+        target.strokeStyle = "#8c6115";
+        target.lineWidth = size * .06;
+        target.stroke();
+        target.fillStyle = "rgba(255,255,255,.55)";
+        roundedRectPath(target, px + w * .12, py + h * .24, w * .55, h * .055, size * .025);
+        target.fill();
+
+        roundedRectPath(target, px + w * .37, py + h * .49, w * .26, h * .23, size * .07);
+        target.fillStyle = "#eaf6ff";
+        target.fill();
+        target.strokeStyle = "#406a86";
+        target.lineWidth = size * .035;
+        target.stroke();
+        target.strokeStyle = "#5da3c7";
+        target.lineWidth = size * .045;
+        target.beginPath();
+        target.moveTo(px + w * .43, py + h * .605);
+        target.lineTo(px + w * .57, py + h * .605);
+        target.moveTo(px + w * .50, py + h * .535);
+        target.lineTo(px + w * .50, py + h * .675);
+        target.stroke();
+
+        target.fillStyle = "#68470f";
+        roundedRectPath(target, px + w * .17, py + h * .88, w * .13, h * .075, size * .03);
+        target.fill();
+        roundedRectPath(target, px + w * .70, py + h * .88, w * .13, h * .075, size * .03);
+        target.fill();
+        target.restore();
+      }
+
+      function drawGearDetail(target, type, px, py, width, height, size) {
+        const cx = px + width / 2;
+        const cy = py + height / 2;
+        target.save();
+        target.strokeStyle = "#263044";
+        target.fillStyle = "#f7f1d9";
+        target.lineWidth = Math.max(2, size * .055);
+        target.lineCap = "round";
+        target.lineJoin = "round";
+        if (type === "I") {
+          roundedRectPath(target, px + size * .12, py + size * .13, width - size * .24, size * .74, size * .28);
+          const tentFill = target.createLinearGradient(px, py, px, py + size);
+          tentFill.addColorStop(0, "#9bf1e7"); tentFill.addColorStop(.45, "#4ecdc4"); tentFill.addColorStop(1, "#25988f");
+          target.fillStyle = tentFill; target.fill(); target.stroke();
+          target.fillStyle = "#21756f";
+          target.beginPath(); target.ellipse(px + size * .28, cy, size * .17, size * .28, 0, 0, Math.PI * 2); target.fill(); target.stroke();
+          for (const at of [.34, .68]) {
+            target.fillStyle = "#f3b23d";
+            roundedRectPath(target, px + width * at - size * .065, py + size * .10, size * .13, size * .80, size * .04); target.fill(); target.stroke();
+          }
+          target.strokeStyle = "rgba(255,255,255,.65)"; target.lineWidth = size * .025;
+          target.beginPath(); target.moveTo(px + size * .52, py + size * .25); target.lineTo(px + width - size * .26, py + size * .25); target.stroke();
+          target.fillStyle = "#f7f1d9";
+          roundedRectPath(target, cx - size * .31, cy - size * .17, size * .62, size * .34, size * .07); target.fill();
+          target.fillStyle = "#17635e"; target.font = `900 ${Math.max(7, size * .15)}px Trebuchet MS`; target.textAlign = "center"; target.textBaseline = "middle"; target.fillText("TENT", cx, cy + 1);
+        } else if (type === "T") {
+          roundedRectPath(target, px + size * .08, py + size * .16, width - size * .16, size * .72, size * .18);
+          const duffelFill = target.createLinearGradient(px, py, px + width, py + size);
+          duffelFill.addColorStop(0, "#f08b43"); duffelFill.addColorStop(.48, "#d9572f"); duffelFill.addColorStop(1, "#9d3522");
+          target.fillStyle = duffelFill; target.fill(); target.strokeStyle = "#64261d"; target.lineWidth = size * .065; target.stroke();
+          target.strokeStyle = "#f4d28b"; target.lineWidth = size * .09;
+          target.beginPath(); target.moveTo(px + size * .72, py + size * .18); target.lineTo(px + size * .72, py + size * .83); target.moveTo(px + size * 2.28, py + size * .18); target.lineTo(px + size * 2.28, py + size * .83); target.stroke();
+          target.strokeStyle = "#57251c"; target.lineWidth = size * .08;
+          target.beginPath(); target.arc(cx, py + size * .26, size * .48, Math.PI, 0); target.stroke();
+          roundedRectPath(target, cx - size * .33, py + size * .80, size * .66, size * 1.05, size * .14);
+          target.fillStyle = "#bd4228"; target.fill(); target.stroke();
+          target.fillStyle = "#f4d28b"; roundedRectPath(target, cx - size * .14, py + size * 1.12, size * .28, size * .22, size * .05); target.fill();
+        } else if (type === "L") {
+          target.strokeStyle = "#63341d"; target.lineWidth = size * .34;
+          target.beginPath(); target.moveTo(px + width - size * .48, py + size * .20); target.lineTo(px + width - size * .48, py + height - size * .47); target.lineTo(px + size * .22, py + height - size * .47); target.stroke();
+          target.strokeStyle = "#f2c55f"; target.lineWidth = size * .21;
+          target.beginPath(); target.moveTo(px + width - size * .48, py + size * .20); target.lineTo(px + width - size * .48, py + height - size * .47); target.lineTo(px + size * .22, py + height - size * .47); target.stroke();
+          target.strokeStyle = "rgba(255,255,255,.48)"; target.lineWidth = size * .035;
+          target.beginPath(); target.moveTo(px + width - size * .55, py + size * .22); target.lineTo(px + width - size * .55, py + height - size * .58); target.stroke();
+          target.fillStyle = "#f5e2aa"; roundedRectPath(target, px + size * .78, py + height - size * .73, size * .92, size * .30, size * .09); target.fill();
+          target.fillStyle = "#d34b2e"; roundedRectPath(target, px + width - size * .68, py + size * .08, size * .40, size * .38, size * .08); target.fill();
+        } else if (type === "J") {
+          target.strokeStyle = "#d9e2ee"; target.lineWidth = size * .065;
+          target.beginPath();
+          target.moveTo(px + size * .37, py + size * 1.05); target.lineTo(px + size * .37, py + size * .24);
+          target.moveTo(px + size * .77, py + size * 1.05); target.lineTo(px + size * .77, py + size * .24);
+          target.stroke();
+          target.strokeStyle = "#263044"; target.lineWidth = size * .12;
+          target.beginPath(); target.moveTo(px + size * .31, py + size * .20); target.lineTo(px + size * .83, py + size * .20); target.stroke();
+
+          roundedRectPath(target, px + size * .08, py + size * .91, size * 2.84, size * .88, size * .18);
+          const caseFill = target.createLinearGradient(px, py + size, px + width, py + size * 1.8);
+          caseFill.addColorStop(0, "#9bc8ff"); caseFill.addColorStop(.48, "#4d96ff"); caseFill.addColorStop(1, "#2567bd");
+          target.fillStyle = caseFill; target.fill(); target.strokeStyle = "#173f75"; target.lineWidth = size * .06; target.stroke();
+          target.strokeStyle = "rgba(255,255,255,.38)"; target.lineWidth = size * .025;
+          for (const rib of [.65, 1.25, 1.85, 2.45]) {
+            target.beginPath(); target.moveTo(px + size * rib, py + size * 1.02); target.lineTo(px + size * rib, py + size * 1.68); target.stroke();
+          }
+          target.fillStyle = "#fff0b8";
+          roundedRectPath(target, px + size * 1.26, py + size * 1.15, size * .52, size * .34, size * .07); target.fill();
+          target.strokeStyle = "#244b78"; target.lineWidth = size * .035; target.stroke();
+          target.fillStyle = "#ef476f"; target.beginPath(); target.arc(px + size * 1.52, py + size * 1.32, size * .075, 0, Math.PI * 2); target.fill();
+          target.fillStyle = "#263044";
+          for (const wheelX of [.42, 2.58]) { target.beginPath(); target.arc(px + size * wheelX, py + size * 1.84, size * .12, 0, Math.PI * 2); target.fill(); }
+        } else if (type === "S") {
+          const bags = [{x:1.02,y:.48,color:"#76e28b"},{x:.08,y:1.31,color:"#b6f2a2"}];
+          bags.forEach(bag => {
+            roundedRectPath(target, px + size * bag.x, py + size * (bag.y - .30), size * 1.82, size * .60, size * .27);
+            target.fillStyle = bag.color; target.fill(); target.strokeStyle = "#285d35"; target.lineWidth = size * .055; target.stroke();
+            target.fillStyle = "#397a47"; target.beginPath(); target.ellipse(px + size * (bag.x + 1.61), py + size * bag.y, size * .18, size * .24, 0, 0, Math.PI * 2); target.fill(); target.stroke();
+            target.strokeStyle = "#f1b84a"; target.lineWidth = size * .10;
+            target.beginPath(); target.moveTo(px + size * (bag.x + .82), py + size * (bag.y - .28)); target.lineTo(px + size * (bag.x + .82), py + size * (bag.y + .28)); target.stroke();
+          });
+          target.strokeStyle = "rgba(255,255,255,.55)"; target.lineWidth = size * .025;
+          for (const bag of bags) {
+            target.beginPath(); target.moveTo(px + size * (bag.x + .18), py + size * (bag.y - .14)); target.lineTo(px + size * (bag.x + .68), py + size * (bag.y - .14)); target.stroke();
+          }
+        } else if (type === "Z") {
+          const chairs = [{x:.10,y:.12},{x:1.10,y:1.04}];
+          chairs.forEach(chair => {
+            target.fillStyle = "#ff7694";
+            roundedRectPath(target, px + size * (chair.x + .14), py + size * chair.y, size * 1.42, size * .37, size * .10); target.fill(); target.strokeStyle = "#762239"; target.lineWidth = size * .045; target.stroke();
+            target.strokeStyle = "#dae1e9"; target.lineWidth = size * .055;
+            target.beginPath();
+            target.moveTo(px + size * (chair.x + .23), py + size * (chair.y + .38)); target.lineTo(px + size * (chair.x + 1.48), py + size * (chair.y + .84));
+            target.moveTo(px + size * (chair.x + 1.42), py + size * (chair.y + .38)); target.lineTo(px + size * (chair.x + .32), py + size * (chair.y + .84));
+            target.stroke();
+            target.strokeStyle = "#762239"; target.lineWidth = size * .05;
+            target.beginPath(); target.moveTo(px + size * (chair.x + .32), py + size * (chair.y + .37)); target.lineTo(px + size * (chair.x + 1.38), py + size * (chair.y + .37)); target.stroke();
+          });
+        }
+        target.restore();
+      }
+
+      function drawMatrixArt(target, matrix, px, py, size, type, alpha = 1, rotation = 0) {
+        const baseMatrix = PIECES[type].matrix;
+        const baseWidth = baseMatrix[0].length * size;
+        const baseHeight = baseMatrix.length * size;
+        if (pieceArt[type]) {
+          target.save();
+          target.globalAlpha = alpha;
+          target.beginPath();
+          matrix.forEach((row, y) => row.forEach((value, x) => {
+            if (value) target.rect(px + x * size, py + y * size, size, size);
+          }));
+          target.clip();
+          target.translate(px + matrix[0].length * size / 2, py + matrix.length * size / 2);
+          target.rotate(rotation * Math.PI / 2);
+          target.drawImage(pieceArt[type], -baseWidth / 2, -baseHeight / 2, baseWidth, baseHeight);
+          target.restore();
+          return;
+        }
+        if (type === "O" && matrix.length === 2 && matrix[0].length === 2) {
+          drawCooler(target, px, py, size, alpha);
+          return;
+        }
+        target.save();
+        target.globalAlpha = alpha;
+        matrix.forEach((row, y) => row.forEach((value, x) => {
+          if (!value) return;
+          target.fillStyle = PIECES[type].color;
+          target.fillRect(px + x * size + 1, py + y * size + 1, size, size);
+          const gloss = target.createLinearGradient(0, py + y * size, 0, py + (y + 1) * size);
+          gloss.addColorStop(0, "rgba(255,255,255,.28)");
+          gloss.addColorStop(1, "rgba(0,0,0,.18)");
+          target.fillStyle = gloss;
+          target.fillRect(px + x * size + 3, py + y * size + 3, size - 4, size - 4);
+        }));
+        target.strokeStyle = "#f3ddaa";
+        target.lineWidth = Math.max(2, size * .075);
+        matrix.forEach((row, y) => row.forEach((value, x) => {
+          if (value) target.strokeRect(px + x * size + 3, py + y * size + 3, size - 6, size - 6);
+        }));
+        target.translate(px + matrix[0].length * size / 2, py + matrix.length * size / 2);
+        target.rotate(rotation * Math.PI / 2);
+        drawGearDetail(target, type, -baseWidth / 2, -baseHeight / 2, baseWidth, baseHeight, size);
+        target.restore();
+      }
+
+      function drawPiece(piece, yOverride = piece.y, alpha = 1) {
+        drawMatrixArt(ctx, piece.matrix, piece.x * CELL, yOverride * CELL, CELL, piece.type, alpha, piece.rotation);
+      }
+
+      function drawPreview(target, type) {
+        const canvas = target.canvas;
+        target.clearRect(0, 0, canvas.width, canvas.height);
+        if (!type) {
+          target.fillStyle = "#f8dfaa";
+          target.font = "700 20px Trebuchet MS";
+          target.textAlign = "center";
+          target.fillText("EMPTY", canvas.width / 2, canvas.height / 2 + 7);
+          return;
+        }
+        const matrix = PIECES[type].matrix;
+        const size = 39;
+        const width = matrix[0].length * size;
+        const height = matrix.length * size;
+        const ox = (canvas.width - width) / 2;
+        const oy = (canvas.height - height) / 2;
+        drawMatrixArt(target, matrix, ox, oy, size, type);
+      }
+
+      function drawReviewGallery() {
+        document.querySelectorAll("[data-review-piece]").forEach(canvas => {
+          const type = canvas.dataset.reviewPiece;
+          const target = canvas.getContext("2d");
+          const matrix = PIECES[type].matrix;
+          target.clearRect(0, 0, canvas.width, canvas.height);
+          const background = target.createRadialGradient(canvas.width / 2, canvas.height / 2, 10, canvas.width / 2, canvas.height / 2, canvas.width * .55);
+          background.addColorStop(0, "#172642"); background.addColorStop(1, "#080d18");
+          target.fillStyle = background; target.fillRect(0, 0, canvas.width, canvas.height);
+          const size = Math.min(67, (canvas.width - 30) / matrix[0].length, (canvas.height - 24) / matrix.length);
+          const width = matrix[0].length * size;
+          const height = matrix.length * size;
+          drawMatrixArt(target, matrix, (canvas.width - width) / 2, (canvas.height - height) / 2, size, type);
+        });
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
+        const bg = ctx.createLinearGradient(0, 0, 0, gameCanvas.height);
+        bg.addColorStop(0, "#12615e");
+        bg.addColorStop(1, "#083d3b");
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
+
+        ctx.save();
+        ctx.setLineDash([3, 4]);
+        ctx.strokeStyle = "rgba(242,181,54,.42)";
+        ctx.lineWidth = 1;
+        for (let x = 1; x < COLS; x++) {
+          ctx.beginPath(); ctx.moveTo(x * CELL + .5, 0); ctx.lineTo(x * CELL + .5, gameCanvas.height); ctx.stroke();
+        }
+        for (let y = 1; y < ROWS; y++) {
+          ctx.beginPath(); ctx.moveTo(0, y * CELL + .5); ctx.lineTo(gameCanvas.width, y * CELL + .5); ctx.stroke();
+        }
+        ctx.restore();
+
+        const lockedGroups = new Map();
+        board.forEach((row, y) => row.forEach((cell, x) => {
+          if (!cell) return;
+          const key = cell.pieceId || `${x}-${y}`;
+          if (!lockedGroups.has(key)) lockedGroups.set(key, []);
+          lockedGroups.get(key).push({ cell, x, y });
+        }));
+        lockedGroups.forEach(cells => {
+          const first = cells[0];
+          const cell = first.cell;
+          if (typeof cell === "string") {
+            drawBlock(ctx, first.x * CELL, first.y * CELL, CELL, cell);
+            return;
+          }
+          const originX = first.x - cell.localX;
+          const originY = first.y - cell.localY;
+          const intact = cells.every(entry =>
+            entry.x - entry.cell.localX === originX && entry.y - entry.cell.localY === originY
+          );
+          if (intact) {
+            drawMatrixArt(ctx, cell.matrix, originX * CELL, originY * CELL, CELL, cell.type, 1, cell.rotation || 0);
+          } else {
+            cells.forEach(entry => {
+              const fragmentOriginX = entry.x - entry.cell.localX;
+              const fragmentOriginY = entry.y - entry.cell.localY;
+              ctx.save();
+              ctx.beginPath();
+              ctx.rect(entry.x * CELL, entry.y * CELL, CELL, CELL);
+              ctx.clip();
+              drawMatrixArt(
+                ctx,
+                entry.cell.matrix,
+                fragmentOriginX * CELL,
+                fragmentOriginY * CELL,
+                CELL,
+                entry.cell.type,
+                1,
+                entry.cell.rotation || 0
+              );
+              ctx.restore();
+            });
+          }
+        });
+        if (clearingRows.length && Math.floor(performance.now() / 70) % 2 === 0) {
+          clearingRows.forEach(y => {
+            ctx.fillStyle = "rgba(255,247,208,.88)";
+            ctx.fillRect(0, y * CELL + 1, gameCanvas.width, CELL - 2);
+          });
+        }
+
+        if (current && !over && !clearingRows.length) {
+          let ghostY = current.y;
+          while (!collides(current, 0, ghostY - current.y + 1)) ghostY++;
+          if (ghostY !== current.y) drawPiece(current, ghostY, .2);
+          drawPiece(current);
+        }
+
+        const vignette = ctx.createRadialGradient(200, 340, 130, 200, 340, 470);
+        vignette.addColorStop(.5, "transparent");
+        vignette.addColorStop(1, "rgba(0,0,0,.32)");
+        ctx.fillStyle = vignette;
+        ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
+      }
+
+      function gameLoop(time) {
+        if (running && !paused && !over) {
+          if (clearingRows.length) {
+            if (time >= clearUntil) finishClear();
+            else draw();
+          } else {
+            const interval = Math.max(115, 780 - (level - 1) * 72);
+            dropAccumulator += Math.min(80, time - lastTime);
+            if (dropAccumulator >= interval) {
+              move(0, 1);
+              dropAccumulator = 0;
+            }
+          }
+        }
+        lastTime = time;
+        requestAnimationFrame(gameLoop);
+      }
+
+      function showToast(message) {
+        ui.toast.textContent = message;
+        ui.toast.classList.add("show");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => ui.toast.classList.remove("show"), 1900);
+      }
+
+      const tracks = [
+        { file: "Falling Down The Road.mp3", title: "Falling Down The Road" },
+        { file: "Spin Me Right.mp3", title: "Spin Me Right" },
+        { file: "Blue Hairclip.mp3", title: "Blue Hairclip" },
+        { file: "Talk Till Dawn.mp3", title: "Talk Till Dawn" }
+      ];
+      let audio = null;
+      let trackIndex = Math.floor(Math.random() * tracks.length);
+      let radioOn = false;
+      let resumeRadioAfterBackground = false;
+
+      function playTrack(index) {
+        if (audio) { audio.pause(); audio.src = ""; }
+        trackIndex = (index + tracks.length) % tracks.length;
+        const track = tracks[trackIndex];
+        audio = new Audio(`../radio/music/90s/${encodeURIComponent(track.file)}`);
+        audio.volume = Number(ui.volume.value);
+        audio.addEventListener("ended", () => playTrack(trackIndex + 1));
+        audio.addEventListener("error", () => {
+          ui.radioStatus.textContent = "SIGNAL LOST • 90.3 KDRT";
+          ui.trackName.textContent = "Open from the Road Trip Runner folder";
+        });
+        ui.radioStatus.textContent = "ON AIR • 90.3 KDRT";
+        ui.trackName.textContent = track.title;
+        audio.play().catch(() => {
+          radioOn = false;
+          ui.radioStatus.textContent = "TAP POWER • 90.3 KDRT";
+          ui.trackName.textContent = "Browser blocked autoplay";
+          ui.radioBtn.textContent = "♫";
+        });
+      }
+
+      function toggleRadio() {
+        radioOn = !radioOn;
+        if (radioOn) {
+          if (audio && audio.src) audio.play().catch(() => playTrack(trackIndex));
+          else playTrack(trackIndex);
+          ui.radioBtn.textContent = "♫×";
+          ui.radioBtn.setAttribute("aria-label", "Turn radio off");
+        } else {
+          if (audio) audio.pause();
+          ui.radioStatus.textContent = "RADIO OFF • 90.3 KDRT";
+          ui.trackName.textContent = "Press power for The Dirt";
+          ui.radioBtn.textContent = "♫";
+          ui.radioBtn.setAttribute("aria-label", "Turn radio on");
+        }
+      }
+
+      function action(name) {
+        if (name === "left") move(-1, 0);
+        if (name === "right") move(1, 0);
+        if (name === "down") move(0, 1);
+        if (name === "rotate") rotate();
+        if (name === "drop") hardDrop();
+      }
+
+      const gearReview = document.getElementById("gearReview");
+      function openGearReview() {
+        const shouldResume = running && !paused && !over;
+        gearReview.dataset.resumeGame = shouldResume ? "true" : "false";
+        if (shouldResume) {
+          paused = true;
+          ui.pauseBtn.textContent = "▶ Resume";
+        }
+        drawReviewGallery();
+        gearReview.classList.remove("hidden");
+      }
+
+      function closeGearReview() {
+        gearReview.classList.add("hidden");
+        if (gearReview.dataset.resumeGame === "true" && !over) {
+          paused = false;
+          ui.pauseBtn.textContent = "Ⅱ Pause";
+          lastTime = performance.now();
+        }
+        gearReview.dataset.resumeGame = "false";
+      }
+
+      document.addEventListener("keydown", event => {
+        if (["ArrowLeft","ArrowRight","ArrowDown","ArrowUp","Space"].includes(event.code)) event.preventDefault();
+        if (event.code === "ArrowLeft") action("left");
+        if (event.code === "ArrowRight") action("right");
+        if (event.code === "ArrowDown") action("down");
+        if (event.code === "ArrowUp" || event.code === "KeyX") action("rotate");
+        if (event.code === "Space") action("drop");
+        if (event.code === "KeyC" || event.code === "ShiftLeft") hold();
+        if (event.code === "KeyP" || event.code === "Escape") togglePause();
+      });
+
+      document.querySelectorAll("[data-action]").forEach(button => {
+        button.addEventListener("pointerdown", event => {
+          event.preventDefault();
+          action(button.dataset.action);
+        });
+      });
+
+      let touchStart = null;
+      gameCanvas.addEventListener("pointerdown", event => {
+        touchStart = { x: event.clientX, y: event.clientY, time: performance.now() };
+        gameCanvas.setPointerCapture(event.pointerId);
+      });
+      gameCanvas.addEventListener("pointerup", event => {
+        if (!touchStart) return;
+        const dx = event.clientX - touchStart.x;
+        const dy = event.clientY - touchStart.y;
+        const elapsed = performance.now() - touchStart.time;
+        if (Math.abs(dx) < 18 && Math.abs(dy) < 18 && elapsed < 350) rotate();
+        else if (Math.abs(dx) > Math.abs(dy)) {
+          const screenCell = gameCanvas.getBoundingClientRect().width / COLS;
+          const steps = Math.min(5, Math.max(1, Math.round(Math.abs(dx) / screenCell)));
+          for (let i = 0; i < steps; i++) move(dx > 0 ? 1 : -1, 0);
+        } else if (dy > 48 || (dy > 32 && elapsed < 260)) hardDrop();
+        else if (dy > 15) move(0, 1);
+        touchStart = null;
+      });
+
+      ui.startBtn.addEventListener("click", startGame);
+      document.getElementById("mapBtn").addEventListener("click", () => {
+        suspendForAppBackground();
+        window.location.href = "../home.html";
+      });
+      ui.pauseBtn.addEventListener("click", togglePause);
+      ui.newGameBtn.addEventListener("click", () => {
+        resetGame();
+        running = true;
+        ui.overlay.classList.add("hidden");
+        lastTime = performance.now();
+      });
+      ui.radioBtn.addEventListener("click", toggleRadio);
+      document.getElementById("gearReviewBtn").addEventListener("click", openGearReview);
+      document.getElementById("closeGearReview").addEventListener("click", closeGearReview);
+      document.getElementById("holdBtn").addEventListener("click", hold);
+      document.getElementById("holdControl").addEventListener("click", hold);
+      ui.skipBtn.addEventListener("click", () => {
+        if (!radioOn) toggleRadio();
+        else playTrack(trackIndex + 1);
+      });
+      ui.volume.addEventListener("input", () => { if (audio) audio.volume = Number(ui.volume.value); });
+      function suspendForAppBackground() {
+        if (running && !paused && !over) togglePause();
+        resumeRadioAfterBackground = Boolean(radioOn && audio && !audio.paused);
+        if (audio) audio.pause();
+      }
+
+      function resumeFromAppBackground() {
+        if (document.hidden) return;
+        if (resumeRadioAfterBackground && radioOn && audio) audio.play().catch(() => {});
+        resumeRadioAfterBackground = false;
+      }
+
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) suspendForAppBackground();
+        else resumeFromAppBackground();
+      });
+      window.addEventListener("pagehide", suspendForAppBackground);
+      window.addEventListener("rtr-app-pause", suspendForAppBackground);
+      window.addEventListener("rtr-app-resume", resumeFromAppBackground);
+
+      drawReviewGallery();
+      loadPieceArt();
+      resetGame();
+      requestAnimationFrame(gameLoop);
+    })();
+  </script>
+</body>
+</html>

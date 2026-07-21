@@ -1,0 +1,554 @@
+{
+  "model": "eleven_v3",
+  "latest_run_character_cost": 313,
+  "cumulative_character_cost": 8402,
+  "clips": [
+    {
+      "file": "00s_toad_1.mp3",
+      "status": "existing",
+      "script": "YEAH!"
+    },
+    {
+      "file": "00s_toad_2.mp3",
+      "status": "existing",
+      "script": "SO GOOD!"
+    },
+    {
+      "file": "00s_toad_3.mp3",
+      "status": "existing",
+      "script": "TOOOAD!"
+    },
+    {
+      "file": "00s_toad_4.mp3",
+      "status": "existing",
+      "script": "WHOA!"
+    },
+    {
+      "file": "00s_toad_5.mp3",
+      "status": "existing",
+      "script": "BIG!"
+    },
+    {
+      "file": "00s_toad_6.mp3",
+      "status": "existing",
+      "script": "LET'S GOOO!"
+    },
+    {
+      "file": "00s_toad_7.mp3",
+      "status": "existing",
+      "script": "NICE!"
+    },
+    {
+      "file": "00s_toad_8.mp3",
+      "status": "existing",
+      "script": "BANGER!"
+    },
+    {
+      "file": "00s_toad_9.mp3",
+      "status": "existing",
+      "script": "*(airhorn)*"
+    },
+    {
+      "file": "00s_toad_10.mp3",
+      "status": "existing",
+      "script": "WOOO!"
+    },
+    {
+      "file": "00s_toad_11.mp3",
+      "status": "existing",
+      "script": "CLASSIC!"
+    },
+    {
+      "file": "00s_toad_12.mp3",
+      "status": "existing",
+      "script": "MY JAM!"
+    },
+    {
+      "file": "00s_toad_13.mp3",
+      "status": "existing",
+      "script": "I LOVE IT!"
+    },
+    {
+      "file": "00s_toad_14.mp3",
+      "status": "existing",
+      "script": "TOAD APPROVES!"
+    },
+    {
+      "file": "00s_id_1.mp3",
+      "status": "existing",
+      "script": "You're in The BLENDER! HITZ 99.5! All the hits, all at once!"
+    },
+    {
+      "file": "00s_id_2.mp3",
+      "status": "existing",
+      "script": "It's Jamie and The Toad and this is HITZ 99.5, The Blender!"
+    },
+    {
+      "file": "00s_ad_1.mp3",
+      "status": "existing",
+      "script": "This weekend at Cyber Zone Internet Caf\u00e9: LAN party 'til 2 A.M.! Bring your OWN tower! Your MOM can't come! Cyber Zone!"
+    },
+    {
+      "file": "00s_ad_2.mp3",
+      "status": "existing",
+      "script": "Ringtone Bonanza dot com! Turn YOUR phone into a PARTY! Standard messaging rates DEFINITELY apply!"
+    },
+    {
+      "file": "00s_intro_backseatsunrise_1.mp3",
+      "status": "existing",
+      "script": "It's a GORGEOUS morning in The Blender and here come The Sunroofs \u2014 'Backseat Sunrise' \u2014 windows DOWN, people, certified summer banger\u2014"
+    },
+    {
+      "file": "00s_intro_backseatsunrise_2.mp3",
+      "status": "existing",
+      "script": "The Sunroofs just pulled into the fast lane with the windows DOWN \u2014 this is 'Backseat Sunrise,' your officially unofficial road-trip anthem\u2014"
+    },
+    {
+      "file": "00s_intro_backseatsunrise_3.mp3",
+      "status": "existing",
+      "script": "Traffic report: sun is UP, snacks are OPEN, and The Sunroofs are taking over every speaker in the car \u2014 'Backseat Sunrise'\u2014"
+    },
+    {
+      "file": "00s_outro_backseatsunrise_1.mp3",
+      "status": "existing",
+      "script": "The Sunroofs, everybody! Best days of our LIVES and it's not even nine A.M.!"
+    },
+    {
+      "file": "00s_outro_backseatsunrise_2.mp3",
+      "status": "existing",
+      "script": "That was The Sunroofs! If your windows are still up, we have FAILED you personally!"
+    },
+    {
+      "file": "00s_intro_paperplanepulse_1.mp3",
+      "status": "existing",
+      "script": "Okaaay we're going up to the CLOUDS \u2014 DJ Contrail, the guy who plays behind a wall of fog, we've NEVER seen his face \u2014 'Paper Plane Pulse'\u2014"
+    },
+    {
+      "file": "00s_intro_paperplanepulse_2.mp3",
+      "status": "existing",
+      "script": "Nobody has ever seen DJ Contrail's face, but somebody keeps cashing his checks \u2014 turn the fog machine ALL the way up for 'Paper Plane Pulse'\u2014"
+    },
+    {
+      "file": "00s_intro_paperplanepulse_3.mp3",
+      "status": "existing",
+      "script": "Headlights ON, hands in the air \u2014 actually, driver, hands on the WHEEL \u2014 DJ Contrail is cleared for takeoff with 'Paper Plane Pulse'\u2014"
+    },
+    {
+      "file": "00s_outro_paperplanepulse_1.mp3",
+      "status": "existing",
+      "script": "DJ Contrail! Still foggy, still a total mystery, we LOVE a man of secrets!"
+    },
+    {
+      "file": "00s_intro_textmebackorelse2000s_1.mp3",
+      "status": "existing",
+      "script": "This is the ORIGINAL, the queen herself, Britney Alexandra \u2014 'Text Me Back Or Else' \u2014 and if he doesn't text back, that's HIS loss\u2014"
+    },
+    {
+      "file": "00s_intro_textmebackorelse2000s_2.mp3",
+      "status": "existing",
+      "script": "The request line is MELTING DOWN \u2014 Britney Alexandra has one message, one flip phone, and absolutely NO patience \u2014 'Text Me Back Or Else'\u2014"
+    },
+    {
+      "file": "00s_intro_textmebackorelse2000s_3.mp3",
+      "status": "existing",
+      "script": "Team Britney, make some NOISE! Britney Alexandra is checking the screen, checking it AGAIN, and giving him exactly one chorus to respond\u2014"
+    },
+    {
+      "file": "00s_outro_textmebackorelse2000s_1.mp3",
+      "status": "existing",
+      "script": "Britney Alexandra! Text her back or she is GONE \u2014 moving on \u2014 NEXT!"
+    },
+    {
+      "file": "00s_outro_textmebackorelse2000s_2.mp3",
+      "status": "existing",
+      "script": "Britney Alexandra! Message delivered, patience expired, number DELETED!"
+    },
+    {
+      "file": "00s_intro_textmebackorelse_1.mp3",
+      "status": "existing",
+      "script": "Now here's the SUNNY one \u2014 Mandy Sincere doing 'Text Me Back' \u2014 same demand, twice the sparkle, sunglasses ON\u2014"
+    },
+    {
+      "file": "00s_intro_textmebackorelse_2.mp3",
+      "status": "existing",
+      "script": "If sunshine had a ringtone, it would be Mandy Sincere \u2014 same message, maximum sparkle \u2014 'Text Me Back Or Else'\u2014"
+    },
+    {
+      "file": "00s_intro_textmebackorelse_3.mp3",
+      "status": "existing",
+      "script": "Team Mandy, this is YOUR round! Mandy Sincere brought three backup dancers and enough glitter to block the signal\u2014"
+    },
+    {
+      "file": "00s_outro_textmebackorelse_1.mp3",
+      "status": "existing",
+      "script": "Mandy Sincere! So bright I can't even SEE! Somebody dim her!"
+    },
+    {
+      "file": "00s_outro_textmebackorelse_2.mp3",
+      "status": "existing",
+      "script": "Mandy Sincere! The message is SENT, the glitter is EVERYWHERE, and we are not getting that deposit back!"
+    },
+    {
+      "file": "00s_battle_textmeback_1.mp3",
+      "status": "existing",
+      "script": "Whoa whoa WHOA \u2014 we're doing it \u2014 BACK to BACK \u2014 Britney Alexandra VERSUS Mandy Sincere, SAME song, and YOU decide who did it better \u2014 ring the bell!"
+    },
+    {
+      "file": "00s_battle_textmeback_2.mp3",
+      "status": "existing",
+      "script": "Stop the presses and FLIP open your phones \u2014 two artists, one song, zero patience! Britney Alexandra versus Mandy Sincere, back to back!"
+    },
+    {
+      "file": "00s_battle_textmeback_3.mp3",
+      "status": "existing",
+      "script": "The Blender Battle is ON! Same title, two completely different levels of sparkle \u2014 Britney versus Mandy, and YOU are the judge!"
+    },
+    {
+      "file": "00s_battle_textmebackround2_1.mp3",
+      "status": "existing",
+      "script": "Round one is in the BOOKS! Keep your scorecard out because contender number two is stepping up RIGHT now!"
+    },
+    {
+      "file": "00s_battle_textmebackround2_2.mp3",
+      "status": "existing",
+      "script": "Do not touch that dial \u2014 version two is loading! Same demand, brand-new attitude, and the judges are already yelling!"
+    },
+    {
+      "file": "00s_battle_textmebackwrap_1.mp3",
+      "status": "existing",
+      "script": "That's BOTH versions! Britney Alexandra and Mandy Sincere went back to back \u2014 you heard the evidence, now pick your winner!"
+    },
+    {
+      "file": "00s_battle_textmebackwrap_2.mp3",
+      "status": "existing",
+      "script": "Battle COMPLETE! Two divas entered, two divas also left because that is how radio works \u2014 tell us who won!"
+    },
+    {
+      "file": "00s_intro_snakecharmerringtoneremix_1.mp3",
+      "status": "existing",
+      "script": "DJ Nokia coming in HOT \u2014 every single beat in this is a PHONE sound, I'm not kidding \u2014 'Snake Charmer'\u2014"
+    },
+    {
+      "file": "00s_intro_snakecharmerringtoneremix_2.mp3",
+      "status": "existing",
+      "script": "Check your flip phone \u2014 no, seriously, that buzzing is IN the song \u2014 DJ Nokia with 'Snake Charmer, Ringtone Remix'\u2014"
+    },
+    {
+      "file": "00s_intro_snakecharmerringtoneremix_3.mp3",
+      "status": "existing",
+      "script": "DJ Nokia made an entire track out of beeps, buzzes, and one voicemail from his MOM \u2014 this is 'Snake Charmer'\u2014"
+    },
+    {
+      "file": "00s_outro_snakecharmerringtoneremix_1.mp3",
+      "status": "existing",
+      "script": "DJ Nokia! And YES that ringtone's for sale and YES it costs MORE than the song!"
+    },
+    {
+      "file": "00s_outro_snakecharmerringtoneremix_2.mp3",
+      "status": "existing",
+      "script": "DJ Nokia! Please stop checking your phone \u2014 the beep is part of the SONG!"
+    },
+    {
+      "file": "00s_intro_lasttime_1.mp3",
+      "status": "existing",
+      "script": "We are required by LAW to play one country song a day and HERE it is \u2014 Colt Maddox, 'Last Time' \u2014 he SWEARS it's the last time, it is NEVER the last time\u2014"
+    },
+    {
+      "file": "00s_intro_lasttime_2.mp3",
+      "status": "existing",
+      "script": "Colt Maddox has returned with the same truck, the same boots, and a completely NEW promise that this is the 'Last Time'\u2014"
+    },
+    {
+      "file": "00s_intro_lasttime_3.mp3",
+      "status": "existing",
+      "script": "Somebody left a cowboy hat in the studio, so legally we have to play Colt Maddox \u2014 'Last Time'\u2014"
+    },
+    {
+      "file": "00s_outro_lasttime_1.mp3",
+      "status": "existing",
+      "script": "Colt Maddox! He'll be right back next hour doing it all AGAIN!"
+    },
+    {
+      "file": "00s_outro_lasttime_2.mp3",
+      "status": "existing",
+      "script": "Colt Maddox! That was the last time until the NEXT last time!"
+    },
+    {
+      "file": "00s_intro_halogenlamps_1.mp3",
+      "status": "existing",
+      "script": "Ooh this one gets MOODY \u2014 Kilowatt Youth, 'Halogen Lamps' \u2014 I'm PRETTY sure it's about two robots falling in love\u2014"
+    },
+    {
+      "file": "00s_intro_halogenlamps_2.mp3",
+      "status": "existing",
+      "script": "Dim the dashboard, activate your feelings \u2014 Kilowatt Youth wrote a love song for appliances and somehow it WORKS \u2014 'Halogen Lamps'\u2014"
+    },
+    {
+      "file": "00s_outro_halogenlamps_1.mp3",
+      "status": "existing",
+      "script": "Kilowatt Youth! Nothing lasts forever EXCEPT that chorus stuck in my HEAD!"
+    },
+    {
+      "file": "00s_intro_frostedtipsforever_1.mp3",
+      "status": "existing",
+      "script": "FROSTED! TIPS! FOREVER! The O.C. Parking Lot \u2014 named after a parking lot they have never actually BEEN to\u2014"
+    },
+    {
+      "file": "00s_intro_frostedtipsforever_2.mp3",
+      "status": "existing",
+      "script": "Grab the hair gel and prepare to feel EVERYTHING \u2014 The O.C. Parking Lot with 'Frosted Tips Forever'\u2014"
+    },
+    {
+      "file": "00s_intro_frostedtipsforever_3.mp3",
+      "status": "existing",
+      "script": "They have never seen the O.C., but they HAVE seen the inside of a salon \u2014 'Frosted Tips Forever' from The O.C. Parking Lot\u2014"
+    },
+    {
+      "file": "00s_outro_frostedtipsforever_1.mp3",
+      "status": "existing",
+      "script": "The O.C. Parking Lot! Get your L.A. Looks on \u2014 we're not crying, YOU'RE crying!"
+    },
+    {
+      "file": "00s_intro_parkinglotcodes_1.mp3",
+      "status": "existing",
+      "script": "BLUE! BLUE! BLUE! You know the code! Mall pop-punk royalty Kacie Vandal \u2014 'Parking Lot Codes'\u2014"
+    },
+    {
+      "file": "00s_intro_parkinglotcodes_2.mp3",
+      "status": "existing",
+      "script": "Level three, blue section, next to the food court \u2014 Kacie Vandal remembers EXACTLY where you parked with 'Parking Lot Codes'\u2014"
+    },
+    {
+      "file": "00s_intro_parkinglotcodes_3.mp3",
+      "status": "existing",
+      "script": "Kacie Vandal is banned from two malls and headlining a third \u2014 this is 'Parking Lot Codes'\u2014"
+    },
+    {
+      "file": "00s_outro_parkinglotcodes_1.mp3",
+      "status": "existing",
+      "script": "Kacie Vandal! I don't KNOW the code but I'm screaming it in the food court anyway!"
+    },
+    {
+      "file": "00s_intro_brokenlink_1.mp3",
+      "status": "existing",
+      "script": "More Kacie Vandal and OH this one's a WEEPER \u2014 'Broken Link' \u2014 grab a napkin, dab those eyes\u2014"
+    },
+    {
+      "file": "00s_intro_brokenlink_2.mp3",
+      "status": "existing",
+      "script": "Kacie Vandal clicked refresh on this relationship for the LAST time \u2014 grab the emergency food-court napkins for 'Broken Link'\u2014"
+    },
+    {
+      "file": "00s_outro_brokenlink_1.mp3",
+      "status": "existing",
+      "script": "Kacie Vandal, 'Broken Link.' We were SO CLOSE! It's fine! I'm fine!"
+    },
+    {
+      "file": "00s_intro_dontfollowme_1.mp3",
+      "status": "existing",
+      "script": "Two people, ONE massive sound \u2014 The Tin Kings, 'Don't Follow Me' \u2014 the drummer and guitarist MIGHT be siblings, they will NOT confirm it\u2014"
+    },
+    {
+      "file": "00s_intro_dontfollowme_2.mp3",
+      "status": "existing",
+      "script": "The Tin Kings brought one guitar, one drum kit, and zero answers about whether they're related \u2014 'Don't Follow Me'\u2014"
+    },
+    {
+      "file": "00s_outro_dontfollowme_1.mp3",
+      "status": "existing",
+      "script": "The Tin Kings! That riff is gonna live in your skull, rent-FREE!"
+    },
+    {
+      "file": "00s_intro_iwasamountain_1.mp3",
+      "status": "generated",
+      "mode": "dialogue",
+      "character_cost": 116,
+      "script": [
+        {
+          "voice_id": "19akvrxzhb63VpcWo2Fv",
+          "text": "[bright, caffeinated, highly expressive 2000s pop-radio delivery] The Tin Kings came back with one guitar, one drum kit, and a breakup big enough to knock down a MOUNTAIN \u2014 'I Was a Mountain'\u2014"
+        },
+        {
+          "voice_id": "iktOP1l0mvjnb2nY1LSP",
+          "text": "[loud, punchy, dopey end blurt] MOUNTAIN!"
+        }
+      ],
+      "toad_gain_db": 4.0
+    },
+    {
+      "file": "00s_intro_iwasamountain_2.mp3",
+      "status": "generated",
+      "mode": "dialogue",
+      "character_cost": 116,
+      "script": [
+        {
+          "voice_id": "19akvrxzhb63VpcWo2Fv",
+          "text": "[bright, caffeinated, highly expressive 2000s pop-radio delivery] They survived the riff, lost the crown, and somehow made the wreckage sound MASSIVE \u2014 The Tin Kings with 'I Was a Mountain'\u2014"
+        },
+        {
+          "voice_id": "iktOP1l0mvjnb2nY1LSP",
+          "text": "[loud, punchy, dopey end blurt] ALWAYS YOU!"
+        }
+      ],
+      "toad_gain_db": 4.0
+    },
+    {
+      "file": "00s_outro_iwasamountain_1.mp3",
+      "status": "generated",
+      "mode": "jamie",
+      "character_cost": 81,
+      "script": "[bright, punchy pop-radio back-announce with a smile] The Tin Kings with 'I Was a Mountain!' Turns out the mountain was feelings, and the feelings had AMPLIFIERS!",
+      "toad_gain_db": null
+    },
+    {
+      "file": "00s_intro_passwords_1.mp3",
+      "status": "existing",
+      "script": "Kick your shoes OFF \u2014 this is Marlowe Kai, he records everything in a HAMMOCK \u2014 'Passwords,' so chill it's basically a nap\u2014"
+    },
+    {
+      "file": "00s_intro_passwords_2.mp3",
+      "status": "existing",
+      "script": "Marlowe Kai recorded this one barefoot, outdoors, and dangerously close to a sprinkler \u2014 'Passwords'\u2014"
+    },
+    {
+      "file": "00s_intro_passwords_3.mp3",
+      "status": "existing",
+      "script": "Your password needs one number, one symbol, and one extremely relaxed surfer \u2014 Marlowe Kai with 'Passwords'\u2014"
+    },
+    {
+      "file": "00s_outro_passwords_1.mp3",
+      "status": "existing",
+      "script": "Marlowe Kai! He knows all your passwords now! ...That's the whole song! It's CUTE!"
+    },
+    {
+      "file": "00s_intro_everytimeiclosemyeyes_1.mp3",
+      "status": "existing",
+      "script": "WARNING: this next one is dangerously catchy \u2014 Copper Avenue, 'Every Time I Close My Eyes' \u2014 you WILL hum it, there is no escape\u2014"
+    },
+    {
+      "file": "00s_intro_everytimeiclosemyeyes_2.mp3",
+      "status": "existing",
+      "script": "Copper Avenue put a hook in this song so sticky it should come with a warning label \u2014 'Every Time I Close My Eyes'\u2014"
+    },
+    {
+      "file": "00s_outro_everytimeiclosemyeyes_1.mp3",
+      "status": "existing",
+      "script": "Copper Avenue! It's STUCK in there now! You're welcome! Or... sorry!"
+    },
+    {
+      "file": "00s_intro_foreverever_1.mp3",
+      "status": "existing",
+      "script": "Big lights, BIG feelings \u2014 The Velvet Casino, straight outta Vegas, the singer wears ONE sequined glove \u2014 'Forever and Ever'\u2014"
+    },
+    {
+      "file": "00s_intro_foreverever_2.mp3",
+      "status": "existing",
+      "script": "The Velvet Casino just arrived with a spotlight, a wind machine, and that ONE mysterious glove \u2014 'Forever and Ever'\u2014"
+    },
+    {
+      "file": "00s_outro_foreverever_1.mp3",
+      "status": "existing",
+      "script": "The Velvet Casino! Forever and EVER! Nobody knows about the glove \u2014 nobody ASKS!"
+    },
+    {
+      "file": "00s_intro_moon_1.mp3",
+      "status": "existing",
+      "script": "Crank it UP \u2014 Cheap Halo, 'Moon' \u2014 every song they've got is about the moon, or a girl, sometimes BOTH\u2014"
+    },
+    {
+      "file": "00s_intro_moon_2.mp3",
+      "status": "existing",
+      "script": "Cheap Halo checked the forecast and, yes, the moon is still UP there \u2014 here is another song about it, conveniently titled 'Moon'\u2014"
+    },
+    {
+      "file": "00s_outro_moon_1.mp3",
+      "status": "existing",
+      "script": "Cheap Halo! See you on the MOON! ...We won't, but it's a nice thought!"
+    },
+    {
+      "file": "00s_intro_drive_1.mp3",
+      "status": "existing",
+      "script": "Get in the CAR \u2014 this is Archduke, art-school dance-punk, named after a historical event they cannot SPELL \u2014 'Drive'\u2014"
+    },
+    {
+      "file": "00s_intro_drive_2.mp3",
+      "status": "existing",
+      "script": "Archduke has a full tank, half a map, and absolutely NO idea where they're going \u2014 perfect conditions for 'Drive'\u2014"
+    },
+    {
+      "file": "00s_intro_drive_3.mp3",
+      "status": "existing",
+      "script": "Art school! Dance floor! Historical name they still cannot explain! Archduke is taking the wheel with 'Drive'\u2014"
+    },
+    {
+      "file": "00s_outro_drive_1.mp3",
+      "status": "existing",
+      "script": "Archduke! We can drive ALL night! Toad's got his learner's permit!"
+    },
+    {
+      "file": "00s_outro_drive_2.mp3",
+      "status": "existing",
+      "script": "Archduke! Pull over, switch seats, and do NOT let Toad parallel park!"
+    },
+    {
+      "file": "00s_intro_throughyoureyes_1.mp3",
+      "status": "existing",
+      "script": "Okay this one's SNEAKY \u2014 Della Sky, 'Through Your Eyes' \u2014 sounds like the happiest song ever, then you read the lyrics and OOF\u2014"
+    },
+    {
+      "file": "00s_intro_throughyoureyes_2.mp3",
+      "status": "existing",
+      "script": "Della Sky wrapped a heartbreak in sunshine and hoped we wouldn't NOTICE \u2014 we noticed! 'Through Your Eyes'\u2014"
+    },
+    {
+      "file": "00s_outro_throughyoureyes_1.mp3",
+      "status": "existing",
+      "script": "Della Sky! Happiest sad song of the YEAR! I need a minute! ...A HAPPY minute!"
+    },
+    {
+      "file": "00s_rain_1.mp3",
+      "status": "existing",
+      "script": "Uh-oh \u2014 Weather Toad says RAIN! Watch those windows, road-trippers!"
+    },
+    {
+      "file": "00s_city_newyork_1.mp3",
+      "status": "existing",
+      "script": "NEW YORK, baby! The city so nice they named it ONCE!"
+    },
+    {
+      "file": "00s_city_washingtondc_1.mp3",
+      "status": "existing",
+      "script": "Washington D.C.! Where the important people make the important DECISIONS!"
+    },
+    {
+      "file": "00s_city_farmland_1.mp3",
+      "status": "existing",
+      "script": "Look at all that CORN! Toad, wave to the cows!"
+    },
+    {
+      "file": "00s_city_desert_1.mp3",
+      "status": "existing",
+      "script": "The DESERT! Zero bars of signal! How is ANYONE gonna text back?!"
+    },
+    {
+      "file": "00s_city_losangeles_1.mp3",
+      "status": "existing",
+      "script": "L.A.! Everyone here is famous! Allegedly!"
+    },
+    {
+      "file": "00s_city_sanfrancisco_1.mp3",
+      "status": "existing",
+      "script": "San Francisco! Mind the FOG and the HILLS!"
+    },
+    {
+      "file": "00s_unlock_skateboard_1.mp3",
+      "status": "existing",
+      "script": "SKATEBOARD unlocked! That is SO extreme of you!"
+    },
+    {
+      "file": "00s_unlock_motorcycle_1.mp3",
+      "status": "existing",
+      "script": "MOTORCYCLE?! Okay big shot \u2014 look at YOU!"
+    }
+  ]
+}

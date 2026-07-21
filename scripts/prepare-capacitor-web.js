@@ -11,16 +11,23 @@ function copyFile(src, dest, transform) {
   else fs.writeFileSync(dest, data);
 }
 
-function copyDir(src, dest) {
+function copyDir(src, dest, include = () => true) {
   if (!fs.existsSync(src)) return;
   fs.mkdirSync(dest, { recursive: true });
   for (const entry of fs.readdirSync(src, { withFileTypes: true })) {
     if (entry.name === ".DS_Store") continue;
     const source = path.join(src, entry.name);
     const target = path.join(dest, entry.name);
-    if (entry.isDirectory()) copyDir(source, target);
+    if (!include(source, entry)) continue;
+    if (entry.isDirectory()) copyDir(source, target, include);
     else if (entry.isFile()) copyFile(source, target);
   }
+}
+
+function includeRuntimeAsset(source, entry) {
+  if (entry.isDirectory()) return true;
+  const name = path.basename(source).toLowerCase();
+  return !name.includes("-source") && !name.includes("contact-sheet");
 }
 
 function appHome(html) {
@@ -40,13 +47,15 @@ fs.mkdirSync(out, { recursive: true });
 copyFile(path.join(root, "home.html"), path.join(out, "index.html"), appHome);
 copyFile(path.join(root, "home.html"), path.join(out, "home.html"), appHome);
 copyFile(path.join(root, "index.html"), path.join(out, "runner.html"), appRunner);
+copyFile(path.join(root, "analytics.js"), path.join(out, "analytics.js"));
 copyFile(path.join(root, "save.js"), path.join(out, "save.js"));
 copyFile(path.join(root, "manifest.json"), path.join(out, "manifest.json"));
 copyFile(path.join(root, "icon.png"), path.join(out, "icon.png"));
 
-copyDir(path.join(root, "assets"), path.join(out, "assets"));
+copyDir(path.join(root, "assets"), path.join(out, "assets"), includeRuntimeAsset);
 copyDir(path.join(root, "radio"), path.join(out, "radio"));
 copyDir(path.join(root, "tap"), path.join(out, "tap"));
+copyDir(path.join(root, "prototypes"), path.join(out, "prototypes"), includeRuntimeAsset);
 copyDir(path.join(root, "videos"), path.join(out, "videos"));
 
 console.log("Prepared Capacitor web bundle at app/www");

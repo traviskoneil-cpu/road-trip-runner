@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon.png">
-<title>Road Trip Runner</title>
+<title>Window Dash | Road Trip Arcade</title>
 <style>
   :root {
     --bg: #1a1a2e;
@@ -156,6 +156,24 @@
     60%, 100% { transform: rotate(90deg); }
   }
   #rotateNote .small { font-size: 13px; opacity: 0.6; margin-top: 8px; }
+  #rotateNote .rotate-map-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    margin-top: 24px;
+    padding: 0 20px;
+    color: var(--text);
+    background: rgba(10, 12, 30, 0.68);
+    border: 1px solid rgba(255,255,255,0.24);
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    line-height: 1;
+    text-decoration: none;
+  }
+  #rotateNote .rotate-map-link:active { border-color: var(--accent); color: var(--accent); }
   @media (pointer: coarse) and (orientation: portrait) {
     #rotateNote { display: flex; }
   }
@@ -220,6 +238,34 @@
   #overlay.hidden { display: none; }
   #overlay h2 { font-size: 34px; margin-bottom: 8px; letter-spacing: 3px; }
   #overlay p { font-size: 14px; line-height: 1.7; opacity: 0.9; max-width: 560px; }
+  #resumeCountdown {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    background: rgba(218, 239, 255, 0.22);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    pointer-events: auto;
+  }
+  #resumeCountdown.hidden { display: none; }
+  #resumeCountdownNumber {
+    min-width: 1.1em;
+    color: #fff;
+    font: 900 112px/1 "Trebuchet MS", "Segoe UI", sans-serif;
+    letter-spacing: 0;
+    text-align: center;
+    text-shadow: 0 5px 18px rgba(8, 19, 37, 0.34);
+  }
+  #resumeCountdownNumber.tick { animation: resumeCount 0.64s cubic-bezier(0.18, 0.74, 0.25, 1); }
+  @keyframes resumeCount {
+    0% { opacity: 0; transform: scale(0.58); }
+    18% { opacity: 1; transform: scale(1.08); }
+    72% { opacity: 1; transform: scale(1); }
+    100% { opacity: 0.28; transform: scale(0.94); }
+  }
   .btn {
     background: var(--accent);
     color: white;
@@ -282,49 +328,73 @@
   .btn-mixtape:hover { background: var(--accent); }
   /* ---- My Mixtape library ---- */
   #library {
-    position: fixed; inset: 0; z-index: 60; padding: 16px;
-    background: rgba(8, 10, 24, 0.93);
+    position: fixed; inset: 0; z-index: 60; padding: max(10px, env(safe-area-inset-top)) 10px max(10px, env(safe-area-inset-bottom));
+    background: rgba(14, 27, 43, 0.92);
     display: flex; align-items: center; justify-content: center;
   }
   #library.hidden { display: none; }
   .lib-panel {
-    width: 900px; max-width: 100%; height: 90vh; height: 90dvh;
-    background: var(--panel); border-radius: 14px; overflow: hidden;
-    display: flex; flex-direction: column; box-shadow: 0 20px 80px rgba(0,0,0,0.7);
+    width: 920px; max-width: 100%; height: min(94vh, 860px); height: min(94dvh, 860px);
+    color: #243554; background: #fff8ec; border: 3px solid #243554; border-radius: 14px; overflow: hidden;
+    display: flex; flex-direction: column; box-shadow: 0 18px 70px rgba(0,0,0,0.55), inset 0 0 0 2px rgba(255,255,255,0.5);
   }
-  .lib-head { display: flex; align-items: center; gap: 14px; padding: 16px 20px; border-bottom: 1px solid #2a3350; }
-  .lib-head h2 { font-size: 24px; letter-spacing: 2px; }
-  .lib-head h2::before { content: "📼 "; }
-  .lib-count { font-size: 13px; opacity: 0.6; }
-  .lib-close { margin-left: auto; background: transparent; border: none; color: var(--text); font-size: 22px; cursor: pointer; opacity: 0.7; }
-  .lib-close:hover { opacity: 1; }
-  .lib-body { flex: 1; overflow-y: auto; padding: 16px 20px 24px; }
-  .lib-empty { opacity: 0.6; font-size: 14px; padding: 20px; text-align: center; }
-  .lib-station { font-size: 13px; letter-spacing: 1px; text-transform: uppercase; color: #ffd166; margin: 18px 0 10px; }
+  .lib-head { min-height: 76px; display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: #ffd23f; border-bottom: 3px solid #243554; }
+  .lib-format { width: 54px; height: 54px; flex: 0 0 auto; display: grid; place-items: center; border-radius: 50%; background: #fff8ec; border: 2px solid #243554; }
+  .lib-format img { display: block; width: 46px; height: 46px; object-fit: contain; filter: drop-shadow(0 3px 2px rgba(31,58,95,0.2)); }
+  .lib-title { min-width: 0; }
+  .lib-head h2 { margin: 0; color: #243554; font-size: 22px; line-height: 1; letter-spacing: 0; }
+  .lib-count { display: block; margin-top: 4px; color: #4d6077; font-size: 11px; font-weight: 800; }
+  .lib-close { margin-left: auto; width: 38px; height: 38px; border: 2px solid #243554; border-radius: 50%; background: #fff8ec; color: #243554; font-size: 19px; cursor: pointer; box-shadow: 0 3px 0 rgba(31,58,95,0.18); }
+  .lib-controls { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 8px; padding: 9px 12px; background: #e4f3ee; border-bottom: 2px solid rgba(36,53,84,0.2); }
+  .lib-tabs { display: flex; align-items: center; gap: 4px; min-width: 0; }
+  .lib-tab { min-height: 34px; border: 0; border-radius: 6px; padding: 6px 12px; color: #52647a; background: transparent; font-size: 11px; font-weight: 900; cursor: pointer; }
+  .lib-tab.active { color: #fff8ec; background: #243554; }
+  .lib-autoplay { display: flex; align-items: center; gap: 6px; color: #52647a; font-size: 10px; font-weight: 900; white-space: nowrap; }
+  .lib-autoplay input { position: absolute; opacity: 0; pointer-events: none; }
+  .lib-switch { position: relative; width: 34px; height: 20px; border-radius: 12px; background: #aab7bd; box-shadow: inset 0 0 0 2px rgba(36,53,84,0.15); }
+  .lib-switch::after { content: ""; position: absolute; top: 3px; left: 3px; width: 14px; height: 14px; border-radius: 50%; background: #fff8ec; transition: transform 150ms ease; }
+  .lib-autoplay input:checked + .lib-switch { background: #34a39a; }
+  .lib-autoplay input:checked + .lib-switch::after { transform: translateX(14px); }
+  .lib-mix-play { min-height: 34px; border: 0; border-radius: 6px; padding: 7px 12px; color: #fff; background: #e45f3f; font-size: 10px; font-weight: 900; cursor: pointer; box-shadow: 0 3px 0 #a53e2a; }
+  .lib-mix-play:disabled { color: #71808c; background: #cad5d2; box-shadow: none; cursor: not-allowed; }
+  .lib-body { flex: 1; overflow-y: auto; padding: 8px 12px 22px; background: linear-gradient(180deg, #fff8ec, #f4ead9); }
+  .lib-empty { color: #667589; font-size: 13px; padding: 24px 14px; text-align: center; }
+  .lib-station { color: #247c79; margin: 16px 2px 8px; font-size: 11px; font-weight: 900; letter-spacing: 0; text-transform: uppercase; }
   .lib-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   @media (max-width: 640px) { .lib-grid { grid-template-columns: 1fr; } }
-  .lib-card { display: flex; align-items: center; gap: 12px; background: #1b2138; border-radius: 10px; padding: 10px; }
-  .lib-card.locked { opacity: 0.5; }
+  .lib-card { min-width: 0; display: flex; align-items: center; gap: 9px; background: #fff; border: 2px solid rgba(36,53,84,0.14); border-radius: 8px; padding: 8px; box-shadow: 0 3px 0 rgba(36,53,84,0.08); }
+  .lib-card.favorite { border-color: #e45f3f; background: #fffaf3; }
+  .lib-card.locked { opacity: 0.55; background: #e7e7df; }
   .lib-cover {
-    width: 54px; height: 54px; border-radius: 8px; flex-shrink: 0;
+    width: 56px; height: 56px; border-radius: 6px; flex-shrink: 0;
     display: flex; align-items: center; justify-content: center;
     font-size: 24px; font-weight: bold; color: rgba(255,255,255,0.92);
     text-shadow: 0 1px 3px rgba(0,0,0,0.5);
   }
   .lib-cover { position: relative; overflow: hidden; }
   .lib-cover-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-  .lib-cover.locked { background: #2a3350; color: #55617f; text-shadow: none; }
+  .lib-cover.locked { background: #c6ced0; color: #71808c; text-shadow: none; }
   .lib-info { flex: 1; min-width: 0; }
-  .lib-song { font-weight: bold; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .lib-band { font-size: 12px; color: var(--accent); margin-bottom: 3px; }
-  .lib-bio { font-size: 11.5px; opacity: 0.72; line-height: 1.35; }
-  .lib-play { flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%; border: none; background: var(--accent); color: #fff; font-size: 15px; cursor: pointer; }
-  .lib-dl { flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%; border: 1px solid #445; color: var(--text); font-size: 13px; text-decoration: none; display: flex; align-items: center; justify-content: center; opacity: 0.7; }
-  .lib-dl:hover { opacity: 1; border-color: var(--accent); }
-  .lib-now { display: flex; align-items: center; gap: 12px; padding: 12px 20px; border-top: 1px solid #2a3350; background: #141a2e; }
+  .lib-song { color: #243554; font-weight: 900; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .lib-band { color: #d45136; font-size: 11px; font-weight: 800; margin: 2px 0 3px; }
+  .lib-bio { color: #667589; font-size: 10.5px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .lib-actions { flex: 0 0 auto; display: flex; align-items: center; gap: 5px; }
+  .lib-favorite, .lib-play { width: 36px; height: 36px; border-radius: 50%; cursor: pointer; }
+  .lib-favorite { border: 2px solid #d7cbbd; color: #9b897a; background: #fff8ec; font-size: 17px; }
+  .lib-favorite.active { color: #fff; border-color: #e45f3f; background: #e45f3f; }
+  .lib-play { border: none; background: #247c79; color: #fff; font-size: 13px; box-shadow: 0 3px 0 #175b59; }
+  .lib-now { min-height: 54px; display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-top: 3px solid #243554; background: #243554; }
   .lib-now.hidden { display: none; }
-  #libNowText { flex: 1; font-size: 13px; color: #ffd166; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  #libNowStop { background: transparent; border: 1px solid #556; color: var(--text); border-radius: 16px; padding: 5px 14px; cursor: pointer; font-size: 12px; }
+  #libNowText { flex: 1; color: #fff8ec; font-size: 12px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .lib-now button { width: 34px; height: 34px; border: 1px solid rgba(255,248,236,0.35); border-radius: 50%; background: rgba(255,248,236,0.1); color: #fff8ec; cursor: pointer; }
+  @media (max-width: 560px) {
+    #library { padding-left: 0; padding-right: 0; }
+    .lib-panel { height: 100vh; height: 100dvh; border-width: 0; border-radius: 0; }
+    .lib-controls { grid-template-columns: 1fr auto; }
+    .lib-autoplay { grid-row: 2; grid-column: 1; justify-self: start; }
+    .lib-mix-play { grid-row: 2; grid-column: 2; }
+    .lib-bio { display: none; }
+  }
   #hud-help { font-size: 12px; opacity: 0.55; margin-top: 10px; text-align: center; line-height: 1.6; }
   kbd {
     background: #333; border-radius: 4px; padding: 1px 6px;
@@ -335,38 +405,52 @@
 <body>
   <a class="map-link" href="home.html">MAP</a>
   <button id="pauseBtn" class="hidden" type="button" aria-label="Pause trip" title="Pause trip">&#10074;&#10074;</button>
-  <h1>Road Trip <span>Runner</span></h1>
+  <h1>Window <span>Dash</span></h1>
   <div class="tagline">Your fingers vs. the great American landscape. Just like the back seat of the minivan.</div>
 
   <div id="rotateNote">
     <span class="phone">&#128241;</span><br>
     Turn your phone sideways
     <div class="small">Road trips are a landscape experience.</div>
+    <a class="rotate-map-link" href="home.html">MAP</a>
   </div>
 
   <div id="gameWrap">
     <canvas id="game" width="960" height="540"></canvas>
     <div id="overlay">
-      <h2 id="ovTitle">ROAD TRIP RUNNER</h2>
+      <h2 id="ovTitle">WINDOW DASH</h2>
       <p id="ovText">
         Touch anywhere to jump. Hold to jump higher.<br>
-        Land on fences and rooftops, and clear the rest.
+        Land on fences and rooftops, and clear the rest.<br>
+        <strong id="runnerBestStart">Personal best: 0m</strong>
       </p>
       <button class="btn" id="startBtn">START THE TRIP</button>
+    </div>
+    <div id="resumeCountdown" class="hidden" aria-live="assertive" aria-atomic="true">
+      <span id="resumeCountdownNumber">3</span>
     </div>
   </div>
 
   <div id="library" class="hidden">
     <div class="lib-panel">
       <div class="lib-head">
-        <h2>MY MIXTAPE</h2>
-        <span id="libCount" class="lib-count"></span>
-        <button id="libClose" class="lib-close">&#10005;</button>
+        <span class="lib-format"><img id="libFormatIcon" src="assets/ui/mixtape-cd.png" alt=""></span>
+        <div class="lib-title"><h2>MY MIXTAPE</h2><span id="libCount" class="lib-count"></span></div>
+        <button id="libClose" class="lib-close" type="button" aria-label="Close mixtape">&#10005;</button>
+      </div>
+      <div class="lib-controls">
+        <div class="lib-tabs" role="tablist" aria-label="Mixtape views">
+          <button class="lib-tab active" id="libAllTab" type="button" role="tab" aria-selected="true">ALL SONGS</button>
+          <button class="lib-tab" id="libMixTab" type="button" role="tab" aria-selected="false">ROAD MIX <span id="libMixCount">0</span></button>
+        </div>
+        <label class="lib-autoplay" for="libAutoplay">AUTO PLAY<input id="libAutoplay" type="checkbox"><span class="lib-switch" aria-hidden="true"></span></label>
+        <button class="lib-mix-play" id="libPlayMix" type="button">PLAY ROAD MIX</button>
       </div>
       <div id="libBody" class="lib-body"></div>
       <div id="libNow" class="lib-now hidden">
         <span id="libNowText"></span>
-        <button id="libNowStop">&#9632; stop</button>
+        <button id="libNowNext" type="button" aria-label="Play next favorite">&#9654;&#10073;</button>
+        <button id="libNowStop" type="button" aria-label="Stop playback">&#9632;</button>
       </div>
     </div>
   </div>
@@ -375,12 +459,13 @@
     Routes: New York &rarr; Washington D.C. &rarr; Farmland &rarr; Desert &rarr; Los Angeles &rarr; San Francisco (loops)
   </div>
 
+<script src="analytics.js"></script>
 <script src="save.js"></script>
 <script>
 "use strict";
 
 // ============================================================
-// ROAD TRIP RUNNER — prototype v0.1
+// WINDOW DASH — Road Trip Arcade's endless runner
 // A 2D endless runner: your fingers run along the landscape
 // out the car window, like every family road trip ever.
 // ============================================================
@@ -429,8 +514,8 @@ const THEMES = [
     backgroundArt: "heartlandFarms",
     midStyle: "hills",
     landmarks: ["silo", "windmill", "treeline"],
-    obstacles: ["cow", "hayBale", "tractor", "scarecrow"],
-    extraObstacles: ["cornCrates", "milkCans", "produceStand", "hayWagon", "barn", "fence", "runawayChicken"],
+    obstacles: ["cornCrates", "milkCans", "produceStand", "hayWagon"],
+    extraObstacles: ["runawayChicken"],
   },
   {
     id: "desert",
@@ -469,8 +554,11 @@ const THEMES = [
     extraObstacles: ["parkletPlanter", "ferryBollards", "goldenGateBarricade", "cableCarBarrier", "cableCar"],
   },
 ];
-const RUNNER_PREVIEW_THEME_ID = new URLSearchParams(window.location.search).get("preview");
+const RUNNER_PREVIEW_PARAMS = new URLSearchParams(window.location.search);
+const RUNNER_PREVIEW_THEME_ID = RUNNER_PREVIEW_PARAMS.get("preview");
 const RUNNER_PREVIEW_THEME = THEMES.find((theme) => theme.id === RUNNER_PREVIEW_THEME_ID) || null;
+const RUNNER_SCENERY_SHOWCASE = Boolean(RUNNER_PREVIEW_THEME) && RUNNER_PREVIEW_PARAMS.get("showcase") === "1";
+const SCENERY_SHOWCASE_SECONDS = 10;
 const THEME_LENGTH = 1800; // meters per unlocked route stop before the next city
 const STARTING_OBSTACLE_COUNT = 4;
 const OBSTACLE_MILESTONES = [
@@ -575,12 +663,12 @@ loadImageCatalog(ObstacleArt);
 const OBSTACLE_DEFS = {
   hydrant:      { w: 34,  h: 46,  landable: false },
   mailbox:      { w: 36,  h: 58,  landable: false },
-  taxi:         { w: 150, h: 78,  landable: true, landOffset: 4 },
+  taxi:         { w: 168, h: 70,  landable: true, landOffset: 4 },
   fence:        { w: 220, h: 70,  landable: true, landOffset: 4 },
   waterTower:   { w: 110, h: 170, landable: true, landOffset: 5 },
   trashBags:    { w: 92,  h: 58,  landable: false },
   subwayEntrance: { w: 165, h: 94, landable: true, landOffset: 24 },
-  hotDogCart:   { w: 122, h: 136, landable: false },
+  hotDogCart:   { w: 122, h: 136, landable: true, landOffset: 5 },
   newsstand:    { w: 158, h: 128, landable: true, landOffset: 5 },
   messengerBike: { w: 118, h: 86, landable: false, moving: true, moveFactor: 1.52 },
   cactus:       { w: 62,  h: 118, landable: false },
@@ -596,7 +684,7 @@ const OBSTACLE_DEFS = {
   crabTraps:    { w: 146, h: 72,  landable: false },
   sourdoughCart: { w: 140, h: 86, landable: false },
   fogStreetlamp: { w: 62, h: 138, landable: false },
-  parkletPlanter: { w: 154, h: 82, landable: true, landOffset: 28 },
+  parkletPlanter: { w: 160, h: 82, landable: true, landOffset: 28 },
   ferryBollards: { w: 164, h: 70, landable: false },
   goldenGateBarricade: { w: 176, h: 86, landable: true, landOffset: 5 },
   cableCarBarrier: { w: 174, h: 88, landable: false },
@@ -614,16 +702,16 @@ const OBSTACLE_DEFS = {
   convertible:  { w: 158, h: 58,  landable: true, landOffset: 4 },
   wave:         { w: 138, h: 82,  landable: false, moving: true, moveFactor: 1.35 },
   lifeguardTower: { w: 146, h: 112, landable: true, landOffset: 18 },
-  tacoTruck:    { w: 150, h: 98,  landable: true, landOffset: 6 },
+  tacoTruck:    { w: 155, h: 98,  landable: true, landOffset: 6 },
   surfboardRack: { w: 156, h: 76,  landable: false },
   movieCamera:  { w: 108, h: 118, landable: false },
   trafficCones: { w: 136, h: 56,  landable: false },
   studioTrailer: { w: 184, h: 96, landable: true, landOffset: 6 },
   cherryTree:   { w: 104, h: 132, landable: false },
-  limo:         { w: 204, h: 66,  landable: true, landOffset: 4 },
+  limo:         { w: 244, h: 60,  landable: true, landOffset: 4 },
   barricade:    { w: 106, h: 66,  landable: true, landOffset: 4 },
-  foodCart:     { w: 108, h: 112, landable: false },
-  marblePlanter: { w: 130, h: 78, landable: true, landOffset: 18 },
+  foodCart:     { w: 108, h: 112, landable: true, landOffset: 5 },
+  marblePlanter: { w: 178, h: 68, landable: true, landOffset: 18 },
   souvenirKiosk: { w: 154, h: 132, landable: true, landOffset: 6 },
   securityCheckpoint: { w: 156, h: 122, landable: true, landOffset: 20 },
   scooterRider: { w: 78, h: 104, landable: false, moving: true, moveFactor: 1.45 },
@@ -633,6 +721,7 @@ const OBSTACLE_DEFS = {
 const S = {
   running: false,
   paused: false,
+  resuming: false,
   gameOver: false,
   t: 0,
   speed: 320,          // px/sec world scroll
@@ -656,6 +745,9 @@ const S = {
   toast: null,         // {text, timer}
 };
 
+document.getElementById("runnerBestStart").textContent =
+  "Personal best: " + Math.floor(S.best).toLocaleString() + "m";
+
 const player = {
   x: 180, y: GROUND_Y, w: 46, h: 74,
   vy: 0, onGround: true, jumpHeld: false,
@@ -674,6 +766,10 @@ function unlockedCityIds() {
 }
 
 function routeThemes() {
+  if (RUNNER_SCENERY_SHOWCASE) {
+    const start = THEMES.findIndex((theme) => theme.id === RUNNER_PREVIEW_THEME.id);
+    return THEMES.slice(start).concat(THEMES.slice(0, start));
+  }
   const open = unlockedCityIds();
   const route = CITY_ORDER.map((id) => THEMES.find((theme) => theme.id === id)).filter((theme) => theme && open.has(theme.id));
   return route.length ? route : [THEMES[0]];
@@ -719,18 +815,24 @@ function stationVehicleName(era) {
   return car ? vehicleName(car) : "another ride";
 }
 
+function stationUnlockHint(era) {
+  const car = Save.vehicleForStation ? Save.vehicleForStation(era) : null;
+  return car && Save.vehicleUnlockHint ? Save.vehicleUnlockHint(car) : "Keep exploring the road";
+}
+
 function bankedMilesForDistance(distance) {
   return Math.floor(distance / RUNNER_METERS_PER_BANKED_MILE);
 }
 
 function currentTheme() {
-  if (RUNNER_PREVIEW_THEME) return RUNNER_PREVIEW_THEME;
+  if (RUNNER_PREVIEW_THEME && !RUNNER_SCENERY_SHOWCASE) return RUNNER_PREVIEW_THEME;
   const route = routeThemes();
   return route[S.themeIndex % route.length] || THEMES[0];
 }
 
 function resetGame() {
-  S.running = true; S.paused = false; S.gameOver = false;
+  cancelResumeCountdown();
+  S.running = true; S.paused = false; S.resuming = false; S.gameOver = false;
   S.t = 0; S.speed = 320; S.distance = 0; S.lives = 3; S.invuln = 0;
   S.themeIndex = 0; S.obstacles = []; S.obstacleDebuts = {}; S.spawnTimer = 1.2;
   S.raining = false; S.rainTimer = 14; S.drops = [];
@@ -800,6 +902,7 @@ const Radio = {
   start() {
     this.stop();
     this._battle = false;
+    this._battleWrapPending = false;
     if (this.era === "off") return;
     if (!this.actx) this.actx = new (window.AudioContext || window.webkitAudioContext)();
     if (this.actx.state === "suspended") this.actx.resume();
@@ -827,6 +930,7 @@ const Radio = {
     return DJ.pick("id");
   },
   rotationWeight(file) {
+    if (Save.isFavoriteSong && Save.isFavoriteSong(this.libraryKey(this.era, file))) return 4;
     return Save.isCollected(this.libraryKey(this.era, file))
       ? this.collectedRotationWeight
       : this.uncollectedRotationWeight;
@@ -853,13 +957,22 @@ const Radio = {
     if (!this.queue.length) this.queue = this.shuffledQueue(tracks, prevFile);
     const nextFile = this.queue.shift();
     const seq = [];
+    let battleWrap = null;
+    if (this._battleWrapPending && prevFile && this.battleTracks.includes(prevFile)) {
+      battleWrap = DJ.pick("battle", "textmebackwrap");
+      if (battleWrap) seq.push(battleWrap);
+      this._battleWrapPending = false;
+    }
     // "Text Me Back" chart battle: sometimes run the two rival versions
     // back to back and let the player judge (00s only)
     let battleToast = null;
-    if (this.era === "00s" && this.battleTracks.includes(nextFile)) {
+    if (!battleWrap && this.era === "00s" && this.battleTracks.includes(nextFile)) {
       if (this._battle) { // this is the answer song
         battleToast = "⚔ TEXT ME BACK BATTLE — Round 2! You be the judge.";
         this._battle = false;
+        this._battleWrapPending = true;
+        const roundTwo = DJ.pick("battle", "textmebackround2");
+        if (roundTwo) seq.push(roundTwo);
       } else if (this.battleTracks.every((f) => tracks.includes(f)) && Math.random() < 0.3) {
         this.queue.unshift(this.battleTracks.find((f) => f !== nextFile));
         this._battle = true;
@@ -868,7 +981,7 @@ const Radio = {
         if (b) seq.push(b);
       }
     }
-    if (prevFile && !battleToast && Math.random() < 0.7) {
+    if (prevFile && !battleToast && !battleWrap && Math.random() < 0.7) {
       const outro = DJ.pick("outro", DJ.slugOf(prevFile));
       if (outro) seq.push(outro);
     }
@@ -876,15 +989,14 @@ const Radio = {
     if (!prevFile) { // cold open: station jingle/ID, then the song intro
       const opening = this.pickOpeningClip();
       if (opening) seq.push(opening);
-    } else if (!battleToast && DJ.breaks % 2 === 1) { // every other break gets an ID or ad
+    } else if (!battleToast && !battleWrap && DJ.breaks % 2 === 1) { // every other break gets an ID or ad
       const spot = DJ.pick(Math.random() < 0.65 ? "id" : "ad") || DJ.pick("id");
       if (spot) seq.push(spot);
     }
     const intro = DJ.pick("intro", DJ.slugOf(nextFile));
     if (intro) seq.push(intro);
-    // The Blender is a two-hander: after Jamie's intro, The Toad blurts a
-    // (separately recorded) interjection — stitched live, no editing needed.
-    if (this.era === "00s" && intro) { const toad = DJ.pick("toad"); if (toad) seq.push(toad); }
+    // The Blender intros are precomposed Jamie/Toad exchanges. Some use a
+    // tight end blurt; selected tracks contain a mid-sentence interruption.
     DJ.playSeq(seq, () => this.playSong(nextFile, tracks, battleToast));
   },
   playSong(file, tracks, toastOverride) {
@@ -1112,8 +1224,19 @@ function update(dt) {
   S.distance += routeMetersPerSecond() * dt;
   S.farX += px * 0.07; S.midX += px * 0.24; S.groundX += px;
 
-  // route changes
-  if (!RUNNER_PREVIEW_THEME) {
+  // Playtest scenery buttons tour every city at a fixed cadence. Normal trips
+  // continue to advance on real road distance and use only unlocked routes.
+  if (RUNNER_SCENERY_SHOWCASE) {
+    const route = routeThemes();
+    const idx = Math.floor(S.t / SCENERY_SHOWCASE_SECONDS) % route.length;
+    if (idx !== S.themeIndex) {
+      S.themeIndex = idx;
+      S.obstacles = [];
+      S.spawnTimer = 0.25;
+      const theme = currentTheme();
+      S.banner = { text: "SCENERY TOUR: " + theme.name, timer: 2.5 };
+    }
+  } else if (!RUNNER_PREVIEW_THEME) {
     const route = routeThemes();
     const idx = Math.floor((S.distance % routeLength()) / THEME_LENGTH) % route.length;
     if (idx !== S.themeIndex) {
@@ -1240,6 +1363,7 @@ function obstacleSurfaceY(o) {
 
 function obstaclePoolForTheme(theme) {
   const roster = obstacleRosterForTheme(theme);
+  if (RUNNER_SCENERY_SHOWCASE) return roster;
   const tripMiles = S.distance / RUNNER_METERS_PER_BANKED_MILE;
   let count = STARTING_OBSTACLE_COUNT;
   for (const milestone of OBSTACLE_MILESTONES) {
@@ -1265,16 +1389,27 @@ function takeHit() {
 }
 
 function endGame() {
-  S.running = false; S.paused = false;
+  cancelResumeCountdown();
+  S.running = false; S.paused = false; S.resuming = false;
   S.gameOver = true;
   Radio.finishSong(); // the last song plays out over the game-over screen
-  if (Save.setRunnerBest(S.distance)) S.best = Save.runnerBest;
+  const isNewBest = Save.setRunnerBest(S.distance);
+  if (isNewBest) S.best = Save.runnerBest;
   const earned = bankedMilesForDistance(S.distance);
   const totalMiles = Save.addMiles(earned);
+  RoadTripAnalytics.capture("game_completed", {
+    game: "window_dash",
+    distance_meters: Math.floor(S.distance),
+    miles_earned: earned,
+    city: currentTheme().id,
+    vehicle: Save.data.currentCar,
+    new_high_score: isNewBest,
+  });
   const ov = document.getElementById("overlay");
   document.getElementById("ovTitle").textContent = "OUT OF GAS!";
   document.getElementById("ovText").innerHTML =
     "You made it <b>" + Math.floor(S.distance) + "m</b> down the road." +
+    (isNewBest ? "<br><b style='color:#ffd166'>NEW PERSONAL BEST!</b>" : "") +
     "<br>Best trip: <b>" + Math.floor(S.best) + "m</b>" +
     "<br>+<b>" + earned + " mi</b> earned · <b>" + totalMiles + " mi</b> banked";
   document.getElementById("startBtn").textContent = "TAKE ANOTHER TRIP";
@@ -1283,11 +1418,7 @@ function endGame() {
   updateStopBtn(); // offer to stop the song still playing out
 }
 
-function pauseGame() {
-  if (!S.running || S.paused || S.gameOver) return;
-  S.paused = true;
-  player.jumpHeld = false;
-  Radio.pauseForGame();
+function showPausedOverlay() {
   document.getElementById("ovTitle").textContent = "TRIP PAUSED";
   document.getElementById("ovText").textContent = "Your road, radio, and miles are waiting right here.";
   document.getElementById("startBtn").textContent = "RESUME TRIP";
@@ -1295,12 +1426,61 @@ function pauseGame() {
   document.getElementById("pauseBtn").classList.add("hidden");
 }
 
+let resumeCountdownTimer = 0;
+
+function cancelResumeCountdown() {
+  if (resumeCountdownTimer) clearTimeout(resumeCountdownTimer);
+  resumeCountdownTimer = 0;
+  S.resuming = false;
+  document.getElementById("resumeCountdown")?.classList.add("hidden");
+}
+
+function pauseGame() {
+  if (!S.running || S.gameOver) return;
+  const wasResuming = S.resuming;
+  cancelResumeCountdown();
+  if (S.paused) {
+    if (wasResuming) showPausedOverlay();
+    return;
+  }
+  S.paused = true;
+  player.jumpHeld = false;
+  Radio.pauseForGame();
+  showPausedOverlay();
+}
+
 function resumeGame() {
-  if (!S.running || !S.paused) return;
-  S.paused = false;
-  Radio.resumeForGame();
+  if (!S.running || !S.paused || S.resuming) return;
+  S.resuming = true;
   document.getElementById("overlay").classList.add("hidden");
-  document.getElementById("pauseBtn").classList.remove("hidden");
+  const countdown = document.getElementById("resumeCountdown");
+  const number = document.getElementById("resumeCountdownNumber");
+  const beats = ["3", "2", "1"];
+  let beat = 0;
+  countdown.classList.remove("hidden");
+
+  const tick = () => {
+    if (!S.running || !S.paused || !S.resuming) return;
+    number.textContent = beats[beat];
+    number.classList.remove("tick");
+    void number.offsetWidth;
+    number.classList.add("tick");
+    beat += 1;
+    if (beat < beats.length) {
+      resumeCountdownTimer = setTimeout(tick, 640);
+      return;
+    }
+    resumeCountdownTimer = setTimeout(() => {
+      if (!S.running || !S.paused || !S.resuming) return;
+      S.paused = false;
+      S.resuming = false;
+      countdown.classList.add("hidden");
+      document.getElementById("pauseBtn").classList.remove("hidden");
+      Radio.resumeForGame();
+    }, 640);
+  };
+
+  tick();
 }
 
 // show the stop button only while a song is playing over the menu
@@ -2217,6 +2397,10 @@ const FingerLegSprite = {
   scaleX: 0.041,
   scaleY: 0.038,
   topCrop: 150,
+  bendY: 545,
+  bendPivotX: 193,
+  bendAngle: 0.075,
+  bendOverlap: 18,
   load() {
     const img = new Image();
     img.onload = () => this.process(img);
@@ -2310,10 +2494,21 @@ function drawSpriteHand(a1, a2) {
     ctx.scale(f.scaleX * (backLeg ? 0.94 : 0.98), f.scaleY * (backLeg ? 0.98 : 1));
     ctx.globalAlpha = 1;
     ctx.filter = "none";
+    const bend = (backLeg ? 1 : -1) * f.bendAngle;
+    const lowerCropY = Math.max(f.topCrop, f.bendY - f.bendOverlap);
+    ctx.save();
+    ctx.translate(f.bendPivotX - f.ax, f.bendY - f.ay);
+    ctx.rotate(bend);
     ctx.drawImage(
       f.cv,
-      0, f.topCrop, f.cv.width, f.cv.height - f.topCrop,
-      -f.ax, f.topCrop - f.ay, f.cv.width, f.cv.height - f.topCrop
+      0, lowerCropY, f.cv.width, f.cv.height - lowerCropY,
+      -f.bendPivotX, lowerCropY - f.bendY, f.cv.width, f.cv.height - lowerCropY
+    );
+    ctx.restore();
+    ctx.drawImage(
+      f.cv,
+      0, f.topCrop, f.cv.width, f.bendY + f.bendOverlap - f.topCrop,
+      -f.ax, f.topCrop - f.ay, f.cv.width, f.bendY + f.bendOverlap - f.topCrop
     );
     ctx.restore();
   }
@@ -2566,7 +2761,7 @@ Radio.playlist = {
   "70s": [],
   "80s": ["After Hours Arcade.mp3", "American Dream.mp3", "Check the Rhime.mp3", "Forever Now.mp3", "Glimmers.mp3", "High Windows.mp3", "Last Ride.mp3", "Night in Neon.mp3", "Nightfall.mp3", "Only the Window Knows.mp3", "Pictures in the Rain.mp3", "Red Light On.mp3", "Small Revolutions.mp3", "The Darker.mp3", "When You Loved Me.mp3", "Without a Word.mp3", "Your Lucky Jacket.mp3"],
   "90s": ["Falling Down The Road.mp3", "Birthday Cake.mp3", "Blue Hairclip.mp3", "Blue Tape Corner.mp3", "Burning Bright.mp3", "Chain Link Riot.mp3", "Dune Line.mp3", "Greedy Fly.mp3", "Hammer of Asgard.mp3", "Into the Rain.mp3", "Just to Be a Ghost.mp3", "Monsoon.mp3", "Paper Crown.mp3", "Paper Hands.mp3", "Spin Me Right.mp3", "Talk Till Dawn.mp3", "Tell Me.mp3", "What a Nice Idea.mp3"],
-  "00s": ["Backseat Sunrise.mp3", "Broken Link.mp3", "Don't Follow Me.mp3", "Drive.mp3", "Every Time I Close My Eyes.mp3", "Forever & Ever.mp3", "Frosted Tips Forever.mp3", "Halogen Lamps.mp3", "Last Time.mp3", "Moon.mp3", "Paper Plane Pulse.mp3", "Parking Lot Codes.mp3", "Passwords.mp3", "Snake Charmer (Ringtone Remix).mp3", "Text Me Back (Or Else) 2000s.mp3", "Text Me Back (Or Else).mp3", "Through Your Eyes.mp3"],
+  "00s": ["Backseat Sunrise.mp3", "Broken Link.mp3", "Don't Follow Me.mp3", "Drive.mp3", "Every Time I Close My Eyes.mp3", "Forever & Ever.mp3", "Frosted Tips Forever.mp3", "Halogen Lamps.mp3", "I Was a Mountain.mp3", "Last Time.mp3", "Moon.mp3", "Paper Plane Pulse.mp3", "Parking Lot Codes.mp3", "Passwords.mp3", "Snake Charmer (Ringtone Remix).mp3", "Text Me Back (Or Else) 2000s.mp3", "Text Me Back (Or Else).mp3", "Through Your Eyes.mp3"],
 };
 fetch("radio/music/playlist.json")
   .then((r) => (r.ok ? r.json() : null))
@@ -2576,6 +2771,28 @@ fetch("radio/music/playlist.json")
 // ---------- DJ clip manifest ----------
 // Inline copy for file:// opens; radio/clips/clips.json overrides when served.
 DJ.setFiles([
+  "80s_ad_1.mp3", "80s_ad_2.mp3", "80s_id_1.mp3", "80s_id_2.mp3",
+  "80s_intro_afterhoursarcade_1.mp3", "80s_intro_afterhoursarcade_2.mp3",
+  "80s_intro_americandream_1.mp3", "80s_intro_americandream_2.mp3",
+  "80s_intro_checktherhime_1.mp3", "80s_intro_checktherhime_2.mp3",
+  "80s_intro_forevernow_1.mp3", "80s_intro_forevernow_2.mp3",
+  "80s_intro_glimmers_1.mp3", "80s_intro_glimmers_2.mp3",
+  "80s_intro_highwindows_1.mp3", "80s_intro_highwindows_2.mp3",
+  "80s_intro_lastride_1.mp3", "80s_intro_lastride_2.mp3",
+  "80s_intro_nightfall_1.mp3", "80s_intro_nightfall_2.mp3",
+  "80s_intro_nightinneon_1.mp3", "80s_intro_nightinneon_2.mp3",
+  "80s_intro_onlythewindowknows_1.mp3", "80s_intro_onlythewindowknows_2.mp3",
+  "80s_intro_picturesintherain_1.mp3", "80s_intro_picturesintherain_2.mp3",
+  "80s_intro_redlighton_1.mp3", "80s_intro_redlighton_2.mp3",
+  "80s_intro_smallrevolutions_1.mp3", "80s_intro_smallrevolutions_2.mp3",
+  "80s_intro_thedarker_1.mp3", "80s_intro_thedarker_2.mp3",
+  "80s_outro_afterhoursarcade_1.mp3", "80s_outro_americandream_1.mp3",
+  "80s_outro_checktherhime_1.mp3", "80s_outro_forevernow_1.mp3",
+  "80s_outro_glimmers_1.mp3", "80s_outro_highwindows_1.mp3",
+  "80s_outro_lastride_1.mp3", "80s_outro_nightfall_1.mp3",
+  "80s_outro_nightinneon_1.mp3", "80s_outro_onlythewindowknows_1.mp3",
+  "80s_outro_picturesintherain_1.mp3", "80s_outro_redlighton_1.mp3",
+  "80s_outro_smallrevolutions_1.mp3", "80s_outro_thedarker_1.mp3",
   "90s_ad_1.mp3", "90s_ad_2.mp3", "90s_city_desert_1.mp3",
   "90s_city_farmland_1.mp3", "90s_city_losangeles_1.mp3", "90s_city_newyork_1.mp3",
   "90s_city_sanfrancisco_1.mp3", "90s_city_washingtondc_1.mp3", "90s_id_1.mp3",
@@ -2604,6 +2821,50 @@ DJ.setFiles([
   "90s_outro_spinmeright_2.mp3", "90s_outro_talktilldawn_1.mp3", "90s_outro_tellme_1.mp3",
   "90s_outro_whataniceidea_1.mp3", "90s_rain_1.mp3", "90s_unlock_motorcycle_1.mp3",
   "90s_unlock_skateboard_1.mp3",
+  "00s_ad_1.mp3", "00s_ad_2.mp3", "00s_battle_textmeback_1.mp3",
+  "00s_city_desert_1.mp3", "00s_city_farmland_1.mp3", "00s_city_losangeles_1.mp3",
+  "00s_city_newyork_1.mp3", "00s_city_sanfrancisco_1.mp3", "00s_city_washingtondc_1.mp3",
+  "00s_id_1.mp3", "00s_id_2.mp3", "00s_intro_backseatsunrise_1.mp3",
+  "00s_intro_brokenlink_1.mp3", "00s_intro_dontfollowme_1.mp3", "00s_intro_drive_1.mp3",
+  "00s_intro_everytimeiclosemyeyes_1.mp3", "00s_intro_foreverever_1.mp3",
+  "00s_intro_frostedtipsforever_1.mp3", "00s_intro_halogenlamps_1.mp3",
+  "00s_intro_lasttime_1.mp3", "00s_intro_moon_1.mp3", "00s_intro_paperplanepulse_1.mp3",
+  "00s_intro_parkinglotcodes_1.mp3", "00s_intro_passwords_1.mp3",
+  "00s_intro_snakecharmerringtoneremix_1.mp3", "00s_intro_textmebackorelse2000s_1.mp3",
+  "00s_intro_textmebackorelse_1.mp3", "00s_intro_throughyoureyes_1.mp3",
+  "00s_outro_backseatsunrise_1.mp3", "00s_outro_brokenlink_1.mp3",
+  "00s_outro_dontfollowme_1.mp3", "00s_outro_drive_1.mp3",
+  "00s_outro_everytimeiclosemyeyes_1.mp3", "00s_outro_foreverever_1.mp3",
+  "00s_outro_frostedtipsforever_1.mp3", "00s_outro_halogenlamps_1.mp3",
+  "00s_outro_lasttime_1.mp3", "00s_outro_moon_1.mp3", "00s_outro_paperplanepulse_1.mp3",
+  "00s_outro_parkinglotcodes_1.mp3", "00s_outro_passwords_1.mp3",
+  "00s_outro_snakecharmerringtoneremix_1.mp3", "00s_outro_textmebackorelse2000s_1.mp3",
+  "00s_outro_textmebackorelse_1.mp3", "00s_outro_throughyoureyes_1.mp3",
+  "00s_rain_1.mp3", "00s_toad_1.mp3", "00s_toad_10.mp3", "00s_toad_11.mp3",
+  "00s_toad_12.mp3", "00s_toad_13.mp3", "00s_toad_14.mp3", "00s_toad_2.mp3",
+  "00s_toad_3.mp3", "00s_toad_4.mp3", "00s_toad_5.mp3", "00s_toad_6.mp3",
+  "00s_toad_7.mp3", "00s_toad_8.mp3", "00s_toad_9.mp3",
+  "00s_unlock_motorcycle_1.mp3", "00s_unlock_skateboard_1.mp3",
+  "00s_intro_backseatsunrise_2.mp3", "00s_intro_backseatsunrise_3.mp3",
+  "00s_intro_brokenlink_2.mp3", "00s_intro_dontfollowme_2.mp3",
+  "00s_intro_drive_2.mp3", "00s_intro_drive_3.mp3",
+  "00s_intro_everytimeiclosemyeyes_2.mp3", "00s_intro_foreverever_2.mp3",
+  "00s_intro_frostedtipsforever_2.mp3", "00s_intro_frostedtipsforever_3.mp3",
+  "00s_intro_halogenlamps_2.mp3", "00s_intro_lasttime_2.mp3",
+  "00s_intro_lasttime_3.mp3", "00s_intro_moon_2.mp3",
+  "00s_intro_paperplanepulse_2.mp3", "00s_intro_paperplanepulse_3.mp3",
+  "00s_intro_parkinglotcodes_2.mp3", "00s_intro_parkinglotcodes_3.mp3",
+  "00s_intro_passwords_2.mp3", "00s_intro_passwords_3.mp3",
+  "00s_intro_snakecharmerringtoneremix_2.mp3", "00s_intro_snakecharmerringtoneremix_3.mp3",
+  "00s_intro_textmebackorelse2000s_2.mp3", "00s_intro_textmebackorelse2000s_3.mp3",
+  "00s_intro_textmebackorelse_2.mp3", "00s_intro_textmebackorelse_3.mp3",
+  "00s_intro_throughyoureyes_2.mp3", "00s_outro_backseatsunrise_2.mp3",
+  "00s_outro_drive_2.mp3", "00s_outro_lasttime_2.mp3",
+  "00s_outro_snakecharmerringtoneremix_2.mp3", "00s_outro_textmebackorelse2000s_2.mp3",
+  "00s_outro_textmebackorelse_2.mp3",
+  "00s_battle_textmeback_2.mp3", "00s_battle_textmeback_3.mp3",
+  "00s_battle_textmebackround2_1.mp3", "00s_battle_textmebackround2_2.mp3",
+  "00s_battle_textmebackwrap_1.mp3", "00s_battle_textmebackwrap_2.mp3",
 ]);
 fetch("radio/clips/clips.json")
   .then((r) => (r.ok ? r.json() : null))
@@ -2621,7 +2882,7 @@ const STATION_LABEL = {
 const Library = {
   meta: {}, order: ["90s", "00s", "70s", "80s"],
   collected: Save.collectedSet(),
-  player: null, playingKey: null,
+  player: null, playingKey: null, view: "all", mixQueue: [],
   load() {
     fetch("radio/stations.json").then((r) => (r.ok ? r.json() : null)).then((d) => {
       if (!d) return;
@@ -2639,6 +2900,7 @@ const Library = {
     const k = this.key(era, file);
     if (!Save.collect(k)) return; // false if already collected
     this.collected.add(k);
+    RoadTripAnalytics.capture("song_collected", { station: era, song_file: file });
     S.toast = { text: "★ ADDED TO MIXTAPE: " + file.replace(/\.[^.]+$/, ""), timer: 4 };
     Sfx.unlock();
     this.updateButton();
@@ -2647,54 +2909,157 @@ const Library = {
     const b = document.getElementById("mixtapeBtn");
     if (b) b.textContent = "♫ MY MIXTAPE — " + this.collected.size + "/" + (this.total() || "?");
   },
+  favorites() { return Save.favoriteSongSet ? Save.favoriteSongSet() : new Set(); },
+  favoriteTracks() {
+    const favorites = this.favorites();
+    const tracks = [];
+    for (const era of this.order) {
+      for (const track of this.meta[era] || []) {
+        if (favorites.has(this.key(era, track.file))) tracks.push({ era, track });
+      }
+    }
+    return tracks;
+  },
+  shuffled(items) {
+    const copy = items.slice();
+    for (let i = copy.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+    return copy;
+  },
+  formatAsset() {
+    const era = (Save.data.settings && Save.data.settings.station) || "90s";
+    return {
+      "70s": "assets/ui/mixtape-8track.png",
+      "80s": "assets/ui/mixtape-cassette.png",
+      "90s": "assets/ui/mixtape-cd.png",
+      "00s": "assets/ui/mixtape-mp3-player.png",
+    }[era] || "assets/ui/mixtape-cd.png";
+  },
+  syncControls() {
+    const favorites = this.favoriteTracks();
+    const allTab = document.getElementById("libAllTab");
+    const mixTab = document.getElementById("libMixTab");
+    allTab.classList.toggle("active", this.view === "all");
+    mixTab.classList.toggle("active", this.view === "mix");
+    allTab.setAttribute("aria-selected", this.view === "all" ? "true" : "false");
+    mixTab.setAttribute("aria-selected", this.view === "mix" ? "true" : "false");
+    document.getElementById("libMixCount").textContent = favorites.length;
+    document.getElementById("libAutoplay").checked = Save.mixtapeAutoplay ? Save.mixtapeAutoplay() : true;
+    document.getElementById("libPlayMix").disabled = !favorites.length;
+    document.getElementById("libFormatIcon").src = this.formatAsset();
+  },
+  setView(view) {
+    this.view = view === "mix" ? "mix" : "all";
+    this.render();
+  },
+  toggleFavorite(era, file) {
+    const key = this.key(era, file);
+    const next = !Save.isFavoriteSong(key);
+    Save.setFavoriteSong(key, next);
+    this.mixQueue = [];
+    this.render();
+  },
+  setAutoplay(on) {
+    if (Save.setMixtapeAutoplay) Save.setMixtapeAutoplay(on);
+    this.syncControls();
+  },
   hue(s) { let h = 0; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) % 360; return h; },
   open() {
     if (Radio.audio) Radio.audio.pause(); // don't overlap a playing-out song
     this.render();
     document.getElementById("library").classList.remove("hidden");
   },
-  close() { this.stopPlayer(); document.getElementById("library").classList.add("hidden"); },
-  stopPlayer() {
+  close() {
+    this.stopPlayer();
+    if (location.hash === "#mixtape") {
+      window.location.href = "home.html";
+      return;
+    }
+    document.getElementById("library").classList.add("hidden");
+  },
+  stopPlayer(clearQueue = true) {
     if (this.player) { this.player.pause(); this.player = null; }
+    if (clearQueue) this.mixQueue = [];
     this.playingKey = null;
     document.getElementById("libNow").classList.add("hidden");
     document.querySelectorAll(".lib-play").forEach((b) => (b.textContent = "▶"));
   },
-  toggle(era, file, btn) {
+  toggle(era, file) {
     const k = this.key(era, file);
     if (this.playingKey === k) { this.stopPlayer(); return; }
-    this.stopPlayer();
+    this.mixQueue = this.shuffled(this.favoriteTracks().filter((item) => this.key(item.era, item.track.file) !== k));
+    this.playTrack(era, file);
+  },
+  playTrack(era, file) {
+    this.stopPlayer(false);
+    const k = this.key(era, file);
+    const track = (this.meta[era] || []).find((item) => item.file === file);
     this.player = new Audio("radio/music/" + era + "/" + encodeURIComponent(file));
     this.player.volume = 0.85;
-    this.player.onended = () => this.stopPlayer();
+    this.player.onended = () => {
+      this.player = null;
+      this.playingKey = null;
+      if ((Save.mixtapeAutoplay ? Save.mixtapeAutoplay() : true) && this.favoriteTracks().length) this.playNextFavorite(k);
+      else this.stopPlayer();
+    };
+    this.player.onerror = () => {
+      if (this.favoriteTracks().length > 1) this.playNextFavorite(k);
+      else this.stopPlayer();
+    };
     this.player.play().catch(() => {});
     this.playingKey = k;
-    btn.textContent = "⏸";
-    document.getElementById("libNowText").textContent = "♫ " + file.replace(/\.[^.]+$/, "");
+    document.getElementById("libNowText").textContent = (track ? track.band + " - " + track.song : file.replace(/\.[^.]+$/, ""));
     document.getElementById("libNow").classList.remove("hidden");
+    this.render();
+  },
+  playNextFavorite(previousKey = "") {
+    const favorites = this.favoriteTracks();
+    if (!favorites.length) { this.stopPlayer(); return; }
+    if (!this.mixQueue.length) {
+      this.mixQueue = this.shuffled(favorites.filter((item) => this.key(item.era, item.track.file) !== previousKey));
+      if (!this.mixQueue.length) this.mixQueue = favorites.slice();
+    }
+    const next = this.mixQueue.shift();
+    this.playTrack(next.era, next.track.file);
+  },
+  startMix() {
+    const favorites = this.favoriteTracks();
+    if (!favorites.length) return;
+    this.mixQueue = this.shuffled(favorites);
+    this.playNextFavorite();
   },
   render() {
     const body = document.getElementById("libBody");
     body.innerHTML = "";
+    const favorites = this.favorites();
+    this.syncControls();
     document.getElementById("libCount").textContent =
-      this.collected.size + " of " + this.total() + " collected";
+      this.collected.size + " of " + this.total() + " collected · " + favorites.size + " in Road Mix";
     for (const era of this.order) {
       const tracks = this.meta[era] || [];
       if (!tracks.length) continue;
       const got = tracks.filter((t) => this.collected.has(this.key(era, t.file))).length;
+      const visibleTracks = this.view === "mix"
+        ? tracks.filter((t) => favorites.has(this.key(era, t.file)))
+        : tracks;
+      if (!visibleTracks.length) continue;
       const h = document.createElement("div");
       h.className = "lib-station";
-      h.textContent = STATION_LABEL[era] + "  ·  " + got + "/" + tracks.length;
+      h.textContent = STATION_LABEL[era] + "  ·  " + (this.view === "mix" ? visibleTracks.length + " FAVORITES" : got + "/" + tracks.length);
       body.appendChild(h);
       const grid = document.createElement("div");
       grid.className = "lib-grid";
-      const sorted = tracks.slice().sort((a, b) =>
+      const sorted = visibleTracks.slice().sort((a, b) =>
         (this.collected.has(this.key(era, a.file)) ? 0 : 1) -
         (this.collected.has(this.key(era, b.file)) ? 0 : 1));
       for (const t of sorted) {
-        const has = this.collected.has(this.key(era, t.file));
+        const key = this.key(era, t.file);
+        const has = this.collected.has(key);
+        const favorite = favorites.has(key);
         const card = document.createElement("div");
-        card.className = "lib-card" + (has ? "" : " locked");
+        card.className = "lib-card" + (has ? "" : " locked") + (favorite ? " favorite" : "");
         if (has) {
           const hue = this.hue(t.song);
           const cover = "radio/covers/" + era + "/" +
@@ -2705,17 +3070,21 @@ const Library = {
             '<span class="lib-cover-letter"></span>' +
             '<img class="lib-cover-img" alt="" src="' + cover + '" onerror="this.remove()"></div>' +
             '<div class="lib-info"><div class="lib-song"></div><div class="lib-band"></div><div class="lib-bio"></div></div>' +
-            '<a class="lib-dl" title="Download MP3">⬇</a>' +
-            '<button class="lib-play">▶</button>';
+            '<div class="lib-actions"><button class="lib-favorite" type="button" title="Add to Road Mix" aria-label="Add to Road Mix">♥</button>' +
+            '<button class="lib-play" type="button" aria-label="Play song">▶</button></div>';
           card.querySelector(".lib-cover-letter").textContent = (t.band[0] || "♪");
           card.querySelector(".lib-song").textContent = t.song;
           card.querySelector(".lib-band").textContent = t.band;
           card.querySelector(".lib-bio").textContent = t.bio || t.style || "";
-          const dl = card.querySelector(".lib-dl");
-          dl.href = "radio/music/" + era + "/" + encodeURIComponent(t.file);
-          dl.setAttribute("download", t.song + ".mp3"); // save it as the song title
+          const favoriteButton = card.querySelector(".lib-favorite");
+          favoriteButton.classList.toggle("active", favorite);
+          favoriteButton.title = favorite ? "Remove from Road Mix" : "Add to Road Mix";
+          favoriteButton.setAttribute("aria-label", favoriteButton.title);
+          favoriteButton.setAttribute("aria-pressed", favorite ? "true" : "false");
+          favoriteButton.addEventListener("click", () => this.toggleFavorite(era, t.file));
           const btn = card.querySelector(".lib-play");
-          btn.addEventListener("click", () => this.toggle(era, t.file, btn));
+          if (this.playingKey === key) btn.textContent = "Ⅱ";
+          btn.addEventListener("click", () => this.toggle(era, t.file));
         } else {
           card.innerHTML =
             '<div class="lib-cover locked">?</div>' +
@@ -2726,10 +3095,12 @@ const Library = {
       }
       body.appendChild(grid);
     }
-    if (!this.collected.size) {
+    if (!this.collected.size || (this.view === "mix" && !favorites.size)) {
       const empty = document.createElement("div");
       empty.className = "lib-empty";
-      empty.textContent = "Your mixtape is empty. Finish a song while you run to collect it.";
+      empty.textContent = this.view === "mix"
+        ? "Heart collected songs to build your Road Mix."
+        : "Your mixtape is empty. Finish a song while you run to collect it.";
       body.prepend(empty);
     }
   },
@@ -2764,6 +3135,11 @@ document.getElementById("startBtn").addEventListener("click", () => {
   document.getElementById("overlay").classList.add("hidden");
   goFullscreenOnMobile();
   resetGame();
+  RoadTripAnalytics.capture("game_started", {
+    game: "window_dash",
+    vehicle: Save.data.currentCar,
+    unlocked_cities: unlockedCityIds().length,
+  });
   Radio.start();
   document.getElementById("pauseBtn").classList.remove("hidden");
   updateStopBtn();
@@ -2771,14 +3147,41 @@ document.getElementById("startBtn").addEventListener("click", () => {
 document.getElementById("pauseBtn").addEventListener("click", pauseGame);
 // Android calls and app switching can take focus without unloading this page.
 // Pause through every browser lifecycle signal so the trip remains intact.
-function pauseForAppInterruption() { pauseGame(); }
+let resumeMenuAudioAfterBackground = false;
+function pauseForAppInterruption() {
+  if (S.running && !S.gameOver) {
+    pauseGame();
+    return;
+  }
+  resumeMenuAudioAfterBackground = Boolean(
+    (Radio.audio && !Radio.audio.paused) ||
+    (DJ.voice && !DJ.voice.paused) ||
+    (Radio.actx && Radio.actx.state === "running")
+  );
+  Radio.pauseForGame();
+}
+function resumeAfterAppInterruption() {
+  if (document.hidden || !resumeMenuAudioAfterBackground || S.running) return;
+  resumeMenuAudioAfterBackground = false;
+  Radio.resumeForGame();
+}
 document.addEventListener("visibilitychange", () => {
   if (document.hidden) pauseForAppInterruption();
+  else resumeAfterAppInterruption();
 });
 document.addEventListener("pause", pauseForAppInterruption);
 window.addEventListener("blur", pauseForAppInterruption);
 window.addEventListener("pagehide", pauseForAppInterruption);
 window.addEventListener("freeze", pauseForAppInterruption);
+window.addEventListener("rtr-app-pause", pauseForAppInterruption);
+window.addEventListener("rtr-app-resume", resumeAfterAppInterruption);
+function pauseForPortraitOrientation() {
+  if (matchMedia("(pointer: coarse) and (orientation: portrait)").matches) pauseGame();
+}
+window.addEventListener("orientationchange", () => setTimeout(pauseForPortraitOrientation, 0));
+if (screen.orientation && screen.orientation.addEventListener) {
+  screen.orientation.addEventListener("change", pauseForPortraitOrientation);
+}
 document.getElementById("stopMusicBtn")?.addEventListener("click", () => {
   Radio.stop();
   updateStopBtn();
@@ -2786,6 +3189,11 @@ document.getElementById("stopMusicBtn")?.addEventListener("click", () => {
 document.getElementById("mixtapeBtn")?.addEventListener("click", () => Library.open());
 document.getElementById("libClose").addEventListener("click", () => Library.close());
 document.getElementById("libNowStop").addEventListener("click", () => Library.stopPlayer());
+document.getElementById("libNowNext").addEventListener("click", () => Library.playNextFavorite(Library.playingKey || ""));
+document.getElementById("libAllTab").addEventListener("click", () => Library.setView("all"));
+document.getElementById("libMixTab").addEventListener("click", () => Library.setView("mix"));
+document.getElementById("libAutoplay").addEventListener("change", (event) => Library.setAutoplay(event.target.checked));
+document.getElementById("libPlayMix").addEventListener("click", () => Library.startMix());
 function openLibraryFromHash() {
   if (location.hash === "#mixtape") Library.open();
 }
@@ -2799,7 +3207,7 @@ function setRadioEra(era, persist) {
     b.classList.toggle("active", b.dataset.era === era);
     b.classList.toggle("locked", !unlocked);
     b.setAttribute("aria-disabled", unlocked ? "false" : "true");
-    if (!unlocked && b.dataset.era !== "off") b.title = "Buy " + stationVehicleName(b.dataset.era) + " to unlock this station.";
+    if (!unlocked && b.dataset.era !== "off") b.title = stationUnlockHint(b.dataset.era) + " to earn " + stationVehicleName(b.dataset.era) + " and unlock this station.";
     else b.removeAttribute("title");
   });
   Radio.era = era;
@@ -2813,7 +3221,7 @@ setRadioEra(Radio.era, false);
 document.querySelectorAll(".decade").forEach((btn) => {
   btn.addEventListener("click", () => {
     if (!radioEraUnlocked(btn.dataset.era)) {
-      S.toast = { text: "Buy " + stationVehicleName(btn.dataset.era) + " to unlock this station.", timer: 3 };
+      S.toast = { text: stationUnlockHint(btn.dataset.era) + " to earn " + stationVehicleName(btn.dataset.era) + " and unlock this station.", timer: 3 };
       return;
     }
     setRadioEra(btn.dataset.era, true);

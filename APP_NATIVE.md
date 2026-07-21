@@ -1,19 +1,22 @@
-# Road Trip Runner Native App Shell
+# Road Trip Arcade Native App Shell
 
-This repo now has a Capacitor Android shell so the existing HTML/JS game can live inside a native app while the web build remains the source of truth.
+This repo has Capacitor Android and iOS shells so the existing HTML/JS game can live inside native apps while the web build remains the source of truth.
 
 ## Structure
 
 - `capacitor.config.json` defines the native app id, name, and generated web directory.
 - `scripts/prepare-capacitor-web.js` builds `app/www` from the current static game files.
 - `android/` is the generated Android project.
-- `app/www/` and `android/app/src/main/assets/public/` are generated and ignored.
+- `ios/` is the native Xcode workspace and iOS project.
+- `app/www/`, `android/app/src/main/assets/public/`, and `ios/App/App/public/` are generated and ignored.
+
+Both native apps use the identifier `com.roadtriparcade.app` and display the name Road Trip Arcade.
 
 The app opens on Home. Inside the generated app bundle:
 
 - `home.html` is copied to `index.html` and `home.html`.
-- the runner `index.html` is copied to `runner.html`.
-- Dad Mode stays at `tap/index.html`.
+- Window Dash's `index.html` is copied to `runner.html`.
+- Wheel Jam stays at `tap/index.html`.
 
 ## Commands
 
@@ -23,9 +26,25 @@ npm run app:sync
 npm run app:build:android
 npm run app:install:android
 npm run app:android
+npm run app:build:ios
+npm run app:archive:ios
+npm run app:run:ios
+npm run app:ios
 ```
 
-Run `npm run app:sync` after changing game files so Capacitor copies the latest web bundle into Android.
+Run `npm run app:sync` after changing game files to copy the latest web bundle into both native projects. Use `app:sync:android` or `app:sync:ios` when working on only one platform.
+
+## iOS Build Note
+
+The iOS app requires Xcode and CocoaPods. `app:build:ios` creates an unsigned Simulator build at:
+
+```txt
+/tmp/road-trip-arcade-ios-build/Build/Products/Debug-iphonesimulator/App.app
+```
+
+For a physical iPhone, run `npm run app:ios`, select the App target in Xcode, choose the Apple developer team under Signing & Capabilities, select the connected iPhone, and press Run.
+
+For TestFlight, create the `com.roadtriparcade.app` record in App Store Connect first. After signing is configured in Xcode, `npm run app:archive:ios` creates `/tmp/RoadTripArcade.xcarchive`; upload that archive through Xcode Organizer.
 
 ## Android Build Note
 

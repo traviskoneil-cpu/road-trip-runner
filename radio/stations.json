@@ -1,5 +1,5 @@
 {
-  "comment": "Radio metadata for Road Trip Runner. Audio clips go in radio/clips/ named {era}_{type}_{n}.mp3 (types: id, intro, outro, ad, rain, city, unlock). Songs go in radio/music/ named {era}_{songSlug}.mp3.",
+  "comment": "Radio metadata for Road Trip Arcade. Audio clips go in radio/clips/ named {era}_{type}_{n}.mp3 (types: id, intro, outro, ad, rain, city, unlock). Songs go in radio/music/ named {era}_{songSlug}.mp3.",
   "stations": {
     "70s": {
       "callSign": "KWAX 96.9 FM",
@@ -61,139 +61,139 @@
       "tracks": [
         {
           "file": "After Hours Arcade.mp3",
-          "band": "KRZR Power Rotation",
+          "band": "Electric Marquis",
           "song": "After Hours Arcade",
-          "style": "80s radio rotation; placeholder metadata until the DJ script pass",
-          "bio": "Temporary KRZR card so this track can play, collect, and show up in Dad Mode.",
-          "genre": "80s Radio"
+          "style": "Minneapolis electro-funk with dry drum machines, rubbery synth bass, clipped guitar, and a playful falsetto lead",
+          "bio": "A one-man funk laboratory whose arcade cabinet allegedly doubles as a mixing desk.",
+          "genre": "Electro-Funk"
         },
         {
           "file": "American Dream.mp3",
-          "band": "KRZR Power Rotation",
+          "band": "Mercy County",
           "song": "American Dream",
-          "style": "80s radio rotation; placeholder metadata until the DJ script pass",
-          "bio": "Temporary KRZR card so this track can play, collect, and show up in Dad Mode.",
-          "genre": "80s Radio"
+          "style": "Heartland rock with ringing guitars, piano, saxophone, and a story-first vocal",
+          "bio": "A highway-bar five-piece that built its first tour out of borrowed vans and tip-jar money.",
+          "genre": "Heartland Rock"
         },
         {
           "file": "Check the Rhime.mp3",
-          "band": "KRZR Power Rotation",
+          "band": "Locker Room Kings",
           "song": "Check the Rhime",
-          "style": "80s radio rotation; placeholder metadata until the DJ script pass",
-          "bio": "Temporary KRZR card so this track can play, collect, and show up in Dad Mode.",
-          "genre": "80s Radio"
+          "style": "Mid-80s old-school hip-hop with a stripped drum-machine beat, scratches, horn hits, and chant hooks",
+          "bio": "Three school friends who treated the gym locker room like a championship arena and never stopped bragging.",
+          "genre": "Old-School Hip-Hop"
         },
         {
           "file": "Forever Now.mp3",
-          "band": "KRZR Power Rotation",
+          "band": "Chrome Viper",
           "song": "Forever Now",
-          "style": "80s radio rotation; placeholder metadata until the DJ script pass",
-          "bio": "Temporary KRZR card so this track can play, collect, and show up in Dad Mode.",
-          "genre": "80s Radio"
+          "style": "High-energy glam metal with crunchy guitars, gated drums, gang vocals, and a fireworks-sized chorus",
+          "bio": "Blaze, Dagger, Torque, and Kevin legally changed every name but one. Kevin says that is the joke.",
+          "genre": "Glam Metal"
         },
         {
           "file": "Glimmers.mp3",
-          "band": "KRZR Power Rotation",
+          "band": "Stallion Force",
           "song": "Glimmers",
-          "style": "80s radio rotation; placeholder metadata until the DJ script pass",
-          "bio": "Temporary KRZR card so this track can play, collect, and show up in Dad Mode.",
-          "genre": "80s Radio"
+          "style": "Triumphant arena rock with soaring guitars, thunderous gated drums, and a stadium-sized chorus",
+          "bio": "They rehearse exclusively on arena loading docks so every chorus remembers where it belongs.",
+          "genre": "Arena Rock"
         },
         {
           "file": "High Windows.mp3",
-          "band": "KRZR Power Rotation",
+          "band": "Northbound Saints",
           "song": "High Windows",
-          "style": "80s radio rotation; placeholder metadata until the DJ script pass",
-          "bio": "Temporary KRZR card so this track can play, collect, and show up in Dad Mode.",
-          "genre": "80s Radio"
+          "style": "Atmospheric British Isles anthem rock with chiming delay guitars, wide synth pads, and an urgent tenor",
+          "bio": "A rooftop-born quartet whose first drummer kept time against a laundromat window.",
+          "genre": "Anthem Rock"
         },
         {
           "file": "Last Ride.mp3",
-          "band": "KRZR Power Rotation",
+          "band": "Midnight Assembly",
           "song": "Last Ride",
-          "style": "80s radio rotation; placeholder metadata until the DJ script pass",
-          "bio": "Temporary KRZR card so this track can play, collect, and show up in Dad Mode.",
-          "genre": "80s Radio"
+          "style": "Nocturnal heartland rock with cracked-mirror imagery, fogbound guitars, and an end-of-the-line chorus",
+          "bio": "A late-night road band whose Suno tape was accidentally labeled Nightfall; the chorus knew its real name.",
+          "genre": "Heartland Rock"
         },
         {
           "file": "Night in Neon.mp3",
-          "band": "KRZR Power Rotation",
+          "band": "Tiffany Blackout",
           "song": "Night in Neon",
-          "style": "80s radio rotation; placeholder metadata until the DJ script pass",
-          "bio": "Temporary KRZR card so this track can play, collect, and show up in Dad Mode.",
-          "genre": "80s Radio"
+          "style": "Bright synth-pop with LinnDrum punch, sparkling arpeggiators, and an expressive female lead",
+          "bio": "Discovered at a food court payphone and contractually required to make every basement look glamorous.",
+          "genre": "Synth-Pop"
         },
         {
           "file": "Nightfall.mp3",
-          "band": "KRZR Power Rotation",
+          "band": "Nico Royale",
           "song": "Nightfall",
-          "style": "80s radio rotation; placeholder metadata until the DJ script pass",
-          "bio": "Temporary KRZR card so this track can play, collect, and show up in Dad Mode.",
-          "genre": "80s Radio"
+          "style": "Dark 80s pop-funk with flashing synths, hard drums, clipped guitar, and an urgent high-tenor lead",
+          "bio": "A precision dance-pop solo star whose choreography is treated like classified information.",
+          "genre": "Pop-Funk"
         },
         {
           "file": "Only the Window Knows.mp3",
-          "band": "KRZR Power Rotation",
+          "band": "Lila Hart",
           "song": "Only the Window Knows",
-          "style": "80s radio rotation; placeholder metadata until the DJ script pass",
-          "bio": "Temporary KRZR card so this track can play, collect, and show up in Dad Mode.",
-          "genre": "80s Radio"
+          "style": "Late-80s pop and R&B power ballad with electric piano, glossy pads, gated snare, and a soaring female belt",
+          "bio": "A meticulous studio perfectionist who records the quiet verse last, after the walls stop shaking.",
+          "genre": "Power Ballad"
         },
         {
           "file": "Pictures in the Rain.mp3",
-          "band": "KRZR Power Rotation",
+          "band": "The Glass Gardens",
           "song": "Pictures in the Rain",
-          "style": "80s radio rotation; placeholder metadata until the DJ script pass",
-          "bio": "Temporary KRZR card so this track can play, collect, and show up in Dad Mode.",
-          "genre": "80s Radio"
+          "style": "Romantic goth-pop and new wave with chorus bass, chiming guitar, soft drum machine, and bright melancholy",
+          "bio": "They keep every lyric in damp shoeboxes and insist the water damage improves the memories.",
+          "genre": "Goth-Pop"
         },
         {
           "file": "Red Light On.mp3",
-          "band": "KRZR Power Rotation",
+          "band": "The Low Signals",
           "song": "Red Light On",
-          "style": "80s radio rotation; placeholder metadata until the DJ script pass",
-          "bio": "Temporary KRZR card so this track can play, collect, and show up in Dad Mode.",
-          "genre": "80s Radio"
+          "style": "Jangly college rock with picked guitars, melodic bass, dry drums, and an earnest conversational vocal",
+          "bio": "A left-of-the-dial quartet broadcasting from a basement they affectionately call the dungeon.",
+          "genre": "College Rock"
         },
         {
           "file": "Small Revolutions.mp3",
-          "band": "KRZR Power Rotation",
+          "band": "Paper Empire",
           "song": "Small Revolutions",
-          "style": "80s radio rotation; placeholder metadata until the DJ script pass",
-          "bio": "Temporary KRZR card so this track can play, collect, and show up in Dad Mode.",
-          "genre": "80s Radio"
+          "style": "British art-pop and new wave with spacious Linn drums, glassy pads, piano, and restrained anthemics",
+          "bio": "Former office clerks who wrote their debut on the backs of forms they were supposed to file.",
+          "genre": "Art-Pop"
         },
         {
           "file": "The Darker.mp3",
-          "band": "KRZR Power Rotation",
+          "band": "Nico Royale",
           "song": "The Darker",
-          "style": "80s radio rotation; placeholder metadata until the DJ script pass",
-          "bio": "Temporary KRZR card so this track can play, collect, and show up in Dad Mode.",
-          "genre": "80s Radio"
+          "style": "Early-80s pop-funk with syncopated bass, crisp drums, synths, horn stabs, and playful falsetto",
+          "bio": "A precision dance-pop solo star whose choreography is treated like classified information.",
+          "genre": "Pop-Funk"
         },
         {
           "file": "When You Loved Me.mp3",
-          "band": "KRZR Power Rotation",
+          "band": "Roxanne Vale",
           "song": "When You Loved Me",
-          "style": "80s radio rotation; placeholder metadata until the DJ script pass",
-          "bio": "Temporary KRZR card so this track can play, collect, and show up in Dad Mode.",
-          "genre": "80s Radio"
+          "style": "Piano-led power ballad that builds through strings and guitar into a massive female-vocal finale",
+          "bio": "She writes every chorus at sunrise and refuses to record until an actual storm has passed.",
+          "genre": "Power Ballad"
         },
         {
           "file": "Without a Word.mp3",
-          "band": "KRZR Power Rotation",
+          "band": "The Velcro Militia",
           "song": "Without a Word",
-          "style": "80s radio rotation; placeholder metadata until the DJ script pass",
-          "bio": "Temporary KRZR card so this track can play, collect, and show up in Dad Mode.",
-          "genre": "80s Radio"
+          "style": "Lean new wave reggae-rock with syncopated drums, fretless-style bass, choppy guitar, and a tense tenor",
+          "bio": "Their drummer is rumored to be a drum machine wearing sunglasses. He continues to deny it.",
+          "genre": "New Wave"
         },
         {
           "file": "Your Lucky Jacket.mp3",
-          "band": "KRZR Power Rotation",
+          "band": "Cassie Chrome",
           "song": "Your Lucky Jacket",
-          "style": "80s radio rotation; placeholder metadata until the DJ script pass",
-          "bio": "Temporary KRZR card so this track can play, collect, and show up in Dad Mode.",
-          "genre": "80s Radio"
+          "style": "Early-80s dance-pop with crisp claps, bright synth bass, clean funk guitar, and cheeky chant vocals",
+          "bio": "A style thief in the best sense: one borrowed jacket, one club entrance, one instant pop career.",
+          "genre": "Dance-Pop"
         }
       ]
     },
@@ -256,23 +256,23 @@
           "file": "Greedy Fly.mp3",
           "band": "The Gauze",
           "song": "Greedy Fly",
-          "style": "British post-grunge, brooding, menacing crunch (Bush-ish)",
+          "style": "British post-grunge with brooding verses, thick low guitars, and a menacing chorus",
           "bio": "British post-grunge. The fly is 'a real fly. And also capitalism.'",
           "genre": "Post-Grunge"
         },
         {
           "file": "Burning Bright.mp3",
-          "band": "Kaydee Sparx",
+          "band": "Britney Alexandra",
           "song": "Burning Bright",
-          "style": "teen dance-pop, glossy, romantic (Britney-ish)",
-          "bio": "A pop star on a college station. Even Meg admits it's catchy.",
+          "style": "Glossy teen dance-pop with romantic verses and a bright key-lift chorus",
+          "bio": "Britney Alexandra's bright early single, before her flip-phone-era pop reign.",
           "genre": "Teen Pop"
         },
         {
           "file": "Talk Till Dawn.mp3",
           "band": "The Pen Pals",
           "song": "Talk Till Dawn",
-          "style": "nerdy fast-talk folk-pop, cozy (Barenaked Ladies-ish)",
+          "style": "Nerdy fast-talk folk-pop with warm acoustic strumming and stacked conversational harmonies",
           "bio": "Six nerds from Ontario who tour with a thesaurus.",
           "genre": "Folk-Pop"
         },
@@ -280,7 +280,7 @@
           "file": "Monsoon.mp3",
           "band": "Big Swell",
           "song": "Monsoon",
-          "style": "west-coast 90s R&B/rap, laid-back groove (Montell Jordan-ish)",
+          "style": "Laid-back west-coast 90s R&B and rap with a rubbery bass groove and smooth call-and-response",
           "bio": "West-coast R&B. Every song is weather as a metaphor for arguing.",
           "genre": "West-Coast R&B"
         },
@@ -296,7 +296,7 @@
           "file": "What a Nice Idea.mp3",
           "band": "Joni Spite",
           "song": "What a Nice Idea",
-          "style": "confessional alt, dreamy but pointed (Alanis-ish)",
+          "style": "Dreamy confessional alt-rock with pointed verses and a volcanic chorus",
           "bio": "Wrote it in a parking lot in eleven minutes. Tells you at every show.",
           "genre": "Alt-Rock"
         },
@@ -304,7 +304,7 @@
           "file": "Tell Me.mp3",
           "band": "The Wednesday Pale",
           "song": "Tell Me",
-          "style": "dream-alt, ethereal female vocals, dramatic (Cranberries-ish)",
+          "style": "Dramatic dream-alt with ringing guitars, ethereal female vocals, and a storm-cloud chorus",
           "bio": "Dream-alt. Singer Saoirse hums the parts she hasn't written yet.",
           "genre": "Dream-Alt"
         },
@@ -312,7 +312,7 @@
           "file": "Just to Be a Ghost.mp3",
           "band": "The Wednesday Pale",
           "song": "Just to Be a Ghost",
-          "style": "dream-alt, haunted, female-vocal bridge (Cranberries-ish)",
+          "style": "Haunted dream-alt with chiming guitars, intimate verses, and a soaring female-vocal bridge",
           "bio": "The follow-up. The ghost is an ex. Or a real ghost. She won't say.",
           "genre": "Dream-Alt"
         },
@@ -320,7 +320,7 @@
           "file": "Dune Line.mp3",
           "band": "Sidewalk Curfew",
           "song": "Dune Line",
-          "style": "snotty pop-punk, three chords, fast (Green Day-ish)",
+          "style": "Snotty three-chord pop-punk at breakneck speed with a shout-along chorus",
           "bio": "Pop-punk trio. All three claim they wrote it; none play it the same twice.",
           "genre": "Pop-Punk"
         },
@@ -328,7 +328,7 @@
           "file": "Paper Crown.mp3",
           "band": "Homeroom Heroes",
           "song": "Paper Crown",
-          "style": "mall pop-punk, gang-vocal chorus (New Found Glory-ish)",
+          "style": "Bright mall pop-punk with palm-muted verses and a gang-vocal chorus",
           "bio": "Mall pop-punk. Sang backup for N2U and will deny it to your face.",
           "genre": "Pop-Punk"
         },
@@ -336,7 +336,7 @@
           "file": "Paper Hands.mp3",
           "band": "Cardigan Weather",
           "song": "Paper Hands",
-          "style": "earnest flannel arena-grunge, mumbled verses (Pearl Jam-ish)",
+          "style": "Earnest arena-grunge with woolly guitars, mumbled verses, and a widescreen chorus",
           "bio": "Flannel arena-grunge. The singer mumbles on purpose.",
           "genre": "Grunge"
         },
@@ -344,7 +344,7 @@
           "file": "Into the Rain.mp3",
           "band": "Barefoot Caravan",
           "song": "Into the Rain",
-          "style": "hippie jam-band, too much percussion (Rusted Root-ish)",
+          "style": "Sun-baked jam-band folk-rock with hand percussion, chant vocals, and a wandering groove",
           "bio": "Jam-band hippies. At least four drummers. Member count unknown.",
           "genre": "Jam Band"
         }
@@ -361,7 +361,7 @@
           "file": "Backseat Sunrise.mp3",
           "band": "The Sunroofs",
           "song": "Backseat Sunrise",
-          "style": "bright up-tempo dance-pop road anthem (Oakenfold 'Starry Eyed Surprise'-ish)",
+          "style": "Bright up-tempo dance-pop road anthem with filtered guitars, breakbeat drums, and a sunrise-sized hook",
           "bio": "Dance-pop one-hit-wonder. Best days of your life, allegedly.",
           "genre": "Dance-Pop"
         },
@@ -369,7 +369,7 @@
           "file": "Paper Plane Pulse.mp3",
           "band": "DJ Contrail",
           "song": "Paper Plane Pulse",
-          "style": "ethereal trance, 'take me higher' build (Oakenfold-ish)",
+          "style": "Ethereal trance with featherlight vocals, rising filters, and a euphoric take-me-higher build",
           "bio": "Trance producer who performs behind a wall of fog. No one's seen his face.",
           "genre": "Trance"
         },
@@ -377,7 +377,7 @@
           "file": "Text Me Back (Or Else) 2000s.mp3",
           "band": "Britney Alexandra",
           "song": "Text Me Back (Or Else)",
-          "style": "2000s teen-pop, sassy (Britney-ish); half of the Text Me Back battle",
+          "style": "Sassy 2000s teen-pop with clipped beats, glossy synths, and a confrontational hook; half of the Text Me Back battle",
           "bio": "Teen-pop royalty. Text her back or she moves on.",
           "genre": "Teen Pop"
         },
@@ -385,7 +385,7 @@
           "file": "Text Me Back (Or Else).mp3",
           "band": "Mandy Sincere",
           "song": "Text Me Back (Or Else)",
-          "style": "bright bubbly pop, sunny (Natasha Bedingfield-ish); other half of the battle",
+          "style": "Sunny bubblegum pop with bright acoustic strums, handclaps, and an unstoppable chorus; the other half of the battle",
           "bio": "The sunny version. Same demand, more sunshine.",
           "genre": "Bubblegum Pop"
         },
@@ -401,9 +401,9 @@
           "file": "Last Time.mp3",
           "band": "Colt Maddox",
           "song": "Last Time",
-          "style": "country-rap crossover, 'one last time' anthem",
-          "bio": "Country crossover. He swears it's the last time. It never is.",
-          "genre": "Country-Rap"
+          "style": "Compact early-2000s rap with a tense loop, clipped drums, and a relentless final-word hook",
+          "bio": "A fast-talking DMV rapper who announces every return to the booth as the last one.",
+          "genre": "Hip-Hop"
         },
         {
           "file": "Halogen Lamps.mp3",
@@ -425,7 +425,7 @@
           "file": "Parking Lot Codes.mp3",
           "band": "Kacie Vandal",
           "song": "Parking Lot Codes",
-          "style": "mall pop-punk, 'blue blue blue' hook (Avril-ish)",
+          "style": "Mall pop-punk with crunchy guitars, a blue-blue-blue hook, and a sneering lead vocal",
           "bio": "Mall pop-punk. Blue, blue, blue — you know the code.",
           "genre": "Pop-Punk"
         },
@@ -433,7 +433,7 @@
           "file": "Broken Link.mp3",
           "band": "Kacie Vandal",
           "song": "Broken Link",
-          "style": "pop-punk breakup ballad (Avril-ish)",
+          "style": "Pop-punk breakup ballad with chiming verses and a full-volume final chorus",
           "bio": "The weepy one. You were close.",
           "genre": "Pop-Punk"
         },
@@ -441,7 +441,15 @@
           "file": "Don't Follow Me.mp3",
           "band": "The Tin Kings",
           "song": "Don't Follow Me",
-          "style": "garage blues-rock stomp (White Stripes / 'Seven Nation Army'-ish)",
+          "style": "Garage blues-rock stomp with a blunt octave riff, dry drums, and basement-show swagger",
+          "genre": "Garage Blues",
+          "bio": "A garage-blues two-piece. The drummer and guitarist may or may not be siblings and refuse to clarify."
+        },
+        {
+          "file": "I Was a Mountain.mp3",
+          "band": "The Tin Kings",
+          "song": "I Was a Mountain",
+          "style": "Raw garage-blues rock with a bruised refrain, dry drums, and a riff that keeps rebuilding itself",
           "genre": "Garage Blues",
           "bio": "A garage-blues two-piece. The drummer and guitarist may or may not be siblings and refuse to clarify."
         },
@@ -449,7 +457,7 @@
           "file": "Passwords.mp3",
           "band": "Marlowe Kai",
           "song": "Passwords",
-          "style": "mellow acoustic surf-pop (Jack Johnson-ish)",
+          "style": "Mellow acoustic surf-pop with brushed percussion, breezy phrasing, and a porch-light chorus",
           "genre": "Acoustic Pop",
           "bio": "A barefoot beach troubadour who records everything in a hammock."
         },
@@ -457,7 +465,7 @@
           "file": "Every Time I Close My Eyes.mp3",
           "band": "Copper Avenue",
           "song": "Every Time I Close My Eyes",
-          "style": "catchy pop-rock (early Maroon 5-ish)",
+          "style": "Sleek early-2000s pop-rock with clipped funk guitar, falsetto hooks, and a radio-polished chorus",
           "genre": "Pop-Rock",
           "bio": "Relentlessly catchy pop-rock. You'll be humming this against your will."
         },
@@ -465,7 +473,7 @@
           "file": "Forever & Ever.mp3",
           "band": "The Velvet Casino",
           "song": "Forever & Ever",
-          "style": "anthemic new-wave indie rock (The Killers-ish)",
+          "style": "Anthemic new-wave indie rock with pulsing synths, bright guitar, and a neon-lit chorus",
           "genre": "Indie Rock",
           "bio": "Vegas glam-indie. The frontman wears one sequined glove and won't say why."
         },
@@ -473,7 +481,7 @@
           "file": "Moon.mp3",
           "band": "Cheap Halo",
           "song": "Moon",
-          "style": "loud retro garage rock (Jet-ish)",
+          "style": "Loud retro garage rock with overdriven guitars, handclaps, and a sneering hook",
           "genre": "Garage Rock",
           "bio": "Loud garage rock. Every song is about the moon, or a girl, sometimes both."
         },
@@ -481,7 +489,7 @@
           "file": "Drive.mp3",
           "band": "Archduke",
           "song": "Drive",
-          "style": "angular art-school dance-punk (Franz Ferdinand-ish)",
+          "style": "Angular art-school dance-punk with clipped guitars, disco bass, and a deadpan vocal",
           "genre": "Dance-Punk",
           "bio": "Art-school dance-punk named after a historical event they can't spell."
         },
@@ -489,7 +497,7 @@
           "file": "Through Your Eyes.mp3",
           "band": "Della Sky",
           "song": "Through Your Eyes",
-          "style": "upbeat piano pop, sad lyrics (Vanessa Carlton-ish)",
+          "style": "Upbeat piano pop with bittersweet lyrics, rushing drums, and a bright sing-along chorus",
           "genre": "Piano Pop",
           "bio": "Piano pop: devastating lyrics over an impossibly happy melody."
         }

@@ -1,4 +1,4 @@
-# ROAD TRIP RUNNER — Radio Script Bible
+# ROAD TRIP ARCADE — Radio Script Bible
 
 Four fictional stations, one per decade. Every band, DJ, sponsor, and event in
 here is invented — zero real-world rights issues. Each section has:
@@ -71,41 +71,113 @@ ever happened. Speaks exclusively in exclamation points.
 *ElevenLabs direction: high-energy male rock DJ, fast, loud, gravelly edge,
 monster-truck-commercial delivery. Emphasis on EVERYTHING.*
 
-### The roster
+### HURRICANE HAMMERS RECORDING CHECKLIST
 
-| Band | Hit | The lore |
-|---|---|---|
-| **Chrome Viper** | "Midnight Accelerator" | Hair metal. Legally changed their names to Blaze, Dagger, Torque, and Kevin. |
-| **Neon Prophecy** | "She's Electric (In a Legal Sense)" | Synthpop trio who perform inside a giant plexiglass pyramid for "no reason we're allowed to discuss." |
-| **Tiffany Blackout** | "Mall Heart" | Teen sensation. Discovered at a food court. Contractually required to mention malls in every song. |
-| **The Velcro Militia** | "Radical Maneuvers" | New-wave band. Their drummer is rumored to be a drum machine wearing sunglasses. He denies it. |
-| **Stallion Force** | "Training Montage" | Wrote one song. It's in 31 movies. They have never needed a second one. |
+Every line below is production-ready and is saved with the exact filename shown.
+The Hurricane treats every record like the main event of the century: fast,
+gravelly, delighted, and just barely under control.
 
-### Banter library
+**Station IDs and ads**
+- `80s_id_1.mp3` — "POWER ONE-OH-FOUR! KRZR! THE RAZOR! MAXIMUM VOLTAGE, MINIMUM MERCY!"
+- `80s_id_2.mp3` — "If your speakers aren't smoking, TURN IT UP! Rick Hurricane Hammers on THE RAZOR!"
+- `80s_ad_1.mp3` — "THIS SATURDAY at the Tri-County Fairgrounds! MONSTER TRUCKS! LASERS! A GUY WHO JUMPS OVER STUFF! Five bucks! SATURDAY!"
+- `80s_ad_2.mp3` — "Laser Tag Larry's grand opening! First hundred customers get a FREE HEADBAND! Larry's, next to the mall! OBVIOUSLY!"
 
-**Song intros**
-- "GOOOOOD MORNING ROAD WARRIORS! You're locked into POWER 104, THE RAZOR — here's Chrome Viper, 'MIDNIGHT ACCELERATOR' — DO NOT operate heavy machinery! Unless it's AWESOME!"
-- "This is the one! From the plexiglass pyramid itself — NEON PROPHECY!"
-- "Tiffany Blackout! 'MALL HEART'! If you're not crying in a food court by the second chorus, SEE A DOCTOR!"
-- "You need to run faster?! STALLION FORCE has your back! MONTAGE! UP! NOW!"
+**After Hours Arcade — Electric Marquis**
+- `80s_intro_afterhoursarcade_1.mp3` — "Security gate DOWN, prize tickets FLYING, and somebody just took the crown! Electric Marquis with AFTER HOURS ARCADE!"
+- `80s_intro_afterhoursarcade_2.mp3` — "Quarters stacked! Leaderboard challenged! Falsetto fully ARMED! Electric Marquis is taking us to the AFTER HOURS ARCADE!"
+- `80s_outro_afterhoursarcade_1.mp3` — "Electric Marquis! AFTER HOURS ARCADE! Pack-Man has filed a formal complaint!"
 
-**Song outros**
-- "THE VELCRO MILITIA! And their drummer, who is DEFINITELY A HUMAN MAN!"
-- "Chrome Viper! Blaze, Dagger, Torque... and Kevin! LEGENDS!"
+**American Dream — Mercy County**
+- `80s_intro_americandream_1.mp3` — "A few dollars, a tip jar, and enough hope to light the whole STATE LINE! Mercy County with AMERICAN DREAM!"
+- `80s_intro_americandream_2.mp3` — "She walked into a one-bar town and said, I AM STARTING OVER TONIGHT! Mercy County! AMERICAN DREAM!"
+- `80s_outro_americandream_1.mp3` — "Mercy County with AMERICAN DREAM! A little freedom, a little fire, and a LOT of saxophone!"
 
-**Station IDs**
-- "POWER! ONE-OH-FOUR! THE RAZORRRRR!"
-- "If your speakers aren't smoking, TURN IT UP — Power 104!"
+**Check the Rhime — Locker Room Kings**
+- `80s_intro_checktherhime_1.mp3` — "CHECK ONE-TWO! The first generation is here to school the whole nation! Locker Room Kings! CHECK THE RHIME!"
+- `80s_intro_checktherhime_2.mp3` — "All natural! No preservatives! Fresh yesterday, today, AND tomorrow! Locker Room Kings with CHECK THE RHIME!"
+- `80s_outro_checktherhime_1.mp3` — "Locker Room Kings! CHECK THE RHIME! Twelve checks per chorus and every one CLEARED!"
 
-**Fake ads**
-- "THIS SATURDAY! At the Tri-County Fairgrounds! MONSTER TRUCKS! LASERS! A GUY WHO JUMPS OVER STUFF! Tickets: five bucks! SATURDAY!"
-- "Laser Tag Larry's Grand Opening! First hundred customers get a FREE HEADBAND! Larry's! Next to the mall! Obviously!"
+**Forever Now — Chrome Viper**
+- `80s_intro_forevernow_1.mp3` — "Fireworks! Dynamite! A city exploding into OUTER SPACE! Chrome Viper makes love permanent with FOREVER NOW!"
+- `80s_intro_forevernow_2.mp3` — "When you cannot find the way back, FOLLOW THE HIGHWAY TRACK! Chrome Viper! FOREVER NOW!"
+- `80s_outro_forevernow_1.mp3` — "Chrome Viper with FOREVER NOW! Blaze, Dagger, Torque, and Kevin remain LEGALLY IMMORTAL!"
+
+**Glimmers — Stallion Force**
+- `80s_intro_glimmers_1.mp3` — "The doubters said NOT YOU, NOT YET! Stallion Force answered with a stadium full of IMPOSSIBLE DREAMS! GLIMMERS!"
+- `80s_intro_glimmers_2.mp3` — "The skyline is turning to FIRE and the high road is OPEN! Stallion Force with GLIMMERS!"
+- `80s_outro_glimmers_1.mp3` — "Stallion Force! GLIMMERS! If you saw the light, congratulations: the impossible is now POSSIBLE!"
+
+**High Windows — Northbound Saints**
+- `80s_intro_highwindows_1.mp3` — "Brick dust, rain-dark concrete, and one light burning over the whole city! Northbound Saints! HIGH WINDOWS!"
+- `80s_intro_highwindows_2.mp3` — "Every floor says turn around, but we keep looking UP! Northbound Saints with HIGH WINDOWS!"
+- `80s_outro_highwindows_1.mp3` — "Northbound Saints! HIGH WINDOWS! Pigeons rising like paper sparks and Hurricane Hammers getting EMOTIONAL!"
+
+**Last Ride — Midnight Assembly**
+- `80s_intro_lastride_1.mp3` — "Cracked mirror! Fog ahead! No stops until the end becomes the BEGINNING! Midnight Assembly with LAST RIDE!"
+- `80s_intro_lastride_2.mp3` — "We will never pass this way again, road warriors! Midnight Assembly is taking the LAST RIDE OUT OF TOWN!"
+- `80s_outro_lastride_1.mp3` — "Midnight Assembly! LAST RIDE! The rearview mirror survived, but it will never be the same!"
+
+**Night in Neon — Tiffany Blackout**
+- `80s_intro_nightinneon_1.mp3` — "Payphone ringing! Basement dancing! Arcade lights fully ENGAGED! Tiffany Blackout with NIGHT IN NEON!"
+- `80s_intro_nightinneon_2.mp3` — "A little too close, a little bit wrong, and ABSOLUTELY electric! Tiffany Blackout! NIGHT IN NEON!"
+- `80s_outro_nightinneon_1.mp3` — "Tiffany Blackout with NIGHT IN NEON! Ten out of ten payphones are still ringing!"
+
+**Nightfall — Nico Royale**
+- `80s_intro_nightfall_1.mp3` — "Red lights flashing, every step landing on the beat, and one voice taking over the whole CITY! Nico Royale brings the NIGHTFALL!"
+- `80s_intro_nightfall_2.mp3` — "Like a bullet from a gun and one second from the end of it ALL! Nico Royale! NIGHTFALL!"
+- `80s_outro_nightfall_1.mp3` — "Nico Royale with NIGHTFALL! Precision, danger, and enough voltage to make the streetlights SWEAT!"
+
+**Only the Window Knows — Lila Hart**
+- `80s_intro_onlythewindowknows_1.mp3` — "The hall phone rings, the rain comes down, and the truth is standing on the OTHER SIDE! Lila Hart! ONLY THE WINDOW KNOWS!"
+- `80s_intro_onlythewindowknows_2.mp3` — "Makeup on the towel! Dress on the chair! One powerhouse voice blowing the curtains OFF! Lila Hart!"
+- `80s_outro_onlythewindowknows_1.mp3` — "Lila Hart with ONLY THE WINDOW KNOWS! The whole world knows NOW!"
+
+**Pictures in the Rain — The Glass Gardens**
+- `80s_intro_picturesintherain_1.mp3` — "Wet photographs, a blue sundress, and handwriting that survived the STORM! The Glass Gardens! PICTURES IN THE RAIN!"
+- `80s_intro_picturesintherain_2.mp3` — "A shoebox of memories just blew across the garden wall! The Glass Gardens with PICTURES IN THE RAIN!"
+- `80s_outro_picturesintherain_1.mp3` — "The Glass Gardens! PICTURES IN THE RAIN! Somebody save the birthday candle!"
+
+**Red Light On — The Low Signals**
+- `80s_intro_redlighton_1.mp3` — "Hello from the dungeon! Do you READ ME up there? The Low Signals transmit with the RED LIGHT ON!"
+- `80s_intro_redlighton_2.mp3` — "Phantom, fraud, fever, or flicker from GOD? The Low Signals stay awake for you! RED LIGHT ON!"
+- `80s_outro_redlighton_1.mp3` — "The Low Signals with RED LIGHT ON! The transmission reached us and the snare hit filed paperwork!"
+
+**Small Revolutions — Paper Empire**
+- `80s_intro_smallrevolutions_1.mp3` — "One word breaks the ceiling! One hand turns the key! Paper Empire starts the SMALL REVOLUTIONS!"
+- `80s_intro_smallrevolutions_2.mp3` — "Office glass! Folded hands! A hundred ways to fall in line and ONE way to break OUT! Paper Empire!"
+- `80s_outro_smallrevolutions_1.mp3` — "Paper Empire with SMALL REVOLUTIONS! Quiet on the outside, DETONATING underneath!"
+
+**The Darker — Nico Royale**
+- `80s_intro_thedarker_1.mp3` — "Smoke! Mirrors! Neon! And a bass line moving like it knows your SECRET! Nico Royale with THE DARKER!"
+- `80s_intro_thedarker_2.mp3` — "When the city falls asleep, the silhouettes come ALIVE! Nico Royale! THE DARKER!"
+- `80s_outro_thedarker_1.mp3` — "Nico Royale with THE DARKER! NIGHTFALL has a dangerous twin, and Hurricane Hammers found it!"
+
+**When You Loved Me — Roxanne Vale**
+- `80s_intro_whenyoulovedme_1.mp3` — "Piano first, heartbreak second, and a final chorus big enough to change the WEATHER! Roxanne Vale! WHEN YOU LOVED ME!"
+- `80s_intro_whenyoulovedme_2.mp3` — "The storm is passing, the photograph is fading, and Roxanne Vale is about to LEVEL this frequency! WHEN YOU LOVED ME!"
+- `80s_outro_whenyoulovedme_1.mp3` — "Roxanne Vale with WHEN YOU LOVED ME! Hurricane Hammers is NOT crying! That is studio rain!"
+
+**Without a Word — The Velcro Militia**
+- `80s_intro_withoutaword_1.mp3` — "Call it a jailbreak! Give them the slip! The Velcro Militia makes the escape WITHOUT A WORD!"
+- `80s_intro_withoutaword_2.mp3` — "One step! A thousand miles! Two steps and we are walking in SUNSHINE! The Velcro Militia!"
+- `80s_outro_withoutaword_1.mp3` — "The Velcro Militia with WITHOUT A WORD! Their drummer remains a DEFINITELY HUMAN MAN!"
+
+**Your Lucky Jacket — Cassie Chrome**
+- `80s_intro_yourluckyjacket_1.mp3` — "Lipstick in the pocket! Glitter on the sleeve! Shoulder pads at MAXIMUM CAPACITY! Cassie Chrome! YOUR LUCKY JACKET!"
+- `80s_intro_yourluckyjacket_2.mp3` — "She walked in like she owned the place, and the building signed over the DEED! Cassie Chrome! YOUR LUCKY JACKET!"
+- `80s_outro_yourluckyjacket_1.mp3` — "Cassie Chrome with YOUR LUCKY JACKET! It was lucky before; now it is LEGENDARY!"
 
 **Game-event lines**
-- *(rain incoming)* "STORM CELL INCOMING! I REPEAT: THE SKY IS DOING A GUITAR SOLO! HANG ON!"
-- *(entering New York)* "NEW YORK CITY BABY! THE BUILDINGS ARE HUGE! JUMP OVER 'EM ANYWAY!"
-- *(entering the desert)* "THE DESERT! IT'S LIKE THE MOON BUT WITH SNAKES! LET'S GO!"
-- *(skateboard unlock)* "WHOA-HO-HO! Somebody's got a SKATEBOARD! RADICAL MANEUVERS INDEED!"
+- `80s_rain_1.mp3` — "STORM CELL INCOMING! The sky is doing a GUITAR SOLO! Hang on!"
+- `80s_city_washingtondc_1.mp3` — "WASHINGTON, D.C.! Monuments up front, maximum voltage in the rear!"
+- `80s_city_farmland_1.mp3` — "FARMLAND! Corn on the left, corn on the right, and THE RAZOR straight down the middle!"
+- `80s_city_desert_1.mp3` — "THE DESERT! It is like the moon, but with SNAKES! Let's GO!"
+- `80s_city_losangeles_1.mp3` — "LOS ANGELES! Neon, palm trees, and enough hairspray to alter the WEATHER!"
+- `80s_city_sanfrancisco_1.mp3` — "SAN FRANCISCO! Hills ahead! Gravity just issued a formal CHALLENGE!"
+- `80s_city_newyork_1.mp3` — "NEW YORK CITY! The buildings are HUGE! Turn it up until they get BIGGER!"
+- `80s_unlock_skateboard_1.mp3` — "WHOA-HO-HO! Somebody unlocked a SKATEBOARD! Radical maneuvers are now AUTHORIZED!"
+- `80s_unlock_motorcycle_1.mp3` — "TWO WHEELS! ONE ENGINE! ZERO MERCY! The motorcycle is UNLOCKED!"
 
 ---
 
@@ -242,16 +314,17 @@ Insists the fly is "a real fly. And also capitalism. And also a fly."
 *Outros:*
 - `90s_outro_greedyfly_1.mp3` — "That was The Gauze. Rex Vane once did a forty-minute interview and explained nothing. ...Icon."
 
-**"Burning Bright" — Kaydee Sparx**
-Teen-pop starlet. She's on The Dirt purely because the request line wouldn't
-stop. Meg is appalled that it's catchy.
+**"Burning Bright" — Britney Alexandra**
+Britney Alexandra's bright early single, before her flip-phone-era pop reign.
+She's on The Dirt because the request line would not stop. Meg is appalled that
+the future superstar is already this catchy.
 
 *Intros:*
-- `90s_intro_burningbright_1.mp3` — "So. There's a pop star on The Dirt now. I don't make the rules. Actually I do, and I broke them. This is Kaydee Sparx, 'Burning Bright.'"
-- `90s_intro_burningbright_2.mp3` — "'Even fleeting can leave a mark.' That's a Kaydee Sparx lyric. It's on a bright pink song. ...It's kind of good. I'm upset about it."
+- `90s_intro_burningbright_1.mp3` — "So. There's a pop star on The Dirt now. Before the flip phones and the billboards, apparently. This is Britney Alexandra, 'Burning Bright.'"
+- `90s_intro_burningbright_2.mp3` — "'Even fleeting can leave a mark.' That's a Britney Alexandra lyric. It's on a bright pink song. ...It's kind of good. I'm upset about it."
 
 *Outros:*
-- `90s_outro_burningbright_1.mp3` — "Kaydee Sparx. 'Burning Bright.' ...I've listened to it four times. For work. Only for work."
+- `90s_outro_burningbright_1.mp3` — "Britney Alexandra. 'Burning Bright.' Before the flip phone. ...I've listened to it four times. For work. Only for work."
 
 **"Talk Till Dawn" — The Pen Pals**
 Nerdy fast-talk folk-pop sextet from Ontario. Spoken-word bits between verses.
@@ -385,7 +458,16 @@ The Toad exists only to press the airhorn button and agree.
 upward inflection. The Toad — dopey male voice, two-word answers, records
 separately: "YEAH!", "SO GOOD!", "TOOOAD!"*
 
-### HOW TO RECORD JAMIE & THE TOAD (read this first)
+### PRODUCTION NOTE — JAMIE & THE TOAD
+
+The 2000s station was produced through the ElevenLabs API. All 104 named clips
+are complete in `radio/clips/`, including 44 intros and 23 outros. Song-intro files are precomposed two-voice
+exchanges: most end with a tight Toad blurt, while selected intros contain a
+mid-sentence interruption. The game must not append another random Toad clip
+after these intros. The standalone Toad library remains available for future
+bits and alternate sequencing.
+
+### ORIGINAL RECORDING PLAN (archived)
 
 The Blender is a two-hander, but ElevenLabs only does one voice at a time —
 so **don't try to record dialogue.** Record them separately and the game
@@ -434,73 +516,117 @@ A random Toad blurt auto-plays after each intro — just leave a beat at the end
 
 **"Backseat Sunrise" — The Sunroofs** *(dance-pop road anthem)*
 - `00s_intro_backseatsunrise_1.mp3` — "It's a GORGEOUS morning in The Blender and here come The Sunroofs — 'Backseat Sunrise' — windows DOWN, people, certified summer banger—"
+- `00s_intro_backseatsunrise_2.mp3` — "The Sunroofs just pulled into the fast lane with the windows DOWN — this is 'Backseat Sunrise,' your officially unofficial road-trip anthem—"
+- `00s_intro_backseatsunrise_3.mp3` — "Traffic report: sun is UP, snacks are OPEN, and The Sunroofs are taking over every speaker in the car — 'Backseat Sunrise'—"
 - `00s_outro_backseatsunrise_1.mp3` — "The Sunroofs, everybody! Best days of our LIVES and it's not even nine A.M.!"
+- `00s_outro_backseatsunrise_2.mp3` — "That was The Sunroofs! If your windows are still up, we have FAILED you personally!"
 
 **"Paper Plane Pulse" — DJ Contrail** *(trance; plays behind a wall of fog)*
 - `00s_intro_paperplanepulse_1.mp3` — "Okaaay we're going up to the CLOUDS — DJ Contrail, the guy who plays behind a wall of fog, we've NEVER seen his face — 'Paper Plane Pulse'—"
+- `00s_intro_paperplanepulse_2.mp3` — "Nobody has ever seen DJ Contrail's face, but somebody keeps cashing his checks — turn the fog machine ALL the way up for 'Paper Plane Pulse'—"
+- `00s_intro_paperplanepulse_3.mp3` — "Headlights ON, hands in the air — actually, driver, hands on the WHEEL — DJ Contrail is cleared for takeoff with 'Paper Plane Pulse'—"
 - `00s_outro_paperplanepulse_1.mp3` — "DJ Contrail! Still foggy, still a total mystery, we LOVE a man of secrets!"
 
 **"Text Me Back (Or Else)" — Britney Alexandra** *(the 2000s version)*
 - `00s_intro_textmebackorelse2000s_1.mp3` — "This is the ORIGINAL, the queen herself, Britney Alexandra — 'Text Me Back Or Else' — and if he doesn't text back, that's HIS loss—"
+- `00s_intro_textmebackorelse2000s_2.mp3` — "The request line is MELTING DOWN — Britney Alexandra has one message, one flip phone, and absolutely NO patience — 'Text Me Back Or Else'—"
+- `00s_intro_textmebackorelse2000s_3.mp3` — "Team Britney, make some NOISE! Britney Alexandra is checking the screen, checking it AGAIN, and giving him exactly one chorus to respond—"
 - `00s_outro_textmebackorelse2000s_1.mp3` — "Britney Alexandra! Text her back or she is GONE — moving on — NEXT!"
+- `00s_outro_textmebackorelse2000s_2.mp3` — "Britney Alexandra! Message delivered, patience expired, number DELETED!"
 
 **"Text Me Back (Or Else)" — Mandy Sincere** *(the sunny version)*
 - `00s_intro_textmebackorelse_1.mp3` — "Now here's the SUNNY one — Mandy Sincere doing 'Text Me Back' — same demand, twice the sparkle, sunglasses ON—"
+- `00s_intro_textmebackorelse_2.mp3` — "If sunshine had a ringtone, it would be Mandy Sincere — same message, maximum sparkle — 'Text Me Back Or Else'—"
+- `00s_intro_textmebackorelse_3.mp3` — "Team Mandy, this is YOUR round! Mandy Sincere brought three backup dancers and enough glitter to block the signal—"
 - `00s_outro_textmebackorelse_1.mp3` — "Mandy Sincere! So bright I can't even SEE! Somebody dim her!"
+- `00s_outro_textmebackorelse_2.mp3` — "Mandy Sincere! The message is SENT, the glitter is EVERYWHERE, and we are not getting that deposit back!"
 
 **The Text Me Back battle** *(plays when the game runs both versions back to back)*
 - `00s_battle_textmeback_1.mp3` — "Whoa whoa WHOA — we're doing it — BACK to BACK — Britney Alexandra VERSUS Mandy Sincere, SAME song, and YOU decide who did it better — ring the bell!"
+- `00s_battle_textmeback_2.mp3` — "Stop the presses and FLIP open your phones — two artists, one song, zero patience! Britney Alexandra versus Mandy Sincere, back to back!"
+- `00s_battle_textmeback_3.mp3` — "The Blender Battle is ON! Same title, two completely different levels of sparkle — Britney versus Mandy, and YOU are the judge!"
+- `00s_battle_textmebackround2_1.mp3` — "Round one is in the BOOKS! Keep your scorecard out because contender number two is stepping up RIGHT now!"
+- `00s_battle_textmebackround2_2.mp3` — "Do not touch that dial — version two is loading! Same demand, brand-new attitude, and the judges are already yelling!"
+- `00s_battle_textmebackwrap_1.mp3` — "That's BOTH versions! Britney Alexandra and Mandy Sincere went back to back — you heard the evidence, now pick your winner!"
+- `00s_battle_textmebackwrap_2.mp3` — "Battle COMPLETE! Two divas entered, two divas also left because that is how radio works — tell us who won!"
 
 **"Snake Charmer (Ringtone Remix)" — DJ Nokia** *(every beat is a phone sound)*
 - `00s_intro_snakecharmerringtoneremix_1.mp3` — "DJ Nokia coming in HOT — every single beat in this is a PHONE sound, I'm not kidding — 'Snake Charmer'—"
+- `00s_intro_snakecharmerringtoneremix_2.mp3` — "Check your flip phone — no, seriously, that buzzing is IN the song — DJ Nokia with 'Snake Charmer, Ringtone Remix'—"
+- `00s_intro_snakecharmerringtoneremix_3.mp3` — "DJ Nokia made an entire track out of beeps, buzzes, and one voicemail from his MOM — this is 'Snake Charmer'—"
 - `00s_outro_snakecharmerringtoneremix_1.mp3` — "DJ Nokia! And YES that ringtone's for sale and YES it costs MORE than the song!"
+- `00s_outro_snakecharmerringtoneremix_2.mp3` — "DJ Nokia! Please stop checking your phone — the beep is part of the SONG!"
 
-**"Last Time" — Colt Maddox** *(the one country crossover)*
-- `00s_intro_lasttime_1.mp3` — "We are required by LAW to play one country song a day and HERE it is — Colt Maddox, 'Last Time' — he SWEARS it's the last time, it is NEVER the last time—"
-- `00s_outro_lasttime_1.mp3` — "Colt Maddox! He'll be right back next hour doing it all AGAIN!"
+**"Last Time" — Colt Maddox** *(compact early-2000s rap)*
+- `00s_intro_lasttime_1.mp3` — "Turn it UP! Colt Maddox is back in the booth with one beat, no wasted motion, and one more promise that this is the 'Last Time'—"
+- `00s_intro_lasttime_2.mp3` — "Colt Maddox said last time was the LAST time, which is exactly why he brought another verse — 'Last Time'—"
+- `00s_intro_lasttime_3.mp3` — "Beat locked, words loaded, and Colt Maddox is giving himself one final shot — 'Last Time'—"
+- `00s_outro_lasttime_1.mp3` — "Colt Maddox! Short track, final word, absolutely coming back with another verse!"
+- `00s_outro_lasttime_2.mp3` — "Colt Maddox! That was the last time until somebody runs the beat BACK!"
 
 **"Halogen Lamps" — Kilowatt Youth** *(moody electro-pop)*
 - `00s_intro_halogenlamps_1.mp3` — "Ooh this one gets MOODY — Kilowatt Youth, 'Halogen Lamps' — I'm PRETTY sure it's about two robots falling in love—"
+- `00s_intro_halogenlamps_2.mp3` — "Dim the dashboard, activate your feelings — Kilowatt Youth wrote a love song for appliances and somehow it WORKS — 'Halogen Lamps'—"
 - `00s_outro_halogenlamps_1.mp3` — "Kilowatt Youth! Nothing lasts forever EXCEPT that chorus stuck in my HEAD!"
 
 **"Frosted Tips Forever" — The O.C. Parking Lot** *(00s emo)*
 - `00s_intro_frostedtipsforever_1.mp3` — "FROSTED! TIPS! FOREVER! The O.C. Parking Lot — named after a parking lot they have never actually BEEN to—"
+- `00s_intro_frostedtipsforever_2.mp3` — "Grab the hair gel and prepare to feel EVERYTHING — The O.C. Parking Lot with 'Frosted Tips Forever'—"
+- `00s_intro_frostedtipsforever_3.mp3` — "They have never seen the O.C., but they HAVE seen the inside of a salon — 'Frosted Tips Forever' from The O.C. Parking Lot—"
 - `00s_outro_frostedtipsforever_1.mp3` — "The O.C. Parking Lot! Get your L.A. Looks on — we're not crying, YOU'RE crying!"
 
 **"Parking Lot Codes" — Kacie Vandal** *(mall pop-punk)*
 - `00s_intro_parkinglotcodes_1.mp3` — "BLUE! BLUE! BLUE! You know the code! Mall pop-punk royalty Kacie Vandal — 'Parking Lot Codes'—"
+- `00s_intro_parkinglotcodes_2.mp3` — "Level three, blue section, next to the food court — Kacie Vandal remembers EXACTLY where you parked with 'Parking Lot Codes'—"
+- `00s_intro_parkinglotcodes_3.mp3` — "Kacie Vandal is banned from two malls and headlining a third — this is 'Parking Lot Codes'—"
 - `00s_outro_parkinglotcodes_1.mp3` — "Kacie Vandal! I don't KNOW the code but I'm screaming it in the food court anyway!"
 
 **"Broken Link" — Kacie Vandal** *(the weeper)*
 - `00s_intro_brokenlink_1.mp3` — "More Kacie Vandal and OH this one's a WEEPER — 'Broken Link' — grab a napkin, dab those eyes—"
+- `00s_intro_brokenlink_2.mp3` — "Kacie Vandal clicked refresh on this relationship for the LAST time — grab the emergency food-court napkins for 'Broken Link'—"
 - `00s_outro_brokenlink_1.mp3` — "Kacie Vandal, 'Broken Link.' We were SO CLOSE! It's fine! I'm fine!"
 
 **"Don't Follow Me" — The Tin Kings** *(garage blues-rock)*
 - `00s_intro_dontfollowme_1.mp3` — "Two people, ONE massive sound — The Tin Kings, 'Don't Follow Me' — the drummer and guitarist MIGHT be siblings, they will NOT confirm it—"
+- `00s_intro_dontfollowme_2.mp3` — "The Tin Kings brought one guitar, one drum kit, and zero answers about whether they're related — 'Don't Follow Me'—"
 - `00s_outro_dontfollowme_1.mp3` — "The Tin Kings! That riff is gonna live in your skull, rent-FREE!"
+
+**"I Was a Mountain" — The Tin Kings** *(garage blues-rock follow-up)*
+- `00s_intro_iwasamountain_1.mp3` — "The Tin Kings came back with one guitar, one drum kit, and a breakup big enough to knock down a MOUNTAIN — 'I Was a Mountain'—"
+- `00s_intro_iwasamountain_2.mp3` — "They survived the riff, lost the crown, and somehow made the wreckage sound MASSIVE — The Tin Kings with 'I Was a Mountain'—"
+- `00s_outro_iwasamountain_1.mp3` — "The Tin Kings with 'I Was a Mountain!' Turns out the mountain was feelings, and the feelings had AMPLIFIERS!"
 
 **"Passwords" — Marlowe Kai** *(acoustic surf-pop)*
 - `00s_intro_passwords_1.mp3` — "Kick your shoes OFF — this is Marlowe Kai, he records everything in a HAMMOCK — 'Passwords,' so chill it's basically a nap—"
+- `00s_intro_passwords_2.mp3` — "Marlowe Kai recorded this one barefoot, outdoors, and dangerously close to a sprinkler — 'Passwords'—"
+- `00s_intro_passwords_3.mp3` — "Your password needs one number, one symbol, and one extremely relaxed surfer — Marlowe Kai with 'Passwords'—"
 - `00s_outro_passwords_1.mp3` — "Marlowe Kai! He knows all your passwords now! ...That's the whole song! It's CUTE!"
 
 **"Every Time I Close My Eyes" — Copper Avenue** *(pop-rock)*
 - `00s_intro_everytimeiclosemyeyes_1.mp3` — "WARNING: this next one is dangerously catchy — Copper Avenue, 'Every Time I Close My Eyes' — you WILL hum it, there is no escape—"
+- `00s_intro_everytimeiclosemyeyes_2.mp3` — "Copper Avenue put a hook in this song so sticky it should come with a warning label — 'Every Time I Close My Eyes'—"
 - `00s_outro_everytimeiclosemyeyes_1.mp3` — "Copper Avenue! It's STUCK in there now! You're welcome! Or... sorry!"
 
 **"Forever & Ever" — The Velvet Casino** *(anthemic indie rock)*
 - `00s_intro_foreverever_1.mp3` — "Big lights, BIG feelings — The Velvet Casino, straight outta Vegas, the singer wears ONE sequined glove — 'Forever and Ever'—"
+- `00s_intro_foreverever_2.mp3` — "The Velvet Casino just arrived with a spotlight, a wind machine, and that ONE mysterious glove — 'Forever and Ever'—"
 - `00s_outro_foreverever_1.mp3` — "The Velvet Casino! Forever and EVER! Nobody knows about the glove — nobody ASKS!"
 
 **"Moon" — Cheap Halo** *(garage rock)*
 - `00s_intro_moon_1.mp3` — "Crank it UP — Cheap Halo, 'Moon' — every song they've got is about the moon, or a girl, sometimes BOTH—"
+- `00s_intro_moon_2.mp3` — "Cheap Halo checked the forecast and, yes, the moon is still UP there — here is another song about it, conveniently titled 'Moon'—"
 - `00s_outro_moon_1.mp3` — "Cheap Halo! See you on the MOON! ...We won't, but it's a nice thought!"
 
 **"Drive" — Archduke** *(dance-punk)*
 - `00s_intro_drive_1.mp3` — "Get in the CAR — this is Archduke, art-school dance-punk, named after a historical event they cannot SPELL — 'Drive'—"
+- `00s_intro_drive_2.mp3` — "Archduke has a full tank, half a map, and absolutely NO idea where they're going — perfect conditions for 'Drive'—"
+- `00s_intro_drive_3.mp3` — "Art school! Dance floor! Historical name they still cannot explain! Archduke is taking the wheel with 'Drive'—"
 - `00s_outro_drive_1.mp3` — "Archduke! We can drive ALL night! Toad's got his learner's permit!"
+- `00s_outro_drive_2.mp3` — "Archduke! Pull over, switch seats, and do NOT let Toad parallel park!"
 
 **"Through Your Eyes" — Della Sky** *(piano pop, sad lyrics / happy melody)*
 - `00s_intro_throughyoureyes_1.mp3` — "Okay this one's SNEAKY — Della Sky, 'Through Your Eyes' — sounds like the happiest song ever, then you read the lyrics and OOF—"
+- `00s_intro_throughyoureyes_2.mp3` — "Della Sky wrapped a heartbreak in sunshine and hoped we wouldn't NOTICE — we noticed! 'Through Your Eyes'—"
 - `00s_outro_throughyoureyes_1.mp3` — "Della Sky! Happiest sad song of the YEAR! I need a minute! ...A HAPPY minute!"
 
 ### JAMIE — game-event lines *(play over the music; no Toad auto-added)*

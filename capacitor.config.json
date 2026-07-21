@@ -1,6 +1,6 @@
 {
-  "appId": "com.roadtriprunner.app",
-  "appName": "Road Trip Runner",
+  "appId": "com.roadtriparcade.app",
+  "appName": "Road Trip Arcade",
   "webDir": "app/www",
   "plugins": {
     "SplashScreen": {

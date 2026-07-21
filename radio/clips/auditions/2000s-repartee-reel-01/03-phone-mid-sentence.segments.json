@@ -1,0 +1,28 @@
+{
+  "voice_segments": [
+    {
+      "voice_id": "19akvrxzhb63VpcWo2Fv",
+      "start_time_seconds": 0.0,
+      "end_time_seconds": 2.0789999999999997,
+      "character_start_index": 0,
+      "character_end_index": 54,
+      "dialogue_input_index": 0
+    },
+    {
+      "voice_id": "iktOP1l0mvjnb2nY1LSP",
+      "start_time_seconds": 2.0789999999999997,
+      "end_time_seconds": 3.602,
+      "character_start_index": 54,
+      "character_end_index": 108,
+      "dialogue_input_index": 1
+    },
+    {
+      "voice_id": "19akvrxzhb63VpcWo2Fv",
+      "start_time_seconds": 3.602,
+      "end_time_seconds": 9.203000000000001,
+      "character_start_index": 108,
+      "character_end_index": 209,
+      "dialogue_input_index": 2
+    }
+  ]
+}

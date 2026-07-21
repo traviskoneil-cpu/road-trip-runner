@@ -1,7 +1,7 @@
 {
-  "name": "Road Trip Runner",
-  "short_name": "RoadTrip",
-  "description": "Your fingers vs. the great American landscape.",
+  "name": "Road Trip Arcade",
+  "short_name": "Trip Arcade",
+  "description": "Classic road-trip games, radio stations, and a cross-country family adventure.",
   "display": "fullscreen",
   "orientation": "any",
   "background_color": "#1a1a2e",

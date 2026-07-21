@@ -1,52 +1,53 @@
-**Findings**
-- [Blocked] Final visual capture did not complete after the latest correction.
-  Location: final v2 hub verification.
-  Evidence: the previous mobile screenshots captured the blue-van/badge version, but the latest change replaces badge pins with transparent map cutouts, caps the phone surface at 430px, moves Hollywood beside the road, places the Golden Gate art over the water, and grays out only the L.A./S.F. locked label lettering. In-app browser automation timed out while reloading/capturing the updated large map image.
-  Impact: static checks confirm the intended files/CSS are in place, but the latest visual state still needs a manual browser refresh or a successful follow-up capture.
-  Fix: refresh the local preview and visually confirm there is no pale-blue in-screen gutter and the Hollywood/Golden Gate art reads as map scenery, not bubbles.
+# Pack the Car — Product Design QA
 
 **Source Visual Truth**
-- Source screenshot: `/Users/travisoneil/Documents/GitHub/Road Trip Runner/prototypes/qa/source-standalone-hub.png`
-- Source file: `/Users/travisoneil/Documents/GitHub/Road Trip Runner/prototypes/Road Trip - Prototype (standalone).html`
-- User-directed differences: replace the flat/emoji map with a livelier illustrated map, change the start badge from "You are here" to "Start Trip", replace Driver/Navigator/Dealership dock artwork with Dad/Mom/van assets, switch the vehicle to the blue van, and add Hollywood/Golden Gate landmarks at L.A. and S.F.
+
+- Source image: `/Users/travisoneil/Documents/GitHub/Road Trip Runner/prototypes/references/pack-the-car-option-3.png`
+- Selected direction: retro American road-trip sticker art inside an open minivan trunk.
+- Required product behavior: a playable falling-piece packing game with rotate, move, hard drop, pause/resume, new game, and hold/swap.
 
 **Implementation Evidence**
-- Desktop screenshot: `/Users/travisoneil/Documents/GitHub/Road Trip Runner/prototypes/qa/implementation-v2-hub-desktop.png`
-- Mobile screenshot: `/Users/travisoneil/Documents/GitHub/Road Trip Runner/prototypes/qa/implementation-v2-hub-mobile.png`
-- Mobile landmark screenshot: `/Users/travisoneil/Documents/GitHub/Road Trip Runner/prototypes/qa/implementation-v2-landmarks-mobile.png`
-- Full-view comparison evidence: `/Users/travisoneil/Documents/GitHub/Road Trip Runner/prototypes/qa/comparison-source-vs-v2.png`
-- Implementation file: `/Users/travisoneil/Documents/GitHub/Road Trip Runner/prototypes/Road Trip - Prototype v2.html`
-- Viewport: desktop 1280 x 920, mobile 430 x 900.
-- State: hub screen at initial load, plus scrolled mobile map state showing L.A. and S.F.
-- Latest static evidence: `assets/landmarks/hollywood-map-cutout.png` and `assets/landmarks/golden-gate-map-cutout-blended.png` both have alpha channels; the prototype now references these cutouts, keeps the landmark art in full color, applies the locked gray treatment only to the label lettering, color-matches the Golden Gate water closer to the map ocean, and no longer references `hollywood-sign-badge.png` or `golden-gate-badge.png`.
 
-**Fidelity Surfaces**
-- Fonts and typography: Trebuchet/system styling is preserved from the source. Labels fit in the dock on desktop and mobile; no button text clipping was observed.
-- Spacing and layout rhythm: the phone surface is capped at 430px in mobile layout and the map scales to the surface width, addressing the pale-blue side gutter seen in the user screenshot.
-- Colors and visual tokens: original sunny palette remains in UI controls while the map shifts to a richer illustrated bitmap. Driver, Navigator, Dealership, and Mixtape accent colors remain distinct.
-- Image quality and asset fidelity: the flat CSS/emoji map was intentionally replaced with a generated raster map. Dad, Mom, and blue minivan assets render in the requested dock positions; Hollywood and Golden Gate are now transparent full-color scenery cutouts worked into the map instead of circular badges; the Golden Gate water has been blended toward the map ocean color; the L.A./S.F. label lettering carries the locked gray treatment; the Mixtape icon behavior is preserved.
-- Copy/content: "Start Trip" replaces the previous "YOU ARE HERE" start badge. Role labels remain Driver, Navigator, Dealership, and Mixtape for recognizability.
+- Implementation: `/Users/travisoneil/Documents/GitHub/Road Trip Runner/prototypes/pack-the-car-v1.html`
+- Browser-rendered screenshot: `/Users/travisoneil/Documents/GitHub/Road Trip Runner/prototypes/references/pack-the-car-car-frame-live.png`
+- Viewport: 390 × 844.
+- State: active game with packed pieces, falling piece, landing preview, next item, and a held item.
+- Full-view comparison evidence: the source and implementation were opened together at their full portrait views. Both prioritize a tall teal trunk-organizer playfield, cream sticker edges, warm orange/yellow controls, a compact destination/score header, next-item tag, side-pocket hold treatment, and a clearly illustrated blue minivan body framing the playfield.
+- Focused region comparison: not required because the full 390 × 844 captures render the title, HUD, item art, hold/next panels, grid, and controls at readable scale.
+
+**Findings**
+
+- No actionable P0, P1, or P2 mismatches remain.
+- The earlier implementation's per-cell canvas artwork was a P1 asset-fidelity mismatch: its pieces looked like decorated blocks rather than the mock's unified illustrated travel objects. Each of the seven pieces now uses a dedicated hand-painted raster sprite with one continuous cream die-cut edge.
+
+**Required Fidelity Surfaces**
+
+- Fonts and typography: the bold condensed system display treatment remains legible at the mobile viewport, with clear separation between title, HUD labels, item names, and gesture hints. No clipping or unintended wrapping was observed.
+- Spacing and layout rhythm: the app fits 390 × 844 without horizontal overflow. The illustrated hatch uses the header region, the pillars stay inside narrow edge gutters, and the bumper sits behind the controls, so the playfield remains dominant while header, HUD, packing status, and controls stay visible.
+- Colors and visual tokens: deep teal, cream, mustard, burnt orange, coral, and dark trunk framing closely follow the selected direction and maintain readable contrast.
+- Image quality and asset fidelity: all seven pieces now use dedicated hand-painted transparent raster art grounded in the selected mock. One continuous cream border defines each full collision silhouette. The cooler, rolled tent, duffel, hockey stick, rolling suitcase, sleeping bags, and folding chairs remain recognizable within exact tetromino hit areas and rotate as whole objects.
+- Copy and content: `Pack the Car`, score/progress, `Next`, `Hold`, `Save for later`, current item name, and action labels are clear and consistent with the packing metaphor.
 
 **Primary Interactions Tested**
-- Start Trip opens the Driver song picker.
-- MAP returns from Driver to the hub.
-- Radio dock cycles station from 90s Hits/KDRT to 2000s Pop/HITZ and updates the Mixtape icon class.
-- Navigator opens the Navigator placeholder screen.
-- Latest pass: Start Trip still opens the Driver song picker after blue-van/landmark edits.
-- Console errors/warnings checked: none.
-- Latest pass static checks: local server returns `200 OK`; `hollywood-map-cutout.png` and `golden-gate-map-cutout-blended.png` have alpha; L.A./S.F. use `landmark-city locked` with full-color art and gray label lettering; no `-badge.png` landmark images are referenced by the prototype.
 
-**Focused Region Comparison Evidence**
-- Earlier mobile screenshot confirms the right dock overlaps the map, remains readable, and uses the blue van.
-- Earlier mobile landmark screenshot confirms the landmark placement area. Latest visual capture is blocked by browser automation timeout after replacing badges with cutouts.
+- Start packing dismisses the intro and begins the falling-piece loop.
+- Hold moves the active item into the side pocket and spawns the next item.
+- Pack performs a hard drop and advances the item queue.
+- Pause opens the paused state; Resume packing returns to play.
+- Browser console errors and warnings checked: none.
 
 **Comparison History**
-- Initial QA pass found no actionable P0/P1/P2 prototype issues.
-- A QA-only comparison page layout issue was fixed so the saved comparison evidence would be readable; this did not affect the prototype.
-- Latest refinement pass found the S.F. badge too close to the bottom radio dock; it was moved upward and recaptured. No actionable P0/P1/P2 issues remain.
-- Newest correction after user screenshot: removed circular landmark badges, added transparent cutout scenery, made `.world` responsive to phone width, capped mobile `.phone` width at 430px, moved the Hollywood sign beside the road, arranged the Golden Gate art over the water, grayed out only the L.A./S.F. locked label lettering, and blended the Golden Gate water color toward the underlying map ocean. Browser capture for this newest state timed out, so final status is blocked pending refresh/visual confirmation.
+
+- Initial implementation pass replaced the previous dark arcade styling with the selected teal stitched-cargo direction, converted Beach Umbrella to Duffel Bag, converted Golf Bag to Hockey Stick, clarified hold as `Save for later`, and added cream sticker outlines to every collision cell.
+- User review correctly identified a P1 visual-quality gap between the mock's cohesive illustrated objects and the implementation's canvas-drawn block details.
+- Fix: generated seven individual painted sprites, removed their chroma backgrounds, loaded and alpha-cropped them at runtime, and rendered each piece as one rotatable object while preserving the existing matrices and collision behavior.
+- Post-fix evidence: `/Users/travisoneil/Documents/GitHub/Road Trip Runner/prototypes/references/pack-the-car-sprite-pass-final.png` shows all seven assets in the active game at 390 × 844. Console errors and warnings: none.
+- Car-frame pass: replaced the flat CSS trunk surround with a dedicated transparent painted minivan hatch asset. The hatch, narrow pillars, taillights, rubber seals, and bumper now occupy the phone's perimeter without reducing the 10-column board or hiding the controls.
+- Car-frame evidence: `/Users/travisoneil/Documents/GitHub/Road Trip Runner/prototypes/references/pack-the-car-car-frame-live.png` at 390 × 844. Console errors and warnings: none.
+- Final browser comparison found no actionable P0/P1/P2 piece-quality, layout, readability, interaction, or fidelity issues at 390 × 844.
 
 **Follow-up Polish**
-- P3: future art pass could generate or paint city-specific overlays for D.C., Farmlands, and Desert so every locked stop feels as bespoke as L.A. and S.F.
 
-final result: blocked
+- P3: a future pass could replace the text-only title badge with a bespoke illustrated car-and-road logo matching the source mock's richer poster treatment.
+
+final result: passed

@@ -2,17 +2,24 @@
   "name": "road-trip-runner",
   "version": "0.1.0",
   "private": true,
-  "description": "Road Trip Runner mobile app shell.",
+  "description": "Road Trip Arcade mobile game collection.",
   "scripts": {
     "app:prepare": "node scripts/prepare-capacitor-web.js",
-    "app:sync": "npm run app:prepare && cap sync android",
-    "app:android": "npm run app:prepare && cap open android",
-    "app:build:android": "npm run app:sync && cd android && JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ./gradlew assembleDebug",
-    "app:install:android": "npm run app:sync && cd android && JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ./gradlew installDebug"
+    "app:sync": "npm run app:prepare && cap sync",
+    "app:sync:android": "npm run app:prepare && cap sync android",
+    "app:sync:ios": "npm run app:prepare && cap sync ios",
+    "app:android": "npm run app:sync:android && cap open android",
+    "app:ios": "npm run app:sync:ios && cap open ios",
+    "app:build:android": "npm run app:sync:android && cd android && JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ./gradlew assembleDebug",
+    "app:install:android": "npm run app:sync:android && cd android && JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ./gradlew installDebug",
+    "app:build:ios": "npm run app:sync:ios && xcodebuild -workspace ios/App/App.xcworkspace -scheme App -configuration Debug -destination 'generic/platform=iOS Simulator' -derivedDataPath /tmp/road-trip-arcade-ios-build CODE_SIGNING_ALLOWED=NO build",
+    "app:archive:ios": "npm run app:sync:ios && xcodebuild -workspace ios/App/App.xcworkspace -scheme App -configuration Release -destination 'generic/platform=iOS' -archivePath /tmp/RoadTripArcade.xcarchive archive",
+    "app:run:ios": "npm run app:sync:ios && cap run ios"
   },
   "dependencies": {
     "@capacitor/android": "^7.4.3",
     "@capacitor/core": "^7.4.3",
+    "@capacitor/ios": "7.6.7",
     "@capacitor/preferences": "^7.0.2"
   },
   "devDependencies": {
