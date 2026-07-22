@@ -113,7 +113,6 @@
   }
   .driver-stats strong { display:block; font-size:22px; line-height:1; }
   .driver-stats span { display:block; margin-top:3px; font-size:9px; font-weight:900; letter-spacing:1px; text-transform:uppercase; }
-  .driver-stats small { display:block; margin-top:7px; padding-top:6px; border-top:1px solid rgba(31,58,95,0.16); font-size:9px; font-weight:900; }
   .driver-scroll {
     position:relative;
     z-index:1;
@@ -160,7 +159,7 @@
   .song .star { position:absolute; top:6px; right:8px; color:var(--gold); font-size:15px; filter:drop-shadow(0 1px 1px rgba(31,58,95,0.35)); }
   .song .diffs { grid-column:1 / -1; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:7px; padding:0 9px 10px; }
   .diffpick { background:rgba(31,58,95,0.08); color:var(--ink); border:1px solid rgba(31,58,95,0.18); padding:9px 8px; border-radius:8px; cursor:pointer; font-size:12px; font-weight:900; letter-spacing:.6px; min-width:0; }
-  .diffpick .small { display:block; margin-top:3px; font-size:10px; font-weight:normal; letter-spacing:0; opacity:.7; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .diffpick .small { display:block; margin-top:4px; padding-top:4px; border-top:1px solid rgba(31,58,95,0.16); color:var(--ink); font-size:11px; font-weight:900; letter-spacing:0; opacity:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .diffpick.unlocked { border-color:rgba(31,58,95,0.24); }
   .diffpick.locked { opacity:0.45; cursor:not-allowed; }
   .diffpick.easy { background:rgba(78,195,199,0.14); }
@@ -233,9 +232,8 @@
         <div class="sub" id="driverSub">Completed mixtape cuts only.</div>
       </div>
       <div class="driver-stats">
-        <strong id="driverBestScore">0</strong>
-        <span>best score</span>
-        <small><b id="driverSongCount">0</b> songs</small>
+        <strong id="driverSongCount">0</strong>
+        <span>songs</span>
       </div>
     </header>
     <div class="driver-scroll">
@@ -507,7 +505,6 @@ function renderGrid() {
   const playable = META.filter((m) => COLLECTED.has(songKey(m)));
   if (expandedSong && !COLLECTED.has(expandedSong)) expandedSong = null;
   $("driverSongCount").textContent = playable.length;
-  $("driverBestScore").textContent = Math.floor(Save.driverBest || 0).toLocaleString();
   $("driverSub").textContent = playable.length
     ? "Your mixtape is ready."
     : "Complete a radio song in Window Dash.";
@@ -561,8 +558,8 @@ function renderSongDiffs(m) {
     btn.className = "diffpick " + d + (unlocked ? " unlocked" : " locked");
     const rule = Object.entries(UNLOCK_RULE).find(([, r]) => r.next === d);
     const small = highScore
-      ? "best " + highScore.toLocaleString() + (best ? " · " + best : "")
-      : (best ? "best " + best : (unlocked ? "play" : (rule ? "get " + rule[1].need + " on " + DIFF_LABEL[rule[0]].toLowerCase() : "locked")));
+      ? "BEST " + highScore.toLocaleString() + (best ? " · " + best : "")
+      : (best ? "BEST " + best : (unlocked ? "PLAY" : (rule ? "GET " + rule[1].need + " ON " + DIFF_LABEL[rule[0]] : "LOCKED")));
     btn.innerHTML = DIFF_LABEL[d] + (unlocked ? "" : " 🔒") + '<span class="small"></span>';
     btn.querySelector(".small").textContent = small;
     btn.addEventListener("click", (e) => {
@@ -1374,7 +1371,7 @@ function beginPlay() {
     station: songMeta.era || "",
     song: songMeta.song,
   });
-  $("hBest").textContent = "BEST " + Math.floor(Save.driverBest || 0).toLocaleString();
+  $("hBest").textContent = "BEST " + Save.songHighScore(songKey(songMeta), DIFFICULTY).toLocaleString();
   // count-in: start audio a bit ahead so the first notes fall in
   source = audioCtx.createBufferSource();
   source.buffer = songBuffer;
@@ -1642,7 +1639,7 @@ function endSong() {
   $("rFC").classList.toggle("hidden", !fc);
   const earnedMiles = milesForDriverResult(stats.score, DIFFICULTY, rank);
   const finalScore = Math.round(stats.score);
-  const isNewDriverBest = finalScore > (Save.driverBest || 0);
+  const isNewSongBest = finalScore > Save.songHighScore(songKey(songMeta), DIFFICULTY);
   const totalMiles = earnedMiles > 0 ? Save.addMiles(earnedMiles) : Save.miles;
   $("rStats").innerHTML =
     "Score <b>" + finalScore.toLocaleString() + "</b><br>" +
@@ -1663,9 +1660,9 @@ function endSong() {
     accuracy_percent: Math.round(acc * 100),
     rank,
     miles_earned: earnedMiles,
-    new_high_score: isNewDriverBest,
+    new_high_score: isNewSongBest,
   });
-  $("rPersonalBest").classList.toggle("hidden", !isNewDriverBest);
+  $("rPersonalBest").classList.toggle("hidden", !isNewSongBest);
   const ru = $("rUnlock");
   if (newDiff) {
     ru.textContent = "🔓 " + DIFF_LABEL[newDiff] + " UNLOCKED FOR THIS SONG!";

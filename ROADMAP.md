@@ -108,7 +108,7 @@ Each game = a "seat" in the car. Build order = fastest-to-fun first.
 - [ ] **Snack Stack** → **auto-unlocks on reaching DC**, starting with ONE
       generator (**snacks**); spend miles to add **drinks → meals → entertainment**.
 - [ ] **Pack the Car (Tetris)** → tied to **vehicles** and unlocks with the Family SUV
-      at the Desert. The Station Wagon follows at Los Angeles and the 70s Custom Van
+      at Chicago. The Station Wagon follows at Los Angeles and the 70s Custom Van
       at San Francisco. Also earns miles.
 
 **Miles (one currency) — earned everywhere, spent on:**
@@ -123,7 +123,9 @@ Each game = a "seat" in the car. Build order = fastest-to-fun first.
 2. Finish the **short starter song** (make it the guaranteed first track) → **unlocks Wheel Jam.**
 3. Two miles sources now → bank miles → **unlock DC** (route extends).
 4. Reach DC → **Snack Stack** unlocks (snacks generator only).
-5. Spend miles → more cities, more generators, new vehicles → each new vehicle → **Pack the Car.**
+5. Reach Farmlands at 500 miles, then Chicago at 1,000 → earn the Family SUV,
+   open the dealership, and unlock **Pack the Car**.
+6. Continue through Desert → Los Angeles → San Francisco for later vehicles and stations.
 
 **Notes:**
 - [x] **First "force → open" gate shipped:** Wheel Jam difficulty unlocks — the pattern the rest reuses.

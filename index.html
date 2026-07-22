@@ -422,7 +422,7 @@
       <p id="ovText">
         Touch anywhere to jump. Hold to jump higher.<br>
         Land on fences and rooftops, and clear the rest.<br>
-        <strong id="runnerBestStart">Personal best: 0m</strong>
+        <strong id="runnerBestStart">Personal best: 0</strong>
       </p>
       <button class="btn" id="startBtn">START THE TRIP</button>
     </div>
@@ -456,7 +456,7 @@
   </div>
 
   <div id="hud-help">
-    Routes: New York &rarr; Washington D.C. &rarr; Farmland &rarr; Desert &rarr; Los Angeles &rarr; San Francisco (loops)
+    Routes: New York &rarr; Washington D.C. &rarr; Farmland &rarr; Chicago &rarr; Desert &rarr; Los Angeles &rarr; San Francisco (loops)
   </div>
 
 <script src="analytics.js"></script>
@@ -518,6 +518,18 @@ const THEMES = [
     extraObstacles: ["runawayChicken"],
   },
   {
+    id: "chicago",
+    citySlug: "chicago",
+    name: "CHICAGO",
+    sky: "chicagoLakefront",
+    skyTop: "#53bfe7", skyBottom: "#f7d99c",
+    far: "#526b80", mid: "#7d654d", ground: "#303137", groundLine: "#696a6d",
+    backgroundArt: "chicagoLakefront",
+    landmarks: ["willisTower", "cloudGate", "elevatedTrain"],
+    obstacles: ["chicagoPizzaBoxes", "chicagoNewsBoxes", "chicagoLStairs", "chicagoStarPlanter"],
+    extraObstacles: ["chicagoWindblownUmbrella"],
+  },
+  {
     id: "desert",
     citySlug: "desert",
     name: "DESERT SOUTHWEST",
@@ -559,7 +571,7 @@ const RUNNER_PREVIEW_THEME_ID = RUNNER_PREVIEW_PARAMS.get("preview");
 const RUNNER_PREVIEW_THEME = THEMES.find((theme) => theme.id === RUNNER_PREVIEW_THEME_ID) || null;
 const RUNNER_SCENERY_SHOWCASE = Boolean(RUNNER_PREVIEW_THEME) && RUNNER_PREVIEW_PARAMS.get("showcase") === "1";
 const SCENERY_SHOWCASE_SECONDS = 10;
-const THEME_LENGTH = 1800; // meters per unlocked route stop before the next city
+const THEME_LENGTH = 1800; // score units per unlocked route stop
 const STARTING_OBSTACLE_COUNT = 4;
 const OBSTACLE_MILESTONES = [
   { miles: 0, count: 4 },
@@ -568,9 +580,9 @@ const OBSTACLE_MILESTONES = [
   { miles: 225, count: Infinity },
 ];
 const STARTER_SECTION_SECONDS = 180;
-const BASE_ROUTE_METERS_PER_SECOND = THEME_LENGTH / STARTER_SECTION_SECONDS;
-const RUNNER_METERS_PER_BANKED_MILE = 30;
-const CITY_ORDER = ["nyc", "dc", "farm", "desert", "la", "sf"];
+const BASE_ROUTE_SCORE_PER_SECOND = THEME_LENGTH / STARTER_SECTION_SECONDS;
+const RUNNER_SCORE_PER_BANKED_MILE = 30;
+const CITY_ORDER = ["nyc", "dc", "farm", "chicago", "desert", "la", "sf"];
 const CAR_STATS = {
   wagon: { routeMultiplier: 1, worldSpeedStart: 260, worldSpeedRamp: 3, worldSpeedMax: 520 },
   minivan: { routeMultiplier: 1, worldSpeedStart: 260, worldSpeedRamp: 3, worldSpeedMax: 520 },
@@ -588,6 +600,7 @@ const BackgroundArt = {
   nyHarbor: { src: "assets/backgrounds/ny-harbor-runner.png", img: null, ready: false, failed: false },
   dcMonuments: { src: "assets/backgrounds/dc-monuments-runner.png", img: null, ready: false, failed: false },
   heartlandFarms: { src: "assets/backgrounds/heartland-farms-runner.png", img: null, ready: false, failed: false },
+  chicagoLakefront: { src: "assets/backgrounds/chicago-lakefront-runner.png", img: null, ready: false, failed: false },
   desertSouthwest: { src: "assets/backgrounds/desert-southwest-runner.png", img: null, ready: false, failed: false },
   losAngeles: { src: "assets/backgrounds/los-angeles-runner.png", img: null, ready: false, failed: false },
   sanFrancisco: { src: "assets/backgrounds/san-francisco-runner.png", img: null, ready: false, failed: false },
@@ -617,6 +630,11 @@ const ObstacleArt = {
   securityCheckpoint: { src: "assets/obstacles/security-checkpoint.png", img: null, ready: false, failed: false },
   scooterRider: { src: "assets/obstacles/scooter-rider.png", img: null, ready: false, failed: false },
   runawayChicken: { src: "assets/obstacles/runaway-chicken.png", img: null, ready: false, failed: false },
+  chicagoPizzaBoxes: { src: "assets/obstacles/chicago-pizza-boxes.png", img: null, ready: false, failed: false },
+  chicagoNewsBoxes: { src: "assets/obstacles/chicago-news-boxes.png", img: null, ready: false, failed: false },
+  chicagoLStairs: { src: "assets/obstacles/chicago-l-stairs.png", img: null, ready: false, failed: false },
+  chicagoStarPlanter: { src: "assets/obstacles/chicago-star-planter.png", img: null, ready: false, failed: false },
+  chicagoWindblownUmbrella: { src: "assets/obstacles/chicago-windblown-umbrella.png", img: null, ready: false, failed: false },
   cornCrates: { src: "assets/obstacles/corn-crates.png", img: null, ready: false, failed: false },
   milkCans:   { src: "assets/obstacles/milk-cans.png", img: null, ready: false, failed: false },
   produceStand: { src: "assets/obstacles/produce-stand.png", img: null, ready: false, failed: false },
@@ -694,6 +712,11 @@ const OBSTACLE_DEFS = {
   scarecrow:    { w: 44,  h: 92,  landable: false },
   barn:         { w: 150, h: 110, landable: true  },
   runawayChicken: { w: 64, h: 56, landable: false, moving: true, moveFactor: 1.58 },
+  chicagoPizzaBoxes: { w: 126, h: 110, landable: true, landOffset: 5 },
+  chicagoNewsBoxes: { w: 154, h: 112, landable: true, landOffset: 5 },
+  chicagoLStairs: { w: 230, h: 158, landable: true, landOffset: 6 },
+  chicagoStarPlanter: { w: 188, h: 76, landable: true, landOffset: 24 },
+  chicagoWindblownUmbrella: { w: 168, h: 112, landable: false, moving: true, moveFactor: 1.58, flipX: true },
   cornCrates:   { w: 120, h: 74,  landable: false },
   milkCans:     { w: 82,  h: 82,  landable: false },
   produceStand: { w: 154, h: 124, landable: true, landOffset: 26 },
@@ -725,7 +748,7 @@ const S = {
   gameOver: false,
   t: 0,
   speed: 320,          // px/sec world scroll
-  distance: 0,         // meters
+  distance: 0,         // score used for pacing, records, and mile conversion
   best: Save.runnerBest,
   lives: 3,
   invuln: 0,
@@ -746,7 +769,7 @@ const S = {
 };
 
 document.getElementById("runnerBestStart").textContent =
-  "Personal best: " + Math.floor(S.best).toLocaleString() + "m";
+  "Personal best: " + Math.floor(S.best).toLocaleString();
 
 const player = {
   x: 180, y: GROUND_Y, w: 46, h: 74,
@@ -794,7 +817,7 @@ function applyVehicleWindowTheme() {
 applyVehicleWindowTheme();
 
 function routeMetersPerSecond() {
-  return BASE_ROUTE_METERS_PER_SECOND * currentCarStats().routeMultiplier;
+  return BASE_ROUTE_SCORE_PER_SECOND * currentCarStats().routeMultiplier;
 }
 
 function vehicleName(id) {
@@ -821,7 +844,7 @@ function stationUnlockHint(era) {
 }
 
 function bankedMilesForDistance(distance) {
-  return Math.floor(distance / RUNNER_METERS_PER_BANKED_MILE);
+  return Math.floor(distance / RUNNER_SCORE_PER_BANKED_MILE);
 }
 
 function currentTheme() {
@@ -1364,7 +1387,7 @@ function obstacleSurfaceY(o) {
 function obstaclePoolForTheme(theme) {
   const roster = obstacleRosterForTheme(theme);
   if (RUNNER_SCENERY_SHOWCASE) return roster;
-  const tripMiles = S.distance / RUNNER_METERS_PER_BANKED_MILE;
+  const tripMiles = S.distance / RUNNER_SCORE_PER_BANKED_MILE;
   let count = STARTING_OBSTACLE_COUNT;
   for (const milestone of OBSTACLE_MILESTONES) {
     if (tripMiles >= milestone.miles) count = milestone.count;
@@ -1399,7 +1422,7 @@ function endGame() {
   const totalMiles = Save.addMiles(earned);
   RoadTripAnalytics.capture("game_completed", {
     game: "window_dash",
-    distance_meters: Math.floor(S.distance),
+    score: Math.floor(S.distance),
     miles_earned: earned,
     city: currentTheme().id,
     vehicle: Save.data.currentCar,
@@ -1408,9 +1431,9 @@ function endGame() {
   const ov = document.getElementById("overlay");
   document.getElementById("ovTitle").textContent = "OUT OF GAS!";
   document.getElementById("ovText").innerHTML =
-    "You made it <b>" + Math.floor(S.distance) + "m</b> down the road." +
+    "You scored <b>" + Math.floor(S.distance).toLocaleString() + "</b> on this run." +
     (isNewBest ? "<br><b style='color:#ffd166'>NEW PERSONAL BEST!</b>" : "") +
-    "<br>Best trip: <b>" + Math.floor(S.best) + "m</b>" +
+    "<br>Best run: <b>" + Math.floor(S.best).toLocaleString() + "</b>" +
     "<br>+<b>" + earned + " mi</b> earned · <b>" + totalMiles + " mi</b> banked";
   document.getElementById("startBtn").textContent = "TAKE ANOTHER TRIP";
   ov.classList.remove("hidden");
@@ -1984,6 +2007,14 @@ function drawObstacleAsset(o, img) {
     ctx.translate(o.x + d.w / 2, GROUND_Y - d.h / 2);
     ctx.rotate(o.spin || 0);
     ctx.drawImage(img, -d.w / 2, -d.h / 2, d.w, d.h);
+    ctx.restore();
+    return;
+  }
+  if (d.flipX) {
+    ctx.save();
+    ctx.translate(o.x + d.w, 0);
+    ctx.scale(-1, 1);
+    ctx.drawImage(img, 0, GROUND_Y - d.h, d.w, d.h);
     ctx.restore();
     return;
   }
@@ -2696,10 +2727,10 @@ function drawHUD(theme) {
   ctx.fill();
   ctx.fillStyle = "#fff";
   ctx.font = "bold 18px 'Trebuchet MS', sans-serif";
-  ctx.fillText(Math.floor(S.distance) + "m", 44, 51);
+  ctx.fillText(Math.floor(S.distance).toLocaleString(), 44, 51);
   ctx.font = "13px 'Trebuchet MS', sans-serif";
   ctx.fillStyle = "#ffd166";
-  ctx.fillText("BEST " + S.best + "m", 130, 50);
+  ctx.fillText("BEST " + Math.floor(S.best).toLocaleString(), 130, 50);
   ctx.fillStyle = "#4ec3c7";
   ctx.fillText("+" + tripMiles + " MI", 245, 50);
   ctx.fillStyle = "#aaa";

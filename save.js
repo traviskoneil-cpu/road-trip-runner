@@ -22,7 +22,7 @@
   const STARTER_CAR = "minivan";
   const VEHICLES = {
     minivan: { name: "Blue Minivan", station: "90s", milestone: "Starter ride" },
-    suv: { name: "Family SUV", station: "00s", milestone: "Reach the Desert" },
+    suv: { name: "Family SUV", station: "00s", milestone: "Reach Chicago" },
     wagon: { name: "Station Wagon", station: "80s", milestone: "Reach Los Angeles" },
     customVan: { name: "Custom Van", station: "70s", milestone: "Reach San Francisco" },
   };
@@ -37,7 +37,7 @@
     },
     miles: 0,                 // spendable trip currency
     lifetimeMiles: 0,         // earned trip miles, used for automatic unlocks
-    runnerBest: 0,            // Window Dash high score, meters
+    runnerBest: 0,            // Window Dash high score
     driverBest: 0,            // Wheel Jam high score, points
     cities: ["nyc"],          // unlocked map areas (the route spine)
     cars: [STARTER_CAR],      // unlocked vehicles
@@ -46,6 +46,7 @@
       energy: 100,
       lastEnergyAt: 0,
       fedCount: 0,
+      ordersCompleted: 0,
       snackBagUses: 0,
       mergeCount: 0,
       highestTier: 0,
@@ -105,6 +106,10 @@
       d.mixtape.favorites = Array.from(new Set(d.mixtape.favorites.filter((id) => typeof id === "string" && d.collected.includes(id))));
       if (typeof d.mixtape.autoplay !== "boolean") d.mixtape.autoplay = DEFAULTS.mixtape.autoplay;
       if (!Array.isArray(d.cities) || !d.cities.length) d.cities = ["nyc"];
+      if (!d.cities.includes("chicago") && ["desert", "la", "sf"].some((city) => d.cities.includes(city))) {
+        const desertIndex = d.cities.indexOf("desert");
+        d.cities.splice(desertIndex >= 0 ? desertIndex : d.cities.length, 0, "chicago");
+      }
       if (!Array.isArray(d.cars) || !d.cars.length) d.cars = [STARTER_CAR];
       if (typeof d.miles !== "number" || !Number.isFinite(d.miles)) d.miles = 0;
       d.miles = Math.max(0, Math.floor(d.miles));
@@ -121,6 +126,7 @@
       nav.energy = Math.max(0, Math.floor(nav.energy));
       if (typeof nav.lastEnergyAt !== "number" || !Number.isFinite(nav.lastEnergyAt) || nav.lastEnergyAt <= 0) nav.lastEnergyAt = Date.now();
       if (typeof nav.fedCount !== "number" || !Number.isFinite(nav.fedCount)) nav.fedCount = 0;
+      if (typeof nav.ordersCompleted !== "number" || !Number.isFinite(nav.ordersCompleted)) nav.ordersCompleted = 0;
       if (typeof nav.snackBagUses !== "number" || !Number.isFinite(nav.snackBagUses)) nav.snackBagUses = 0;
       if (typeof nav.mergeCount !== "number" || !Number.isFinite(nav.mergeCount)) nav.mergeCount = 0;
       if (typeof nav.highestTier !== "number" || !Number.isFinite(nav.highestTier)) nav.highestTier = 0;
@@ -129,6 +135,7 @@
       if (typeof nav.highestMealTier !== "number" || !Number.isFinite(nav.highestMealTier)) nav.highestMealTier = 0;
       if (typeof nav.highestFunTier !== "number" || !Number.isFinite(nav.highestFunTier)) nav.highestFunTier = 0;
       nav.fedCount = Math.max(0, Math.floor(nav.fedCount));
+      nav.ordersCompleted = Math.max(0, Math.floor(nav.ordersCompleted));
       nav.snackBagUses = Math.max(0, Math.floor(nav.snackBagUses));
       nav.mergeCount = Math.max(0, Math.floor(nav.mergeCount));
       nav.highestTier = Math.max(0, Math.floor(nav.highestTier));

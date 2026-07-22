@@ -8,5 +8,6 @@ node_modules/
 prototypes/qa/
 prototypes/references/
 radio/clips/auditions/
+**/*-source-chromakey.png
 scripts/
 *.md
