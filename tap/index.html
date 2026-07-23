@@ -1363,7 +1363,7 @@ function beginPlay() {
   resize();
   stats = { score: 0, combo: 0, maxCombo: 0, perfect: 0, good: 0, miss: 0, mult: 1, total: chart.length };
   for (const nt of chart) { nt.hit = false; nt.judged = false; nt.headHit = false; nt.holding = false; nt.done = false; }
-  hitFx = []; judgeFx = null; laneDown = [false, false, false]; lastLoopMs = 0;
+  hitFx = []; judgeFx = null; laneDown = [false, false, false]; resetLaneInputOwners(); lastLoopMs = 0;
   Traffic.init();
   RoadTripAnalytics.capture("game_started", {
     game: "wheel_jam",
@@ -1574,34 +1574,48 @@ function registerMiss() {
 }
 
 const KEY_LANE = { "f": 0, "j": 1, "k": 2, "arrowleft": 0, "arrowdown": 1, "arrowright": 2 };
+const keyLaneDown = new Set();
 document.addEventListener("keydown", (e) => {
   if (e.repeat) return;
   const L = KEY_LANE[e.key.toLowerCase()];
-  if (L !== undefined) { e.preventDefault(); pressLane(L); }
+  if (L !== undefined) {
+    e.preventDefault();
+    const laneAlreadyHeld = laneDown[L];
+    keyLaneDown.add(L);
+    if (!laneAlreadyHeld) pressLane(L);
+  }
   if (e.key === "Escape" && running) quitToSelect();
 });
 document.addEventListener("keyup", (e) => {
   const L = KEY_LANE[e.key.toLowerCase()];
-  if (L !== undefined) releaseLane(L);
+  if (L !== undefined) {
+    keyLaneDown.delete(L);
+    if (!Object.values(pointerLane).includes(L)) releaseLane(L);
+  }
 });
 function laneOf(x) {
   if (x < fieldX || x > fieldX + fieldW) return x < CW / 2 ? 0 : 2; // outside maps to nearest side
   return Math.min(LANES - 1, Math.floor((x - fieldX) / laneW));
 }
 const pointerLane = {}; // pointerId -> lane, so multi-touch holds work
+function resetLaneInputOwners() {
+  keyLaneDown.clear();
+  Object.keys(pointerLane).forEach((pointerId) => delete pointerLane[pointerId]);
+}
 function releasePointer(pointerId) {
   const L = pointerLane[pointerId];
   if (L === undefined) return;
   delete pointerLane[pointerId];
   // Do not cut a lane's hold short when a second finger is still on it.
-  if (!Object.values(pointerLane).includes(L)) releaseLane(L);
+  if (!Object.values(pointerLane).includes(L) && !keyLaneDown.has(L)) releaseLane(L);
 }
 canvas.addEventListener("pointerdown", (e) => {
   e.preventDefault();
   const L = laneOf(e.clientX);
+  const laneAlreadyHeld = laneDown[L];
   pointerLane[e.pointerId] = L;
   try { canvas.setPointerCapture(e.pointerId); } catch (err) {}
-  pressLane(L);
+  if (!laneAlreadyHeld) pressLane(L);
 }, { passive: false });
 canvas.addEventListener("pointerup", (e) => {
   e.preventDefault();
@@ -1682,6 +1696,8 @@ window.addEventListener("rtr-save-restored", () => {
 let resumeAudioContextAfterBackground = false;
 function suspendForAppBackground() {
   resumeAudioContextAfterBackground = Boolean(audioCtx && audioCtx.state === "running");
+  laneDown = [false, false, false];
+  resetLaneInputOwners();
   if (audioCtx && audioCtx.state === "running") audioCtx.suspend().catch(() => {});
 }
 function resumeFromAppBackground() {

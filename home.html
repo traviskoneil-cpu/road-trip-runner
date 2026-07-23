@@ -401,6 +401,25 @@
     white-space: nowrap;
   }
 
+  .privacy-settings-open {
+    width: 34px;
+    height: 34px;
+    border: 0;
+    border-radius: 50%;
+    color: var(--ink);
+    background: var(--cream);
+    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.14);
+    font-size: 19px;
+    line-height: 1;
+    cursor: pointer;
+    pointer-events: auto;
+  }
+
+  .privacy-settings-open:active {
+    translate: 0 2px;
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.14);
+  }
+
   .logo {
     color: var(--ink);
     font-size: 13px;
@@ -4336,6 +4355,100 @@
     backdrop-filter: blur(8px);
   }
 
+  .privacy-panel {
+    position: absolute;
+    inset: 0;
+    z-index: 95;
+    display: grid;
+    place-items: center;
+    padding: max(24px, env(safe-area-inset-top)) 18px max(24px, env(safe-area-inset-bottom));
+    background: rgba(8, 16, 31, 0.72);
+    backdrop-filter: blur(8px);
+  }
+
+  .privacy-card {
+    position: relative;
+    width: min(100%, 370px);
+    padding: 22px 18px 18px;
+    border: 3px solid rgba(31, 58, 95, 0.16);
+    border-radius: 8px;
+    color: var(--ink);
+    background: var(--cream);
+    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.38);
+  }
+
+  .privacy-card h2 {
+    margin: 0;
+    font-size: 23px;
+    letter-spacing: 0;
+  }
+
+  .privacy-card > p {
+    margin: 9px 0 16px;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.45;
+  }
+
+  .privacy-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 34px;
+    height: 34px;
+    border: 0;
+    border-radius: 50%;
+    color: var(--cream);
+    background: var(--ink);
+    font-size: 22px;
+    cursor: pointer;
+  }
+
+  .privacy-choice {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px;
+    align-items: center;
+    padding: 13px;
+    border: 2px solid rgba(31, 58, 95, 0.16);
+    border-radius: 7px;
+    background: #fffdf5;
+    cursor: pointer;
+  }
+
+  .privacy-choice strong,
+  .privacy-choice span {
+    display: block;
+  }
+
+  .privacy-choice strong {
+    font-size: 13px;
+  }
+
+  .privacy-choice span {
+    margin-top: 3px;
+    color: var(--muted);
+    font-size: 9px;
+    font-weight: 800;
+    line-height: 1.3;
+  }
+
+  .privacy-choice input {
+    width: 24px;
+    height: 24px;
+    accent-color: var(--green);
+  }
+
+  .privacy-status {
+    min-height: 15px;
+    margin: 10px 0 0;
+    color: var(--green);
+    font-size: 10px;
+    font-weight: 900;
+    text-align: center;
+  }
+
   .onboarding-card {
     width: min(100%, 392px);
     max-height: calc(100svh - max(32px, env(safe-area-inset-top)) - max(32px, env(safe-area-inset-bottom)));
@@ -4735,6 +4848,7 @@
         <div class="stats">
           <div class="stat-pill"><span id="milesCount">0</span> mi</div>
           <div class="stat-pill"><span id="songCount">0</span> songs</div>
+          <button class="privacy-settings-open" type="button" id="privacySettingsOpen" aria-label="Privacy and settings" title="Privacy and settings">&#9881;</button>
         </div>
       </div>
 
@@ -5189,6 +5303,19 @@
           <p class="plate-review-note">Only the place you confirm and this small scrapbook photo are saved. Plate numbers are never kept.</p>
           <button class="plate-review-confirm" type="button" id="confirmPlateReview">Add to the Scrapbook</button>
         </div>
+      </div>
+    </div>
+
+    <div class="privacy-panel hidden" id="privacyPanel" role="dialog" aria-modal="true" aria-labelledby="privacyTitle">
+      <div class="privacy-card">
+        <button class="privacy-close" type="button" id="privacyClose" aria-label="Close privacy settings">&times;</button>
+        <h2 id="privacyTitle">Privacy &amp; Data</h2>
+        <p>Road Trip Arcade can share anonymous play events and technical errors so we can see which games need work. It does not send names, email, photos, microphone audio, or precise location.</p>
+        <label class="privacy-choice" for="analyticsEnabled">
+          <span><strong>Share anonymous play data</strong><span>Game starts, completed rounds, unlocks, and app errors.</span></span>
+          <input id="analyticsEnabled" type="checkbox">
+        </label>
+        <div class="privacy-status" id="privacyStatus" aria-live="polite"></div>
       </div>
     </div>
   </main>
@@ -6087,6 +6214,19 @@ function showToast(message) {
   toastTimer = setTimeout(() => toast.classList.remove("show"), 2400);
 }
 
+function openPrivacySettings() {
+  const enabled = RoadTripAnalytics?.isEnabled?.() !== false;
+  $("analyticsEnabled").checked = enabled;
+  $("privacyStatus").textContent = enabled ? "Anonymous analytics are on." : "Anonymous analytics are off.";
+  $("privacyPanel").classList.remove("hidden");
+  $("privacyClose").focus();
+}
+
+function closePrivacySettings() {
+  $("privacyPanel").classList.add("hidden");
+  $("privacySettingsOpen").focus();
+}
+
 function showOnboarding(id, continuation, options = {}) {
   const guide = ONBOARDING[id];
   if (!guide) {
@@ -6395,7 +6535,25 @@ function canPlaceSnackAt(nav, index, value, ignoredAnchors = []) {
 
 function mergeSnackDestination(nav, sourceIndex, targetIndex, mergedValue) {
   const mergeAnchors = [sourceIndex, targetIndex];
-  return [targetIndex, sourceIndex].find((index) => (
+  const footprint = snackFootprint(mergedValue);
+  const candidates = [];
+  const seen = new Set();
+  [targetIndex, sourceIndex].forEach((pivotIndex) => {
+    const pivotRow = Math.floor(pivotIndex / NAV_GRID_COLS);
+    const pivotCol = pivotIndex % NAV_GRID_COLS;
+    for (let rowOffset = 0; rowOffset < footprint.rows; rowOffset += 1) {
+      for (let colOffset = 0; colOffset < footprint.cols; colOffset += 1) {
+        const row = pivotRow - rowOffset;
+        const col = pivotCol - colOffset;
+        if (row < 0 || col < 0) continue;
+        const index = row * NAV_GRID_COLS + col;
+        if (seen.has(index)) continue;
+        seen.add(index);
+        candidates.push(index);
+      }
+    }
+  });
+  return candidates.find((index) => (
     canPlaceSnackAt(nav, index, mergedValue, mergeAnchors)
   ));
 }
@@ -7159,7 +7317,7 @@ function updateDragTarget(x, y) {
 }
 
 function updateDragGhost(event) {
-  if (!dragState) return;
+  if (!dragState || event.pointerId !== dragState.pointerId) return;
   const point = pointFromEvent(event);
   if (Math.hypot(point.x - dragState.startX, point.y - dragState.startY) > 5) {
     dragState.moved = true;
@@ -7295,6 +7453,10 @@ function completeSnackDrop(sourceIndex, target) {
 
 function startSnackDrag(event, cell) {
   if (!isNavigatorUnlocked() || event.button > 0) return;
+  if (dragState) {
+    event.preventDefault();
+    return;
+  }
   closeSnackActionMenu();
   const index = Number(cell.dataset.mergeCell);
   const nav = syncNavigatorEnergy();
@@ -7308,6 +7470,7 @@ function startSnackDrag(event, cell) {
   document.body.appendChild(ghost);
   cell.classList.add("drag-source");
   dragState = {
+    pointerId: event.pointerId,
     sourceIndex: index,
     sourceEl: cell,
     ghost,
@@ -7340,6 +7503,7 @@ function teardownSnackDrag() {
   clearSnackHoldTimer();
   clearDragTarget();
   state.sourceEl?.classList.remove("drag-source");
+  try { state.sourceEl?.releasePointerCapture?.(state.pointerId); } catch (error) {}
   state.ghost?.remove?.();
   document.removeEventListener("pointermove", onSnackPointerMove);
   document.removeEventListener("pointerup", onSnackPointerUp);
@@ -7349,7 +7513,7 @@ function teardownSnackDrag() {
 }
 
 function finishSnackDrag(event, canceled) {
-  if (!dragState) return;
+  if (!dragState || event.pointerId !== dragState.pointerId) return;
   updateDragGhost(event);
   const state = dragState;
   const target = state.target;
@@ -7362,6 +7526,7 @@ function finishSnackDrag(event, canceled) {
 }
 
 function onSnackPointerMove(event) {
+  if (!dragState || event.pointerId !== dragState.pointerId) return;
   updateDragGhost(event);
   event.preventDefault();
 }
@@ -8289,11 +8454,21 @@ function renderPlateRecall() {
     return;
   }
 
+  if (PlateRecall.phase === "interrupted") {
+    scene.innerHTML = '<div class="plate-recall-empty"><strong>Quick pit stop.</strong><span>The parade paused while the app was away.</span></div>';
+    prompt.textContent = "Your collected plates are safe.";
+    hint.textContent = "Restart this round for a fresh sequence.";
+    button.textContent = "Restart Round";
+    button.disabled = false;
+    return;
+  }
+
   if (PlateRecall.phase === "won") {
-    const state = plateRecallState(PlateRecall.target);
+    const resultPlate = PlateRecall.target || PlateRecall.sequence[PlateRecall.sequence.length - 1];
+    const state = plateRecallState(resultPlate);
     scene.innerHTML =
       '<div class="plate-recall-watch">' +
-        '<span class="plate-recall-watch-label">New plate tucked in</span>' +
+        '<span class="plate-recall-watch-label">' + (PlateRecall.target ? "New plate tucked in" : "Parade complete") + '</span>' +
         plateRecallCarMarkup(state.id, { correct: true }) +
       '</div>';
     prompt.textContent = PlateRecall.target ? state.name + " is in the book." : "Full collection, fresh recall.";
@@ -8301,7 +8476,7 @@ function renderPlateRecall() {
       ? "+" + PlateRecall.rewardMiles + " mi" + (PlateRecall.rewardText ? " · " + PlateRecall.rewardText : "")
       : "A shuffled road-trip replay keeps the memory game going.";
     progress.textContent = length + " / " + length;
-    button.textContent = "Next Plate";
+    button.textContent = PlateRecall.target ? "Next Plate" : "Play Again";
     button.disabled = false;
     return;
   }
@@ -8911,7 +9086,14 @@ let resumePlateAmbienceAfterBackground = false;
 let resumeOnboardingVideoAfterBackground = false;
 function suspendHomeForBackground() {
   HomeRadio.suspend();
-  resumePlateAmbienceAfterBackground = Boolean(PlateRecallAmbience.audio && !PlateRecallAmbience.audio.paused);
+  if (dragState) teardownSnackDrag();
+  const activePlateRound = ["watch", "repeat", "correct"].includes(PlateRecall.phase);
+  resumePlateAmbienceAfterBackground = !activePlateRound && Boolean(PlateRecallAmbience.audio && !PlateRecallAmbience.audio.paused);
+  if (activePlateRound) {
+    cancelPlateRecallTimer();
+    PlateRecall.phase = "interrupted";
+    renderPlateRecall();
+  }
   const onboardingVideo = $("onboardingVideo");
   resumeOnboardingVideoAfterBackground = Boolean(activeOnboarding && !onboardingVideo.paused && !onboardingVideo.ended);
   if (PlateRecallAmbience.audio) PlateRecallAmbience.audio.pause();
@@ -8952,6 +9134,15 @@ document.querySelectorAll("[data-playtest-city]").forEach((button) => {
   button.addEventListener("click", () => openRunnerPreview(button.dataset.playtestCity));
 });
 $("restoreRealTrip").addEventListener("click", restoreRealTrip);
+$("privacySettingsOpen").addEventListener("click", openPrivacySettings);
+$("privacyClose").addEventListener("click", closePrivacySettings);
+$("privacyPanel").addEventListener("click", (event) => {
+  if (event.target === $("privacyPanel")) closePrivacySettings();
+});
+$("analyticsEnabled").addEventListener("change", (event) => {
+  const enabled = RoadTripAnalytics.setEnabled(Boolean(event.target.checked));
+  $("privacyStatus").textContent = enabled ? "Anonymous analytics are on." : "Anonymous analytics are off.";
+});
 
 function clearPlaytestHold() {
   if (playtestHoldTimer) clearTimeout(playtestHoldTimer);

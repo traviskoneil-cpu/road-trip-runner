@@ -899,8 +899,21 @@ document.addEventListener("keydown", (e) => {
 document.addEventListener("keyup", (e) => {
   if (e.code === "Space" || e.code === "ArrowUp") jumpRelease();
 });
-canvas.addEventListener("pointerdown", jumpPress);
-canvas.addEventListener("pointerup", jumpRelease);
+let jumpPointerId = null;
+canvas.addEventListener("pointerdown", (event) => {
+  if (jumpPointerId !== null) return;
+  jumpPointerId = event.pointerId;
+  try { canvas.setPointerCapture(event.pointerId); } catch (error) {}
+  jumpPress();
+});
+function releaseJumpPointer(event) {
+  if (event.pointerId !== jumpPointerId) return;
+  jumpPointerId = null;
+  jumpRelease();
+}
+canvas.addEventListener("pointerup", releaseJumpPointer);
+canvas.addEventListener("pointercancel", releaseJumpPointer);
+canvas.addEventListener("lostpointercapture", releaseJumpPointer);
 
 // ============================================================
 // AUDIO — placeholder era "radio" built on WebAudio.
@@ -1467,6 +1480,7 @@ function pauseGame() {
     return;
   }
   S.paused = true;
+  jumpPointerId = null;
   player.jumpHeld = false;
   Radio.pauseForGame();
   showPausedOverlay();

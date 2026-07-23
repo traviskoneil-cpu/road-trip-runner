@@ -995,6 +995,10 @@
 
       function cloneMatrix(matrix) { return matrix.map(row => [...row]); }
 
+      function occupiedCellCount(matrix) {
+        return matrix.reduce((count, row) => count + row.filter(Boolean).length, 0);
+      }
+
       function createPiece(type) {
         const matrix = cloneMatrix(PIECES[type].matrix);
         return { type, matrix, rotation: 0, x: Math.floor((COLS - matrix[0].length) / 2), y: 0 };
@@ -1093,6 +1097,10 @@
 
       function lockPiece() {
         if (!current || clearingRows.length) return;
+        if (collides(current, 0, 0)) {
+          endGame();
+          return;
+        }
         const pieceId = ++pieceSerial;
         const lockedMatrix = cloneMatrix(current.matrix);
         current.matrix.forEach((row, y) => row.forEach((value, x) => {
@@ -1526,7 +1534,7 @@
           }
           const originX = first.x - cell.localX;
           const originY = first.y - cell.localY;
-          const intact = cells.every(entry =>
+          const intact = cells.length === occupiedCellCount(cell.matrix) && cells.every(entry =>
             entry.x - entry.cell.localX === originX && entry.y - entry.cell.localY === originY
           );
           if (intact) {
@@ -1679,6 +1687,7 @@
 
       document.addEventListener("keydown", event => {
         if (["ArrowLeft","ArrowRight","ArrowDown","ArrowUp","Space"].includes(event.code)) event.preventDefault();
+        if (event.repeat && ["ArrowUp", "KeyX", "Space", "KeyC", "ShiftLeft", "KeyP", "Escape"].includes(event.code)) return;
         if (event.code === "ArrowLeft") action("left");
         if (event.code === "ArrowRight") action("right");
         if (event.code === "ArrowDown") action("down");
@@ -1697,14 +1706,16 @@
 
       let touchStart = null;
       gameCanvas.addEventListener("pointerdown", event => {
-        touchStart = { x: event.clientX, y: event.clientY, time: performance.now() };
-        gameCanvas.setPointerCapture(event.pointerId);
+        if (touchStart) return;
+        touchStart = { pointerId: event.pointerId, x: event.clientX, y: event.clientY, time: performance.now() };
+        try { gameCanvas.setPointerCapture(event.pointerId); } catch (error) {}
       });
       gameCanvas.addEventListener("pointerup", event => {
-        if (!touchStart) return;
+        if (!touchStart || event.pointerId !== touchStart.pointerId) return;
         const dx = event.clientX - touchStart.x;
         const dy = event.clientY - touchStart.y;
         const elapsed = performance.now() - touchStart.time;
+        touchStart = null;
         if (Math.abs(dx) < 18 && Math.abs(dy) < 18 && elapsed < 350) rotate();
         else if (Math.abs(dx) > Math.abs(dy)) {
           const screenCell = gameCanvas.getBoundingClientRect().width / COLS;
@@ -1712,8 +1723,12 @@
           for (let i = 0; i < steps; i++) move(dx > 0 ? 1 : -1, 0);
         } else if (dy > 48 || (dy > 32 && elapsed < 260)) hardDrop();
         else if (dy > 15) move(0, 1);
-        touchStart = null;
       });
+      function cancelGameGesture(event) {
+        if (touchStart && event.pointerId === touchStart.pointerId) touchStart = null;
+      }
+      gameCanvas.addEventListener("pointercancel", cancelGameGesture);
+      gameCanvas.addEventListener("lostpointercapture", cancelGameGesture);
 
       ui.startBtn.addEventListener("click", startGame);
       document.getElementById("mapBtn").addEventListener("click", () => {
@@ -1738,6 +1753,7 @@
       });
       ui.volume.addEventListener("input", () => { if (audio) audio.volume = Number(ui.volume.value); });
       function suspendForAppBackground() {
+        touchStart = null;
         if (running && !paused && !over) togglePause();
         resumeRadioAfterBackground = Boolean(radioOn && audio && !audio.paused);
         if (audio) audio.pause();

@@ -5,6 +5,8 @@
 
   const PROJECT_KEY = "phc_oushmAHKiCrmtfMhyajRhR22LKWugwxRh7QUDLoCTn5Z";
   const API_HOST = "https://us.i.posthog.com";
+  const PREFERENCE_KEY = "rtr_analytics_enabled";
+  const capturedErrors = new Set();
 
   function surfaceName() {
     const title = document.title || "";
@@ -25,7 +27,12 @@
 
   const Analytics = {
     surface: surfaceName(),
+    enabled: true,
+    isEnabled() {
+      return this.enabled;
+    },
     capture(event, properties) {
+      if (!this.enabled) return;
       if (!event || !global.posthog || typeof global.posthog.capture !== "function") return;
       global.posthog.capture(event, Object.assign({
         surface: this.surface,
@@ -37,10 +44,35 @@
       this.capture("screen_viewed", Object.assign({ screen }, properties || {}));
     },
     optOut() {
+      this.enabled = false;
+      try { localStorage.setItem(PREFERENCE_KEY, "0"); } catch (error) {}
       global.posthog?.opt_out_capturing?.();
     },
     optIn() {
+      this.enabled = true;
+      try { localStorage.setItem(PREFERENCE_KEY, "1"); } catch (error) {}
       global.posthog?.opt_in_capturing?.();
+    },
+    setEnabled(enabled) {
+      if (enabled) this.optIn();
+      else this.optOut();
+      return this.enabled;
+    },
+    captureError(kind, error, details) {
+      if (!this.enabled || capturedErrors.size >= 10) return;
+      const message = String((error && error.message) || error || "Unknown error").slice(0, 300);
+      const source = String((details && details.source) || "").split("/").pop().slice(0, 120);
+      const signature = [kind, message, source, details && details.line].join("|");
+      if (capturedErrors.has(signature)) return;
+      capturedErrors.add(signature);
+      this.capture("app_error", {
+        error_kind: kind,
+        error_name: String((error && error.name) || "Error").slice(0, 80),
+        error_message: message,
+        source,
+        line: Math.max(0, Number(details && details.line) || 0),
+        column: Math.max(0, Number(details && details.column) || 0),
+      });
     },
   };
 
@@ -60,6 +92,25 @@
   });
 
   const privacySignal = navigator.globalPrivacyControl === true || navigator.doNotTrack === "1";
-  if (privacySignal) Analytics.optOut();
-  else Analytics.capture("app_opened");
+  let explicitPreference = "";
+  try { explicitPreference = localStorage.getItem(PREFERENCE_KEY) || ""; } catch (error) {}
+  Analytics.enabled = explicitPreference === "1" || (explicitPreference !== "0" && !privacySignal);
+  if (Analytics.enabled) {
+    global.posthog?.opt_in_capturing?.();
+    Analytics.capture("app_opened");
+  } else {
+    global.posthog?.opt_out_capturing?.();
+  }
+
+  global.addEventListener("error", (event) => {
+    if (!event || !event.error) return;
+    Analytics.captureError("javascript", event.error, {
+      source: event.filename,
+      line: event.lineno,
+      column: event.colno,
+    });
+  });
+  global.addEventListener("unhandledrejection", (event) => {
+    Analytics.captureError("promise", event && event.reason);
+  });
 })(window);

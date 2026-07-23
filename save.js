@@ -27,7 +27,11 @@
     customVan: { name: "Custom Van", station: "70s", milestone: "Reach San Francisco" },
   };
   const DEFAULTS = {
-    v: 13,
+    v: 14,
+    saveMeta: {
+      revision: 0,
+      updatedAt: 0,
+    },
     difficulties: ["easy"],   // legacy Dad Mode global difficulty unlocks
     driverSongs: {},          // per-song Wheel Jam progress: { "era|file": { difficulties, best } }
     collected: [],            // collected song ids, "era|file"
@@ -86,6 +90,7 @@
     RANK_ORDER, UNLOCK_RULE, VEHICLES, STARTER_CAR,
     data: clone(DEFAULTS),
     hadLocalSaveOnBoot: false,
+    _nativeBackupQueue: Promise.resolve(),
 
     load() {
       let raw = null;
@@ -97,6 +102,11 @@
       this.hadLocalSaveOnBoot = !!rawText;
       if (raw && typeof raw === "object") this.data = Object.assign(clone(DEFAULTS), raw);
       const d = this.data;
+      if (!d.saveMeta || typeof d.saveMeta !== "object" || Array.isArray(d.saveMeta)) d.saveMeta = clone(DEFAULTS.saveMeta);
+      if (!Number.isFinite(d.saveMeta.revision)) d.saveMeta.revision = 0;
+      if (!Number.isFinite(d.saveMeta.updatedAt)) d.saveMeta.updatedAt = 0;
+      d.saveMeta.revision = Math.max(0, Math.floor(d.saveMeta.revision));
+      d.saveMeta.updatedAt = Math.max(0, Math.floor(d.saveMeta.updatedAt));
       // normalize shape (guards against hand-edited / partial / old blobs)
       if (!Array.isArray(d.difficulties) || !d.difficulties.length) d.difficulties = ["easy"];
       if (!d.driverSongs || typeof d.driverSongs !== "object") d.driverSongs = {};
@@ -226,7 +236,7 @@
       if (!this.isStationUnlocked(d.settings.station)) d.settings.station = DEFAULTS.settings.station;
       this._migrateOldKeys();
       d.v = DEFAULTS.v;
-      this.persist({ skipNative: !this.hadLocalSaveOnBoot });
+      this.persist({ skipNative: !this.hadLocalSaveOnBoot, skipRevision: true });
       return this;
     },
 
@@ -257,7 +267,12 @@
     },
 
     persist(options) {
-      try { localStorage.setItem(KEY, JSON.stringify(this.data)); } catch (e) {}
+      if (!(options && options.skipRevision)) {
+        this.data.saveMeta.revision += 1;
+        this.data.saveMeta.updatedAt = Date.now();
+      }
+      try { localStorage.setItem(KEY, JSON.stringify(this.data)); }
+      catch (e) { global.RoadTripAnalytics?.captureError?.("save_write", e); }
       if (options && options.skipNative) return;
       this.backupNative();
     },
@@ -270,9 +285,11 @@
     backupNative() {
       const prefs = this.nativePreferences();
       if (!prefs || typeof prefs.set !== "function") return;
-      try {
-        prefs.set({ key: NATIVE_BACKUP_KEY, value: JSON.stringify(this.data) });
-      } catch (e) {}
+      const value = JSON.stringify(this.data);
+      this._nativeBackupQueue = this._nativeBackupQueue
+        .catch(() => {})
+        .then(() => prefs.set({ key: NATIVE_BACKUP_KEY, value }))
+        .catch((error) => global.RoadTripAnalytics?.captureError?.("native_save_write", error));
     },
     restoreNativeBackup() {
       const prefs = this.nativePreferences();
@@ -303,7 +320,10 @@
       try { localStorage.setItem(PLAYTEST_BACKUP_KEY, value); } catch (e) {}
       const prefs = this.nativePreferences();
       if (prefs && typeof prefs.set === "function") {
-        try { prefs.set({ key: NATIVE_PLAYTEST_BACKUP_KEY, value }); } catch (e) {}
+        this._nativeBackupQueue = this._nativeBackupQueue
+          .catch(() => {})
+          .then(() => prefs.set({ key: NATIVE_PLAYTEST_BACKUP_KEY, value }))
+          .catch((error) => global.RoadTripAnalytics?.captureError?.("native_playtest_backup", error));
       }
     },
     applyPlaytest(data) {

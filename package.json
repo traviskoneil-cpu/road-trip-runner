@@ -14,7 +14,9 @@
     "app:install:android": "npm run app:sync:android && cd android && JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ./gradlew installDebug",
     "app:build:ios": "npm run app:sync:ios && xcodebuild -workspace ios/App/App.xcworkspace -scheme App -configuration Debug -destination 'generic/platform=iOS Simulator' -derivedDataPath /tmp/road-trip-arcade-ios-build CODE_SIGNING_ALLOWED=NO build",
     "app:archive:ios": "npm run app:sync:ios && xcodebuild -workspace ios/App/App.xcworkspace -scheme App -configuration Release -destination 'generic/platform=iOS' -archivePath /tmp/RoadTripArcade.xcarchive archive",
-    "app:run:ios": "npm run app:sync:ios && cap run ios"
+    "app:run:ios": "npm run app:sync:ios && cap run ios",
+    "test:save": "node scripts/test-save.js",
+    "test": "npm run test:save"
   },
   "dependencies": {
     "@capacitor/android": "^7.4.3",
