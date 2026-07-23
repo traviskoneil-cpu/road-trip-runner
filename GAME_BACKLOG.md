@@ -1,5 +1,25 @@
 # Road Trip Arcade Backlog
 
+## Product Analytics Follow-Up
+
+Return to PostHog after the current playtesting/content pass:
+
+- Build a Road Trip Arcade dashboard from intentional custom events instead of
+  PostHog's generic autocapture starter dashboard.
+- Show active players, games opened/started/completed/failed, repeat play,
+  progression drop-off, city and vehicle unlocks, song collection, economy
+  activity, and errors by game/platform.
+- Add a small anonymous `progress_snapshot` event with total/lifetime miles,
+  furthest city, owned-car count, unlocked-game count, collected-song count,
+  plate count, and relevant progression version.
+- Capture the snapshot at stable milestones such as app launch, city/car/game
+  unlocks, and session end. Do not send the full save or fire it every frame.
+- Exclude known internal/playtest devices from player-facing reports.
+- Keep broad click autocapture and session replay disabled. Decide separately
+  whether basic `$pageview` capture is useful for headline traffic metrics.
+- Confirm the dashboard can answer: which games people play, where progression
+  stalls, what content drives return play, and what should be expanded next.
+
 ## Secret Tracks
 
 Keep these as achievement-triggered mixtape additions until their custom songs,
