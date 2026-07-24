@@ -335,6 +335,7 @@
   #library.hidden { display: none; }
   .lib-panel {
     width: 920px; max-width: 100%; height: min(94vh, 860px); height: min(94dvh, 860px);
+    min-height: 0;
     color: #243554; background: #fff8ec; border: 3px solid #243554; border-radius: 14px; overflow: hidden;
     display: flex; flex-direction: column; box-shadow: 0 18px 70px rgba(0,0,0,0.55), inset 0 0 0 2px rgba(255,255,255,0.5);
   }
@@ -344,7 +345,7 @@
   .lib-title { min-width: 0; }
   .lib-head h2 { margin: 0; color: #243554; font-size: 22px; line-height: 1; letter-spacing: 0; }
   .lib-count { display: block; margin-top: 4px; color: #4d6077; font-size: 11px; font-weight: 800; }
-  .lib-close { margin-left: auto; width: 38px; height: 38px; border: 2px solid #243554; border-radius: 50%; background: #fff8ec; color: #243554; font-size: 19px; cursor: pointer; box-shadow: 0 3px 0 rgba(31,58,95,0.18); }
+  .lib-close { margin-left: auto; width: 38px; height: 38px; border: 2px solid #243554; border-radius: 50%; background: #fff8ec; color: #243554; font-size: 21px; cursor: pointer; box-shadow: 0 3px 0 rgba(31,58,95,0.18); }
   .lib-controls { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 8px; padding: 9px 12px; background: #e4f3ee; border-bottom: 2px solid rgba(36,53,84,0.2); }
   .lib-tabs { display: flex; align-items: center; gap: 4px; min-width: 0; }
   .lib-tab { min-height: 34px; border: 0; border-radius: 6px; padding: 6px 12px; color: #52647a; background: transparent; font-size: 11px; font-weight: 900; cursor: pointer; }
@@ -380,6 +381,9 @@
   .lib-bio { color: #667589; font-size: 10.5px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
   .lib-actions { flex: 0 0 auto; display: flex; align-items: center; gap: 5px; }
   .lib-favorite, .lib-play { width: 36px; height: 36px; border-radius: 50%; cursor: pointer; }
+  .lib-order { display: grid; gap: 3px; }
+  .lib-order button { width: 28px; height: 25px; border: 1px solid rgba(36,53,84,0.22); border-radius: 5px; color: #243554; background: #e4f3ee; font-size: 12px; font-weight: 900; cursor: pointer; }
+  .lib-order button:disabled { opacity: 0.3; cursor: default; }
   .lib-favorite { border: 2px solid #d7cbbd; color: #9b897a; background: #fff8ec; font-size: 17px; }
   .lib-favorite.active { color: #fff; border-color: #e45f3f; background: #e45f3f; }
   .lib-play { border: none; background: #247c79; color: #fff; font-size: 13px; box-shadow: 0 3px 0 #175b59; }
@@ -388,8 +392,8 @@
   #libNowText { flex: 1; color: #fff8ec; font-size: 12px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .lib-now button { width: 34px; height: 34px; border: 1px solid rgba(255,248,236,0.35); border-radius: 50%; background: rgba(255,248,236,0.1); color: #fff8ec; cursor: pointer; }
   @media (max-width: 560px) {
-    #library { padding-left: 0; padding-right: 0; }
-    .lib-panel { height: 100vh; height: 100dvh; border-width: 0; border-radius: 0; }
+    #library { align-items: stretch; padding-left: 0; padding-right: 0; }
+    .lib-panel { height: auto; max-height: 100%; border-width: 0; border-radius: 0; }
     .lib-controls { grid-template-columns: 1fr auto; }
     .lib-autoplay { grid-row: 2; grid-column: 1; justify-self: start; }
     .lib-mix-play { grid-row: 2; grid-column: 2; }
@@ -436,7 +440,7 @@
       <div class="lib-head">
         <span class="lib-format"><img id="libFormatIcon" src="assets/ui/mixtape-cd.png" alt=""></span>
         <div class="lib-title"><h2>MY MIXTAPE</h2><span id="libCount" class="lib-count"></span></div>
-        <button id="libClose" class="lib-close" type="button" aria-label="Close mixtape">&#10005;</button>
+        <button id="libClose" class="lib-close" type="button" aria-label="Back to map">&#8592;</button>
       </div>
       <div class="lib-controls">
         <div class="lib-tabs" role="tablist" aria-label="Mixtape views">
@@ -756,6 +760,8 @@ const S = {
   banner: null,        // {text, timer}
   obstacles: [],
   obstacleDebuts: {},
+  lastMovingSpawnAt: -Infinity,
+  announcedCities: new Set(),
   spawnTimer: 1.2,
   // weather
   raining: false,
@@ -858,6 +864,8 @@ function resetGame() {
   S.running = true; S.paused = false; S.resuming = false; S.gameOver = false;
   S.t = 0; S.speed = 320; S.distance = 0; S.lives = 3; S.invuln = 0;
   S.themeIndex = 0; S.obstacles = []; S.obstacleDebuts = {}; S.spawnTimer = 1.2;
+  S.lastMovingSpawnAt = -Infinity;
+  S.announcedCities = new Set([currentTheme().id]);
   S.raining = false; S.rainTimer = 14; S.drops = [];
   S.rainAnnounced = false; // Meg calls the weather once per run
   // clear skies until around the end of the first leg
@@ -1148,6 +1156,7 @@ const Radio = {
 // ============================================================
 const DJ = {
   reg: {}, files: new Set(), voice: null, breaks: 0,
+  jobs: [], activeJob: null,
   pausedByGame: false, resumeVoice: false,
   setFiles(files) {
     this.reg = {};
@@ -1168,27 +1177,52 @@ const DJ = {
     return pool ? pool[Math.floor(Math.random() * pool.length)] : null;
   },
   slugOf(file) { return file.replace(/\.[^.]+$/, "").toLowerCase().replace(/[^a-z0-9]/g, ""); },
-  // play clips back-to-back, then call done()
-  playSeq(clips, done) {
+  // All host lines share one queue, so a weather/city call waits for the
+  // current break instead of talking over it or being dropped.
+  playSeq(clips, done, options = {}) {
+    this.jobs.push({ clips: clips.filter(Boolean).slice(), done, duck: options.duck === true });
+    this.startNextJob();
+  },
+  startNextJob() {
+    if (this.activeJob || this.voice || !this.jobs.length) return;
+    this.activeJob = this.jobs.shift();
+    if (this.activeJob.duck && Radio.audio) Radio.audio.volume = 0.15;
+    this.playNextClip();
+  },
+  playNextClip() {
+    const job = this.activeJob;
+    if (!job) return;
+    const f = job.clips.shift();
+    if (!f) {
+      if (job.duck && Radio.audio) Radio.audio.volume = 0.65;
+      this.activeJob = null;
+      const done = job.done;
+      if (done) done();
+      this.startNextJob();
+      return;
+    }
+    this.voice = new Audio("radio/clips/" + encodeURIComponent(f));
+    this.voice.volume = /burningbright|textmeback/i.test(f) ? 0.72 : 1;
+    let settled = false;
     const next = () => {
-      const f = clips.shift();
-      if (!f) { this.voice = null; if (done) done(); return; }
-      this.voice = new Audio("radio/clips/" + encodeURIComponent(f));
-      this.voice.onended = next;
-      this.voice.onerror = next;
-      this.voice.play().catch(() => { this.voice = null; if (done) done(); });
+      if (settled) return;
+      settled = true;
+      this.voice = null;
+      this.playNextClip();
     };
-    next();
+    this.voice.onended = next;
+    this.voice.onerror = next;
+    this.voice.play().catch(next);
   },
   // one-off line over the music (rain, cities, unlocks): duck, talk, restore
   event(type, slug) {
-    if (this.voice) return; // already talking
     const f = this.pick(type, slug);
     if (!f) return;
-    if (Radio.audio) Radio.audio.volume = 0.15;
-    this.playSeq([f], () => { if (Radio.audio) Radio.audio.volume = 0.65; });
+    this.playSeq([f], null, { duck: true });
   },
   cut() {
+    this.jobs = [];
+    this.activeJob = null;
     if (this.voice) {
       this.voice.onended = null;
       this.voice.onerror = null;
@@ -1279,7 +1313,10 @@ function update(dt) {
       S.themeIndex = idx;
       const theme = currentTheme();
       S.banner = { text: "NOW ENTERING: " + theme.name, timer: 2.5 };
-      DJ.event("city", theme.citySlug);
+      if (!S.announcedCities.has(theme.id)) {
+        S.announcedCities.add(theme.id);
+        DJ.event("city", theme.citySlug);
+      }
     }
   }
 
@@ -1374,17 +1411,22 @@ function spawnObstacle() {
   const theme = currentTheme();
   const pool = obstaclePoolForTheme(theme);
   const debuted = S.obstacleDebuts[theme.id] || (S.obstacleDebuts[theme.id] = {});
+  const movingReady = S.t - S.lastMovingSpawnAt >= 8.5;
+  const eligiblePool = pool.filter((candidate) => movingReady || !OBSTACLE_DEFS[candidate]?.moving);
+  const spawnPool = eligiblePool.length ? eligiblePool : pool;
   // Give each newly available obstacle an on-road debut before randomizing
   // the pool again. The moving one remains last in its city's roster.
-  const key = pool.find((candidate) => !debuted[candidate])
-    || pool[Math.floor(Math.random() * pool.length)];
+  const key = spawnPool.find((candidate) => !debuted[candidate])
+    || spawnPool[Math.floor(Math.random() * spawnPool.length)];
   debuted[key] = true;
   const def = OBSTACLE_DEFS[key];
+  if (def.moving) S.lastMovingSpawnAt = S.t;
   const last = S.obstacles[S.obstacles.length - 1];
   const currentFactor = obstacleMoveFactor(def);
   const lastFactor = last ? obstacleMoveFactor(last.def) : 1;
-  const movingGap = S.speed * Math.max(0, Math.max(currentFactor, lastFactor) - 1) * 0.35;
-  const minGap = S.speed * 0.62 + 40 + movingGap; // keep faster obstacles physically clearable
+  const movingGap = (def.moving || last?.def.moving ? S.speed * 0.8 : 0)
+    + S.speed * Math.max(0, Math.max(currentFactor, lastFactor) - 1) * 0.45;
+  const minGap = S.speed * 0.68 + 40 + movingGap; // keep faster obstacles physically clearable
   const x = Math.max(W + 40, last ? last.x + last.def.w + minGap : 0);
   S.obstacles.push({ key, def, x });
 }
@@ -1433,6 +1475,7 @@ function endGame() {
   if (isNewBest) S.best = Save.runnerBest;
   const earned = bankedMilesForDistance(S.distance);
   const totalMiles = Save.addMiles(earned);
+  const snackEnergy = Save.addNavigatorEnergy ? Save.addNavigatorEnergy(Math.floor(S.t / 30)) : 0;
   RoadTripAnalytics.capture("game_completed", {
     game: "window_dash",
     score: Math.floor(S.distance),
@@ -1447,7 +1490,8 @@ function endGame() {
     "You scored <b>" + Math.floor(S.distance).toLocaleString() + "</b> on this run." +
     (isNewBest ? "<br><b style='color:#ffd166'>NEW PERSONAL BEST!</b>" : "") +
     "<br>Best run: <b>" + Math.floor(S.best).toLocaleString() + "</b>" +
-    "<br>+<b>" + earned + " mi</b> earned · <b>" + totalMiles + " mi</b> banked";
+    "<br>+<b>" + earned + " mi</b> earned · <b>" + totalMiles + " mi</b> banked" +
+    (snackEnergy ? "<br>Snack Stack refilled <b>+" + snackEnergy + " gas</b> while you ran." : "");
   document.getElementById("startBtn").textContent = "TAKE ANOTHER TRIP";
   ov.classList.remove("hidden");
   document.getElementById("pauseBtn").classList.add("hidden");
@@ -2956,14 +3000,14 @@ const Library = {
   },
   favorites() { return Save.favoriteSongSet ? Save.favoriteSongSet() : new Set(); },
   favoriteTracks() {
-    const favorites = this.favorites();
-    const tracks = [];
+    const tracksByKey = new Map();
     for (const era of this.order) {
       for (const track of this.meta[era] || []) {
-        if (favorites.has(this.key(era, track.file))) tracks.push({ era, track });
+        tracksByKey.set(this.key(era, track.file), { era, track });
       }
     }
-    return tracks;
+    const orderedKeys = Save.favoriteSongs ? Save.favoriteSongs() : Array.from(this.favorites());
+    return orderedKeys.map((key) => tracksByKey.get(key)).filter(Boolean);
   },
   shuffled(items) {
     const copy = items.slice();
@@ -3003,6 +3047,11 @@ const Library = {
     const key = this.key(era, file);
     const next = !Save.isFavoriteSong(key);
     Save.setFavoriteSong(key, next);
+    this.mixQueue = [];
+    this.render();
+  },
+  moveFavorite(era, file, direction) {
+    if (!Save.moveFavoriteSong || !Save.moveFavoriteSong(this.key(era, file), direction)) return;
     this.mixQueue = [];
     this.render();
   },
@@ -3082,24 +3131,31 @@ const Library = {
     this.syncControls();
     document.getElementById("libCount").textContent =
       this.collected.size + " of " + this.total() + " collected · " + favorites.size + " in Road Mix";
-    for (const era of this.order) {
-      const tracks = this.meta[era] || [];
-      if (!tracks.length) continue;
-      const got = tracks.filter((t) => this.collected.has(this.key(era, t.file))).length;
-      const visibleTracks = this.view === "mix"
-        ? tracks.filter((t) => favorites.has(this.key(era, t.file)))
-        : tracks;
-      if (!visibleTracks.length) continue;
+    const groups = this.view === "mix"
+      ? [{ label: "ROAD MIX", entries: this.favoriteTracks() }]
+      : this.order.map((era) => ({
+        label: STATION_LABEL[era],
+        era,
+        entries: (this.meta[era] || []).map((track) => ({ era, track })),
+      }));
+    for (const group of groups) {
+      if (!group.entries.length) continue;
+      const got = group.entries.filter(({ era, track }) => this.collected.has(this.key(era, track.file))).length;
       const h = document.createElement("div");
       h.className = "lib-station";
-      h.textContent = STATION_LABEL[era] + "  ·  " + (this.view === "mix" ? visibleTracks.length + " FAVORITES" : got + "/" + tracks.length);
+      h.textContent = group.label + "  ·  " + (this.view === "mix" ? group.entries.length + " FAVORITES" : got + "/" + group.entries.length);
       body.appendChild(h);
       const grid = document.createElement("div");
       grid.className = "lib-grid";
-      const sorted = visibleTracks.slice().sort((a, b) =>
-        (this.collected.has(this.key(era, a.file)) ? 0 : 1) -
-        (this.collected.has(this.key(era, b.file)) ? 0 : 1));
-      for (const t of sorted) {
+      const favoriteOrder = Save.favoriteSongs ? Save.favoriteSongs() : [];
+      const sorted = this.view === "mix"
+        ? group.entries.slice()
+        : group.entries.slice().sort((a, b) =>
+          (this.collected.has(this.key(a.era, a.track.file)) ? 0 : 1) -
+          (this.collected.has(this.key(b.era, b.track.file)) ? 0 : 1));
+      for (const entry of sorted) {
+        const era = entry.era;
+        const t = entry.track;
         const key = this.key(era, t.file);
         const has = this.collected.has(key);
         const favorite = favorites.has(key);
@@ -3115,7 +3171,9 @@ const Library = {
             '<span class="lib-cover-letter"></span>' +
             '<img class="lib-cover-img" alt="" src="' + cover + '" onerror="this.remove()"></div>' +
             '<div class="lib-info"><div class="lib-song"></div><div class="lib-band"></div><div class="lib-bio"></div></div>' +
-            '<div class="lib-actions"><button class="lib-favorite" type="button" title="Add to Road Mix" aria-label="Add to Road Mix">♥</button>' +
+            '<div class="lib-actions">' +
+            (this.view === "mix" ? '<span class="lib-order"><button class="lib-up" type="button" aria-label="Move song earlier">&#8593;</button><button class="lib-down" type="button" aria-label="Move song later">&#8595;</button></span>' : '') +
+            '<button class="lib-favorite" type="button" title="Add to Road Mix" aria-label="Add to Road Mix">♥</button>' +
             '<button class="lib-play" type="button" aria-label="Play song">▶</button></div>';
           card.querySelector(".lib-cover-letter").textContent = (t.band[0] || "♪");
           card.querySelector(".lib-song").textContent = t.song;
@@ -3127,6 +3185,15 @@ const Library = {
           favoriteButton.setAttribute("aria-label", favoriteButton.title);
           favoriteButton.setAttribute("aria-pressed", favorite ? "true" : "false");
           favoriteButton.addEventListener("click", () => this.toggleFavorite(era, t.file));
+          if (this.view === "mix") {
+            const orderIndex = favoriteOrder.indexOf(key);
+            const up = card.querySelector(".lib-up");
+            const down = card.querySelector(".lib-down");
+            up.disabled = orderIndex <= 0;
+            down.disabled = orderIndex < 0 || orderIndex >= favoriteOrder.length - 1;
+            up.addEventListener("click", () => this.moveFavorite(era, t.file, -1));
+            down.addEventListener("click", () => this.moveFavorite(era, t.file, 1));
+          }
           const btn = card.querySelector(".lib-play");
           if (this.playingKey === key) btn.textContent = "Ⅱ";
           btn.addEventListener("click", () => this.toggle(era, t.file));

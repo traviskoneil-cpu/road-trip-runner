@@ -416,6 +416,7 @@
       if (!row.difficulties.includes("easy")) row.difficulties.unshift("easy");
       if (!row.best || typeof row.best !== "object") row.best = {};
       if (!row.scores || typeof row.scores !== "object") row.scores = {};
+      if (!row.fullCombos || typeof row.fullCombos !== "object") row.fullCombos = {};
       Object.keys(row.scores).forEach((diff) => {
         const score = Number(row.scores[diff]);
         if (Number.isFinite(score) && score > 0) row.scores[diff] = Math.floor(score);
@@ -431,6 +432,14 @@
     },
     songBest(id, diff) { return this._driverSong(id).best[diff] || null; },
     songHighScore(id, diff) { return this._driverSong(id).scores[diff] || 0; },
+    hasSongFullCombo(id, diff) { return this._driverSong(id).fullCombos[diff] === true; },
+    recordSongFullCombo(id, diff) {
+      const row = this._driverSong(id);
+      if (row.fullCombos[diff] === true) return false;
+      row.fullCombos[diff] = true;
+      this.persist();
+      return true;
+    },
     // Record a per-song Wheel Jam result; returns the newly-unlocked difficulty name, or null.
     recordSongResult(id, diff, rank, score) {
       const row = this._driverSong(id);
@@ -465,6 +474,15 @@
       if (favorite && index === -1) favorites.push(id);
       else if (!favorite && index >= 0) favorites.splice(index, 1);
       else return false;
+      this.persist();
+      return true;
+    },
+    moveFavoriteSong(id, direction) {
+      const favorites = this.data.mixtape.favorites;
+      const index = favorites.indexOf(id);
+      const nextIndex = index + (direction < 0 ? -1 : 1);
+      if (index < 0 || nextIndex < 0 || nextIndex >= favorites.length) return false;
+      [favorites[index], favorites[nextIndex]] = [favorites[nextIndex], favorites[index]];
       this.persist();
       return true;
     },
@@ -549,6 +567,17 @@
       n = n | 0;
       if ((this.data.miles || 0) < n) return false;
       this.data.miles -= n; this.persist(); return true;
+    },
+
+    addNavigatorEnergy(n, cap = 100) {
+      const nav = this.data.navigator || (this.data.navigator = clone(DEFAULTS.navigator));
+      const amount = Math.max(0, Math.floor(Number(n) || 0));
+      const limit = Math.max(1, Math.floor(Number(cap) || 100));
+      const before = Math.min(limit, Math.max(0, Math.floor(Number(nav.energy) || 0)));
+      nav.energy = Math.min(limit, before + amount);
+      if (nav.energy >= limit) nav.lastEnergyAt = Date.now();
+      this.persist();
+      return nav.energy - before;
     },
 
     // ---- runner best ----

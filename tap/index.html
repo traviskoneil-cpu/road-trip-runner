@@ -306,10 +306,11 @@ function show(name) { for (const k in screens) screens[k].classList.toggle("hidd
 const UNLOCK_RULE = Save.UNLOCK_RULE;
 let DIFFICULTY = "easy";
 const DIFF = { // spacing: min gap in the main tap stream · simul: chance of extra chord notes (Hard)
-  easy:   { spacing: 0.32,  k: 1.5, simul: 0 },
-  medium: { spacing: 0.20,  k: 1.4, simul: 0 },
+  easy:   { spacing: 0.26,  k: 1.42, simul: 0 },
+  medium: { spacing: 0.19,  k: 1.38, simul: 0 },
   hard:   { spacing: 0.135, k: 1.3, simul: 0.30 },
 };
+const FULL_COMBO_FIRST_BONUS = { easy: 20, medium: 40, hard: 100 };
 const mkNote = (t, lane, hold) => ({ t, lane, hold, hit: false, judged: false, headHit: false, holding: false, done: false });
 const LANES = 3;
 const LANE_COLOR = ["#e94560", "#ffd166", "#4ec3c7"];
@@ -1651,14 +1652,18 @@ function endSong() {
   $("rSong").textContent = songMeta.song;
   $("rBand").textContent = songMeta.band + " · " + DIFF_LABEL[DIFFICULTY];
   $("rFC").classList.toggle("hidden", !fc);
-  const earnedMiles = milesForDriverResult(stats.score, DIFFICULTY, rank);
+  const baseMiles = milesForDriverResult(stats.score, DIFFICULTY, rank);
   const finalScore = Math.round(stats.score);
+  const firstFullCombo = fc && Save.recordSongFullCombo(songKey(songMeta), DIFFICULTY);
+  const fullComboBonus = firstFullCombo ? (FULL_COMBO_FIRST_BONUS[DIFFICULTY] || 0) : 0;
+  const earnedMiles = baseMiles + fullComboBonus;
   const isNewSongBest = finalScore > Save.songHighScore(songKey(songMeta), DIFFICULTY);
   const totalMiles = earnedMiles > 0 ? Save.addMiles(earnedMiles) : Save.miles;
   $("rStats").innerHTML =
     "Score <b>" + finalScore.toLocaleString() + "</b><br>" +
     "Accuracy <b>" + Math.round(acc * 100) + "%</b><br>" +
     "Max combo <b>" + stats.maxCombo + "</b><br>" +
+    (firstFullCombo ? "First full combo bonus <b>+" + fullComboBonus + " mi</b><br>" : "") +
     "+<b>" + earnedMiles + " mi</b> earned · <b>" + totalMiles + " mi</b> banked<br>" +
     "<span style='color:#4ec3c7'>Perfect " + stats.perfect + "</span> · " +
     "<span style='color:#ffd166'>Good " + stats.good + "</span> · " +
@@ -1674,6 +1679,9 @@ function endSong() {
     accuracy_percent: Math.round(acc * 100),
     rank,
     miles_earned: earnedMiles,
+    full_combo: fc,
+    first_full_combo: firstFullCombo,
+    full_combo_bonus: fullComboBonus,
     new_high_score: isNewSongBest,
   });
   $("rPersonalBest").classList.toggle("hidden", !isNewSongBest);

@@ -48,6 +48,11 @@ This is a future Runner event, not active gameplay yet.
 - Gas Station: active first pass with a daily free Snack Stack gas can, a
   mileage-priced roadside refill, and a paper map that unlocks the next city.
   Route Pass cards are storefront previews only until real billing is added.
+- Roadside supplies should always include one mileage-priced Snack Stack gas
+  refill. Rotate the remaining offer slots on a predictable refresh cadence
+  across snack, drink, meal, fun, and dog branches. Tiered offers may include
+  higher-level merge items, but prices must preserve the value of playing
+  Snack Stack rather than skipping its progression.
 - Gas Station music rack: add **Roadside Music Credits** as a song-unlock route
   for players who want a larger rotation or are having trouble collecting a
     particular song in Window Dash. One credit redeems one locked **core rotation**
@@ -77,6 +82,28 @@ This is a future Runner event, not active gameplay yet.
   - Do not sell individual songs for real money in the first pass. If paid music
     packs arrive later, run them through the entitlement layer and preserve all
     earned unlock paths.
+  - Playtest an alternate presentation in which each station has a small
+    rotating selection of specific locked songs. Only show songs for stations
+    unlocked by the player's owned cars. Compare this against format-neutral
+    credits before choosing one system; do not run both at once.
 - Dealership: achievement route to earn cars plus an optional early-unlock path.
 - First-time mode guides: Wheel Jam has a Dad dialogue card now; wire in a Wheel Jam
   video when that fourth clip is added to `videos/`.
+
+## Paid Economy Decisions
+
+Keep these as product experiments until the free mileage economy, purchase
+restoration, and store compliance paths are validated.
+
+- Decide whether to sell miles at all. Cars, routes, songs, and supplies must
+  continue to show their free earning path wherever a paid shortcut appears.
+- Candidate mile packs from the current notes: 1,000 miles for $0.99, 3,000 for
+  $2.49, 8,000 for $4.99, 20,000 for $9.99, and 50,000 for $19.99. Reprice only
+  after measuring real progression speed and likely spend sinks.
+- Consider rewarded ads for a time-limited 2x mileage booster and optional
+  Snack Stack gas. Cap both daily and never interrupt an active game, song,
+  introduction video, or first-time unlock moment.
+- Prefer Apple and Google purchase restoration over account creation for the
+  first release. Durable non-consumable entitlements can be restored from the
+  store account; consumable mile balances still require an entitlement ledger
+  or cloud backup if they must survive reinstall/device changes.

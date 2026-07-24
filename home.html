@@ -286,6 +286,12 @@
     transform-origin: 44% 68%;
   }
 
+  .city.chicago .landmark-art {
+    width: 108px;
+    margin-bottom: -12px;
+    transform: translateX(4px);
+  }
+
   .city-label {
     margin-top: 5px;
     color: #fff;
@@ -1502,8 +1508,8 @@
 
   .plate-state-grid {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 10px 8px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px 10px;
   }
 
   .plate-state {
@@ -1530,13 +1536,13 @@
 
   .plate-wall-plate .plate-recall-plate-top,
   .plate-wall-plate .plate-recall-plate-bottom {
-    font-size: 4.5px;
-    letter-spacing: 0.16px;
+    font-size: 6.5px;
+    letter-spacing: 0.22px;
   }
 
   .plate-wall-plate .plate-recall-plate-code {
-    font-size: 10px;
-    letter-spacing: 0.65px;
+    font-size: 15px;
+    letter-spacing: 0.8px;
   }
 
   .plate-state.unseen .plate-wall-plate {
@@ -3907,6 +3913,18 @@
     z-index: 2;
   }
 
+  .merge-cell.merge-blocked {
+    animation: mergeBlockedFlash 0.56s ease-out;
+  }
+
+  @keyframes mergeBlockedFlash {
+    0%, 100% { background-color: transparent; box-shadow: inherit; }
+    30%, 68% {
+      background: rgba(214, 55, 48, 0.58);
+      box-shadow: inset 0 0 0 3px rgba(153, 24, 22, 0.82);
+    }
+  }
+
   .merge-cell.born .snack-icon {
     animation: snackBorn 0.28s ease-out;
   }
@@ -4817,7 +4835,8 @@
             <span class="city-dot"></span>
             <span class="city-label"></span>
           </button>
-          <button class="city chicago" type="button" data-city="chicago">
+          <button class="city landmark-city chicago" type="button" data-city="chicago">
+            <img class="landmark-art" src="assets/landmarks/chicago-map-cutout.png" alt="">
             <span class="city-dot"></span>
             <span class="city-label"></span>
           </button>
@@ -5382,7 +5401,7 @@ const PLATE_REWARD_CATALOG = [
   { id: "all-states", icon: "50", title: "Fifty States", detail: "+150 mi and the Coast-to-Coast family album cover", miles: 150, requirement: (book) => book.states.length >= PLATE_STATES.length },
 ];
 const PLATE_RECALL_MAX_SEQUENCE = 20;
-const PLATE_RECALL_SHOW_MS = 1050;
+const PLATE_RECALL_SHOW_MS = 1250;
 const PLATE_RECALL_ORDER = [
   "NY", "NJ", "PA", "CT", "MA", "MD", "VA", "NC", "SC", "GA", "FL", "OH", "MI", "IL", "WI", "MN", "IA", "MO", "TX", "CO",
   "AZ", "NM", "UT", "NV", "CA", "OR", "WA", "ID", "MT", "WY", "ND", "SD", "NE", "KS", "OK", "AR", "LA", "MS", "AL", "TN",
@@ -6062,7 +6081,7 @@ const HomeRadio = {
       const voice = new Audio("radio/clips/" + encodeURIComponent(file));
       this.voice = voice;
       voice.preload = "auto";
-      voice.volume = 0.78;
+      voice.volume = /burningbright|textmeback/i.test(file) ? 0.6 : 0.78;
       voice.onended = () => {
         if (this.voice !== voice) return;
         next();
@@ -6151,6 +6170,7 @@ const HomeRadio = {
 // ElevenLabs-generated pass-by for the traffic animation.
 const PlateRecallSound = {
   source: null,
+  active: null,
 
   start() {
     if (!this.source) {
@@ -6163,9 +6183,24 @@ const PlateRecallSound = {
   passBy(intensity = 1) {
     const source = this.start();
     if (!source) return;
+    if (this.active) {
+      this.active.pause();
+      this.active.currentTime = 0;
+    }
     const passBy = source.cloneNode();
     passBy.volume = Math.min(0.34, Math.max(0.1, 0.18 * intensity));
+    passBy.onended = () => {
+      if (this.active === passBy) this.active = null;
+    };
+    this.active = passBy;
     passBy.play().catch(() => {});
+  },
+
+  stop() {
+    if (!this.active) return;
+    this.active.pause();
+    this.active.currentTime = 0;
+    this.active = null;
   },
 };
 
@@ -6468,7 +6503,7 @@ function requestPendingSlotIndex(request, value) {
 }
 
 function requestRewardMiles(request) {
-  return snackMilesTotal(requestPendingValues(request));
+  return snackMilesTotal(requestValues(request));
 }
 
 function snackFootprint(value) {
@@ -6553,9 +6588,29 @@ function mergeSnackDestination(nav, sourceIndex, targetIndex, mergedValue) {
       }
     }
   });
+  Array.from({ length: NAV_GRID_CELLS }, (_, index) => index)
+    .sort((a, b) => {
+      const targetRow = Math.floor(targetIndex / NAV_GRID_COLS);
+      const targetCol = targetIndex % NAV_GRID_COLS;
+      const aDistance = Math.abs(Math.floor(a / NAV_GRID_COLS) - targetRow) + Math.abs((a % NAV_GRID_COLS) - targetCol);
+      const bDistance = Math.abs(Math.floor(b / NAV_GRID_COLS) - targetRow) + Math.abs((b % NAV_GRID_COLS) - targetCol);
+      return aDistance - bDistance;
+    })
+    .forEach((index) => {
+      if (!seen.has(index)) candidates.push(index);
+    });
   return candidates.find((index) => (
     canPlaceSnackAt(nav, index, mergedValue, mergeAnchors)
   ));
+}
+
+function flashBlockedMergeGrid() {
+  document.querySelectorAll("[data-merge-cell]").forEach((cell) => {
+    cell.classList.remove("merge-blocked");
+    void cell.offsetWidth;
+    cell.classList.add("merge-blocked");
+    setTimeout(() => cell.classList.remove("merge-blocked"), 620);
+  });
 }
 
 function occupiedBoardCount(nav) {
@@ -6854,7 +6909,7 @@ function navEnergyTimerText(nav) {
   if (nav.energy >= NAV_ENERGY_CAP) return "FULL";
   const elapsed = Math.max(0, Date.now() - nav.lastEnergyAt);
   const remaining = NAV_ENERGY_REGEN_MS - (elapsed % NAV_ENERGY_REGEN_MS);
-  return "+1 in " + formatNavClock(remaining);
+  return "+1 in " + formatNavClock(remaining) + " / RUN = 2X";
 }
 
 function addNavigatorFuel(amount) {
@@ -7369,6 +7424,7 @@ function completeDraggedSnack(sourceIndex, targetIndex) {
     nav.lastMessage = "Make room before that snack grows.";
     Save.persist();
     renderNavigator();
+    flashBlockedMergeGrid();
     showToast(nav.lastMessage);
     return false;
   }
@@ -7409,7 +7465,9 @@ function feedRequesterFromCell(sourceIndex, requesterId) {
     showToast(nav.lastMessage);
     return false;
   }
-  const milesEarned = snackFeedMiles(value);
+  const orderMiles = activeRequest
+    ? snackMilesTotal(requestValues(activeRequest))
+    : snackFeedMiles(value);
   const snackName = snackTier(value).name;
   nav.board[sourceIndex] = null;
   nav.fedCount = (nav.fedCount || 0) + 1;
@@ -7422,24 +7480,26 @@ function feedRequesterFromCell(sourceIndex, requesterId) {
   const remainingValues = activeRequest ? requestPendingValues(activeRequest) : [];
   const orderComplete = !activeRequest || remainingValues.length === 0;
   if (activeRequest && remainingValues.length) {
-    nav.lastMessage = requester.name + " got " + snackName + ". " + remainingValues.length + " left. +" + milesEarned + " mi.";
+    nav.lastMessage = requester.name + " got " + snackName + ". " + remainingValues.length + " left.";
   } else {
-    nav.lastMessage = requester.name + " got " + snackName + ". Order done. +" + milesEarned + " mi.";
+    nav.lastMessage = requester.name + " got " + snackName + ". Order done. +" + orderMiles + " mi.";
     nav.ordersCompleted = Math.max(0, Math.floor(nav.ordersCompleted || 0)) + 1;
     replaceNavigatorRequest(nav, requester.id);
   }
-  if (typeof Save.addMiles === "function") Save.addMiles(milesEarned);
-  else {
-    Save.data.miles = Math.max(0, (Save.data.miles || 0) + milesEarned);
-    Save.persist();
-  }
+  if (orderComplete) {
+    if (typeof Save.addMiles === "function") Save.addMiles(orderMiles);
+    else {
+      Save.data.miles = Math.max(0, (Save.data.miles || 0) + orderMiles);
+      Save.persist();
+    }
+  } else Save.persist();
   RoadTripAnalytics.capture("snack_order_item_delivered", {
     requester: requester.id,
     snack: snackTier(value).id,
-    miles_earned: milesEarned,
+    miles_earned: orderComplete ? orderMiles : 0,
     order_completed: orderComplete,
   });
-  launchNavigatorMileageBurst(requester.id, milesEarned, orderComplete);
+  if (orderComplete) launchNavigatorMileageBurst(requester.id, orderMiles, true);
   renderAll();
   showToast(nav.lastMessage);
   return true;
@@ -7820,6 +7880,7 @@ function handleMergeCell(index) {
     nav.lastMessage = "Make room before that snack grows.";
     Save.persist();
     renderNavigator();
+    flashBlockedMergeGrid();
     showToast(nav.lastMessage);
     return;
   }
@@ -8360,6 +8421,7 @@ function cancelPlateRecallTimer() {
 
 function resetPlateRecall() {
   cancelPlateRecallTimer();
+  PlateRecallSound.stop();
   PlateRecallAmbience.stop();
   PlateRecall.phase = "idle";
   PlateRecall.sequence = [];
@@ -8496,7 +8558,6 @@ function advancePlateRecallWatch() {
     PlateRecall.choices = plateRecallChoices();
     PlateRecall.timer = 0;
     renderPlateRecall();
-    PlateRecallSound.passBy(0.8);
     return;
   }
   PlateRecall.shown += 1;
